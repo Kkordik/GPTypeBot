@@ -1,12 +1,12 @@
 import asyncio
-from database.database_classes import Database, UsersTable, TextsTable
+from classes.database_classes import Database, UsersTable
 from config import HOST, USER, PASSWORD, NAME, PORT
 
 
 async def run_db(_loop, host, user, password, name, port) -> Database:
-    db = Database(host, user, password, name, port)
-    await db.make_pool(_loop)
-    return db
+    _db = Database(host, user, password, name, port)
+    await _db.make_pool(_loop)
+    return _db
 
 
 if __name__ == "database.run_db":
@@ -16,4 +16,3 @@ if __name__ == "database.run_db":
 
     # Register main tables
     user_tb = UsersTable(db)
-    text_tb = TextsTable(db)

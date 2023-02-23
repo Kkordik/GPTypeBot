@@ -26,7 +26,6 @@ class Database:
         """
         async with self.__pool.acquire() as con:
             async with con.cursor() as cur:
-                print(command)
                 await cur.execute(command)
                 res = await cur.fetchall()
             await con.commit()
@@ -65,6 +64,8 @@ class Table:
                 # Changing "string" to "'string'" to execute it in sql command as string
                 if isinstance(parameters[column], str):
                     parameters[column] = "'{}'".format(parameters[column])
+                elif isinstance(parameters[column], list):
+                    parameters[column] = str(parameters[column][0])
                 else:
                     parameters[column] = str(parameters[column])
             else:
@@ -132,7 +133,6 @@ class Table:
 
         unpack_values = ', '.join(columns_vals.values())
         unpack_columns = ', '.join(columns_vals.keys())
-        print(command.format(self.__name, unpack_columns, unpack_values))
         return await self.execute_tb(command.format(self.__name, unpack_columns, unpack_values))
 
     async def launch_table(self,  *args, **kwargs):
@@ -148,37 +148,10 @@ class UsersTable(Table):
     user_id: bigint
     donation: smallint
     api_key: text
+    date_time: datetime
     """
     __name = "users"
-    __columns = ["id", "user_id", "donation", "api_key"]
+    __columns = ["id", "user_id", "donation", "api_key", "date_time"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)
-
-
-class LanguageTable(Table):
-    """
-    id: tinyint unsigned auto_increment
-    language: tinytext
-    """
-    __name = "language"
-    __columns = ["id",  "language"]
-
-    def __init__(self, db: Database):
-        self.db = db
-        super().__init__(self.__name, self.db, self.__columns)
-
-
-class TextsTable(Table):
-    """
-    id: tinyint unsigned auto_increment
-    text_name: tinytext
-    language: tinytext
-    text: text
-    """
-    __name = "texts"
-    __columns = ["id", "text_name", "language", "text"]
-
-    def __init__(self, db: Database):
-        self.db = db
-        super().__init__(self.__name, self.db, self.__columns)
