@@ -12,8 +12,8 @@ async def inline_echo(inline_query: InlineQuery):
     # you can set your unique id's
     # but for example i'll generate it based on text because I know, that
     # only text will be passed in this example
-    # text = inline_query.query or 'echo'
-    # result_id: str = hashlib.md5(text.encode()).hexdigest()
+    text = inline_query.query or 'echo'
+    result_id: str = hashlib.md5(text.encode()).hexdigest()
     # if len(text) <= 250:
     #     input_content = InputTextMessageContent(text)
     # else:
@@ -28,8 +28,9 @@ async def inline_echo(inline_query: InlineQuery):
     # await bot.answer_inline_query(inline_query.id, results=[item], cache_time=1, switch_pm_text="go to pm",
     #                               switch_pm_parameter=result_id)
     query_t = Query(text=inline_query.query)
-    print(query_t.check_markers_order(query_t.get_markers_list()))
-    await inline_query.answer(results=[InlineQueryResultArticle(id=123, title="answer",
+    print(query_t.divide_query(query_t.get_markers_list()))
+    print(query_t.__dict__)
+    await inline_query.answer(results=[InlineQueryResultArticle(id=result_id, title="answer",
                                                                input_message_content=InputTextMessageContent(message_text="fuck you"))],
                               cache_time=1)
     # After I've checked marks order I have to divide text on queries.
