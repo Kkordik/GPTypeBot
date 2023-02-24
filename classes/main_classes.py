@@ -28,13 +28,16 @@ class User(MainClassBase):
     async def get_language(self, user: types.User = None):
         if user:
             self.user = user
-        if self.user:
+        try:
+            if self.user:
+                self.language = self.user.language_code
+            elif self.user_id:
+                self.user = await bot.get_chat(self.user_id)
             self.language = self.user.language_code
-            return self.language
-        elif self.user_id:
-            self.user = await bot.get_chat(self.user_id)
-            self.language = self.user.language_code
-            return self.language
+        except Exception as ex:
+            print(ex)
+            self.language = BASIC_LANGUAGE
+        return self.language
 
     async def insert_user(self, user_id=None):
         if user_id:
