@@ -1,13 +1,13 @@
 class Marker:
     marker: str
     start_id: int
-    __end_id: int
+    _end_id: int
 
     def __init__(self, start_id: int, end_id: int = None):
         self.start_id = start_id
-        self.__end_id = end_id
+        self._end_id = end_id
 
-    def get_end_id(self):
+    def get_end_id(self, text: str):
         return self.start_id + len(self.marker)
 
     def get_marker(self):
@@ -64,10 +64,11 @@ class TranslateMarker(BeginMarker):
         super().__init__(start_id=start_id, end_id=end_id)
         self.language = language
 
-    def get_end_id(self, language: str = None):
-        if language:
-            self.language = language
-        return self.start_id + len(self.marker) + len(self.language)
+    def get_end_id(self, text: str):
+        _marker_end_id = self.start_id + len(self.marker)
+        self._end_id = text[_marker_end_id:].find(" ")
+        self.language = text[_marker_end_id:self._end_id]
+        return self._end_id
 
 
 class SimpleEndMarker(EndMarker):

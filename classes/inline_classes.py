@@ -1,5 +1,6 @@
 import re
 from classes.Markers import Marker, BeginMarker, EndMarker
+from classes.Mistakes import WrongMarkerUse
 
 
 class Query:
@@ -33,22 +34,23 @@ class Query:
 
         return self.markers_list
 
-    def divide_query(self, markers_list: list = None) -> []:
+    def divide_query(self, markers_list: list = None) -> WrongMarkerUse | None:
         if markers_list:
             self.markers_list = markers_list
-        if not self.markers_list:
+        if not self.markers_list or self.markers_list == []:
             self.sub_queries = [Query(text=self.text)]
-            return self.sub_queries
+            return
 
+        print(self.text, markers_list, sep=' ')
         markers_num = len(self.markers_list)
         first_m = self.markers_list[0]
         first_m_sup: BeginMarker | EndMarker = type(first_m).__bases__[0]
 
         if (markers_num == 1) and (first_m_sup == BeginMarker):
-            self.sub_queries = [Query(text=self.text[first_m.get_end_id():], begin_marker=first_m)]
-            return self.sub_queries
+            self.sub_queries = [Query(text=self.text[first_m.get_end_id(self.text):], begin_marker=first_m)]
+            return
         elif (markers_num >= 1) and first_m_sup == EndMarker:
-            return False
+            return WrongMarkerUse()
 
         flag = True
         marker_id = 0
@@ -61,9 +63,10 @@ class Query:
 
             if current_m_sup != next_m_sup:
                 if current_m_sup == BeginMarker:
-                    self.sub_queries.append(Query(text=self.text[current_m.get_end_id():next_m.start_id],
+                    self.sub_queries.append(Query(text=self.text[current_m.get_end_id(self.text):next_m.start_id],
                                                   begin_marker=current_m))
             else:
                 flag = False
             marker_id += 1
-        return self.sub_queries
+        if not flag:
+            return WrongMarkerUse()

@@ -7,6 +7,7 @@ from inline_interface.inline_query import register_inline_query_handler
 
 async def main(_loop):
     # Register handlers
+    dp.stop_polling()
     register_main_start_cmd(dp)
     register_inline_query_handler(dp)
     #register_get_photo_id(dp)

@@ -2,7 +2,7 @@ from aiogram import types
 from run_bot import bot
 from classes.database_classes import Table, UsersTable
 from config import BASIC_LANGUAGE
-
+from texts import texts
 
 class MainClassBase:
     def __init__(self, table, row_id: int = None):
@@ -28,15 +28,18 @@ class User(MainClassBase):
     async def get_language(self, user: types.User = None):
         if user:
             self.user = user
-        try:
-            if self.user:
-                self.language = self.user.language_code
-            elif self.user_id:
-                self.user = await bot.get_chat(self.user_id)
-            self.language = self.user.language_code
-        except Exception as ex:
-            print(ex)
+
+        if self.user:
+            language = self.user.language_code
+        else:
+            self.user = await bot.get_chat(self.user_id)
+            language = self.user.language_code
+
+        if language in texts:
+            self.language = language
+        else:
             self.language = BASIC_LANGUAGE
+
         return self.language
 
     async def insert_user(self, user_id=None):
