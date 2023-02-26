@@ -4,6 +4,7 @@ from classes.database_classes import Table, UsersTable
 from config import BASIC_LANGUAGE
 from texts import texts
 
+
 class MainClassBase:
     def __init__(self, table, row_id: int = None):
         self.table: Table = table

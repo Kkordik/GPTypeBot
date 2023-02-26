@@ -1,3 +1,11 @@
+def ends_with_marker(text: str) -> bool:
+    for end_marker_p in [EndMarker, EndSign]:
+        for end_marker in end_marker_p.__subclasses__():
+            if text.endswith(end_marker.marker):
+                return True
+    return False
+
+
 class Marker:
     marker: str
     start_id: int
@@ -57,7 +65,7 @@ class PostMarker(BeginMarker):
 
 
 class TranslateMarker(BeginMarker):
-    marker = "t."
+    marker = "t_"
     language: str
 
     def __int__(self, start_id: int, end_id: int = None, language: str = None):
@@ -66,14 +74,14 @@ class TranslateMarker(BeginMarker):
 
     def get_end_id(self, text: str):
         _marker_end_id = self.start_id + len(self.marker)
-        self._end_id = text[_marker_end_id:].find(" ")
+        self._end_id = text[_marker_end_id:].find(" ") + _marker_end_id
         self.language = text[_marker_end_id:self._end_id]
+        print(self._end_id)
         return self._end_id
 
 
 class SimpleEndMarker(EndMarker):
     marker = ".e"
-
 
 
 class DotSign(EndSign):
