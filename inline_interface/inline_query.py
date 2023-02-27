@@ -1,5 +1,4 @@
 import asyncio
-
 from aiogram import Dispatcher
 from run_bot import bot
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
@@ -9,17 +8,37 @@ from texts import texts, facts
 from classes.MainClasses import User
 from database.run_db import user_tb
 from classes.Markers import ends_with_marker
-import re
+
+
+async def answer_fact_inline_query(inline_query: InlineQuery, result_id: str, fact_name: str, lang: str, *kwargs):
+    text = facts[lang][fact_name].format(*kwargs)
+
+    answers = [
+        InlineQueryResultArticle(
+            id=result_id,
+            title=text,
+            input_message_content=InputTextMessageContent(message_text=text)
+        )
+    ]
+    await inline_query.answer(
+        results=answers,
+        cache_time=1,
+        switch_pm_text=texts[lang]["see_more_but"],
+        switch_pm_parameter=fact_name
+    )
 
 
 async def inline_echo(inline_query: InlineQuery):
     result_id: str = hashlib.md5(inline_query.query.encode()).hexdigest()
-    print(result_id)
-    user = User(user_tb, user_id=inline_query.from_user.id, user=inline_query.from_user)
-    await user.insert_user()
-    lang = await user.get_language()
+    user_db = User(user_tb, user_id=inline_query.from_user.id, user=inline_query.from_user)
+    await user_db.insert_user()
+    lang = await user_db.get_language()
 
-    query_t = Query(text=inline_query.query)
+    if len(inline_query.query) > 255:
+        await answer_fact_inline_query(inline_query, result_id, "too_long_query", lang)
+        return
+
+    query_t = Query(text=inline_query.query, user=inline_query.from_user)
     mistake = query_t.divide_query(query_t.get_markers_list())
 
     if not mistake:
@@ -38,46 +57,22 @@ async def inline_echo(inline_query: InlineQuery):
         )
 
     else:
-        text = facts[lang][mistake.text_name].format(mistake.marker.marker)
-
-        answers = [
-            InlineQueryResultArticle(
-                id=result_id,
-                title=text,
-                input_message_content=InputTextMessageContent(message_text=text)
-            )
-        ]
-        await inline_query.answer(
-            results=answers,
-            cache_time=1,
-            switch_pm_text=texts[lang]["see_more_but"],
-            switch_pm_parameter=mistake.text_name
-        )
+        await answer_fact_inline_query(inline_query, result_id, mistake.text_name, lang, mistake.marker.marker)
 
 
 async def use_end_signs(inline_query: InlineQuery):
     result_id: str = hashlib.md5(inline_query.query.encode()).hexdigest()
 
-    user = User(user_tb, user_id=inline_query.from_user.id, user=inline_query.from_user)
-    await user.insert_user()
-    lang = await user.get_language()
+    user_db = User(user_tb, user_id=inline_query.from_user.id, user=inline_query.from_user)
+    await user_db.insert_user()
+    lang = await user_db.get_language()
 
-    fact = "end_with_sign"
-    fact_text = facts[lang][fact]
+    print(len(inline_query.query))
+    if len(inline_query.query) > 255:
+        await answer_fact_inline_query(inline_query, result_id, "too_long_query", lang)
+        return
 
-    answers = [
-        InlineQueryResultArticle(
-            id=result_id,
-            title=fact_text,
-            input_message_content=InputTextMessageContent(message_text=fact_text)
-        )
-    ]
-    await inline_query.answer(
-        results=answers,
-        cache_time=1,
-        switch_pm_text=texts[lang]["see_more_but"],
-        switch_pm_parameter=fact
-    )
+    await answer_fact_inline_query(inline_query, result_id, "end_with_sign", lang)
 
 
 def register_inline_query_handler(dp: Dispatcher):

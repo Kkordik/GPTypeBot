@@ -1,5 +1,6 @@
 from classes.GPTSession import GPT
 from config import SUPPORTER_MAX_TOKEN
+from aiogram.types import User
 
 
 def ends_with_marker(text: str) -> bool:
@@ -45,7 +46,7 @@ class BeginMarker(Marker):
     def get_gpt_func(gpt: GPT):
         return gpt.completion
 
-    def add_salt(self, prompt: str, supporter: bool = None) -> dict:
+    def add_salt(self, prompt: str, supporter: bool = None, user: User = None) -> dict:
         if supporter:
             return {"prompt": self.salt + prompt,
                     "max_tokens": SUPPORTER_MAX_TOKEN,
@@ -78,7 +79,19 @@ class MistakeMarker(BeginMarker):
 
 class FormalMarker(BeginMarker):
     marker = "-f"
-    salt = "Write formal message about: "
+    salt = "Write formal message from {} about: "
+
+    def add_salt(self, prompt: str, supporter: bool = None, user: User = None) -> dict:
+        self.salt = self.salt.format(user.first_name)
+        if supporter:
+            return {"prompt": self.salt + prompt,
+                    "max_tokens": SUPPORTER_MAX_TOKEN,
+                    "model": self.model,
+                    "temperature": self.temperature}
+        else:
+            return {"prompt": self.salt + prompt,
+                    "model": self.model,
+                    "temperature": self.temperature}
 
 
 class PostMarker(BeginMarker):
@@ -102,7 +115,7 @@ class TranslateMarker(BeginMarker):
         self.language = text[_marker_end_id-1:self._end_id]
         return self._end_id
 
-    def add_salt(self, prompt: str, supporter: bool = None) -> dict:
+    def add_salt(self, prompt: str, supporter: bool = None, user: User = None) -> dict:
         self.salt = self.salt.format(self.language)
         if supporter:
             return {"edit_input": self.salt + prompt,
