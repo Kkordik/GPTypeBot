@@ -4,7 +4,7 @@ from config import DEFAULT_TOKEN_NUM
 
 class GPT:
     url = "https://api.openai.com/v1/"
-    model: str = "text-davinci-003"
+    model: str
     prompt: str
     edit_input: str
     instruction: str
@@ -47,16 +47,16 @@ class GPT:
 
     async def edit(self, edit_input: str, instruction: str, model: str = None, temperature: int = None,
                    n: int = None) -> str:
-        self.url += "completions"
+        self.url += "edits"
         self.edit_input = edit_input
         self.instruction = instruction
-        self.model = model or "text-davinci-003"
+        self.model = model or "text-davinci-edit-001"
         self.temperature = temperature or 1
         self.n = n or 1
 
         self.data = {
             "model": self.model,
-            "input": self.input,
+            "input": self.edit_input,
             "instruction": self.instruction,
             "temperature": self.temperature,
             "n": self.n,

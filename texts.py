@@ -1,3 +1,5 @@
+from classes.Markers import DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
+
 texts = {
     "en": {
         "start_text": "Hello! its gptype bot",
@@ -15,15 +17,24 @@ texts = {
 
 facts = {
     "en": {
-        "end_with_sign": "End query with one of '.'  '!'  '?'  '.e'",
+        "end_with_sign": "End query with one of '{}'  '{}'  '{}'  '{}'".format(DotSign.marker,
+                                                                               ExclamationSign.marker,
+                                                                               QuestionSign.marker,
+                                                                               SimpleEndMarker.marker),
         "wrong_marker_use": "Check correctness of markers {}"
     },
     "uk": {
-        "end_with_sign": "Uk End query with one of '.'  '!'  '?'  '.e'",
+        "end_with_sign": "Uk End query with one of '{}'  '{}'  '{}'  '{}'".format(DotSign.marker,
+                                                                                  ExclamationSign.marker,
+                                                                                  QuestionSign.marker,
+                                                                                  SimpleEndMarker.marker),
         "wrong_marker_use": "Uk Check correctness of markers {}"
     },
     "ru": {
-        "end_with_sign": "Ru End query with one of '.'  '!'  '?'  '.e'",
+        "end_with_sign": "Ru End query with one of '{}'  '{}'  '{}'  '{}'".format(DotSign.marker,
+                                                                                  ExclamationSign.marker,
+                                                                                  QuestionSign.marker,
+                                                                                  SimpleEndMarker.marker),
         "wrong_marker_use": "Ru Check correctness of markers {}"
     }
 }

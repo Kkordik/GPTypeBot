@@ -66,43 +66,30 @@ class EndSign(Marker):
 
 
 class SimpleMarker(BeginMarker):
-    marker = "q."
+    marker = "-q"
     salt = ""
 
 
 class MistakeMarker(BeginMarker):
-    marker = "m."
-    salt = "Correct mistakes"
-
-    @staticmethod
-    def get_gpt_func(gpt: GPT):
-        return gpt.edit
-
-    def add_salt(self, prompt: str, supporter: bool = None) -> dict:
-        if supporter:
-            return {"edit_input": prompt,
-                    "model": self.model,
-                    "temperature": self.temperature}
-        else:
-            return {"prompt": self.salt + prompt,
-                    "model": self.model,
-                    "temperature": self.temperature}
+    marker = "-m"
+    salt = "Correct mistakes: "
+    temperature = 0
 
 
 class FormalMarker(BeginMarker):
-    marker = "f."
+    marker = "-f"
     salt = "Write formal message about: "
 
 
 class PostMarker(BeginMarker):
-    marker = "p."
+    marker = "-p"
     salt = "Write post about: "
 
 
 class TranslateMarker(BeginMarker):
-    marker = "t_"
-    model = "text-curie-001"
-    salt = "Translate following text to {}: "
+    marker = "-t-"
+    temperature = 0.3
+    salt = "Translate this into {}: "
     language: str
 
     def __int__(self, start_id: int, end_id: int = None, language: str = None):
@@ -111,13 +98,14 @@ class TranslateMarker(BeginMarker):
 
     def get_end_id(self, text: str):
         _marker_end_id = self.start_id + len(self.marker)
-        self._end_id = text[_marker_end_id:].find(" ") + _marker_end_id
+        self._end_id = text[_marker_end_id:].find("-") + _marker_end_id
         self.language = text[_marker_end_id-1:self._end_id]
         return self._end_id
 
     def add_salt(self, prompt: str, supporter: bool = None) -> dict:
+        self.salt = self.salt.format(self.language)
         if supporter:
-            return {"edit_input": self.salt.format(self.language) + prompt,
+            return {"edit_input": self.salt + prompt,
                     "model": self.model,
                     "max_tokens": SUPPORTER_MAX_TOKEN,
                     "temperature": self.temperature}
@@ -128,7 +116,7 @@ class TranslateMarker(BeginMarker):
 
 
 class SimpleEndMarker(EndMarker):
-    marker = ".e"
+    marker = "-e"
 
 
 class DotSign(EndSign):
