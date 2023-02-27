@@ -1,7 +1,9 @@
 import re
 from typing import Union
-from classes.Markers import Marker, BeginMarker, EndMarker
+from classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
 from classes.Mistakes import WrongMarkerUse
+from classes.GPTSession import GPT
+from config import OPEN_AI_KEY
 
 
 class Query:
@@ -40,7 +42,9 @@ class Query:
         if markers_list:
             self.markers_list = markers_list
         if not self.markers_list or self.markers_list == []:
-            self.sub_queries = [Query(text=self.text)]
+            self.sub_queries = [Query(text=self.text, supporter=self.supporter,
+                                      begin_marker=SimpleMarker(start_id=0, end_id=0))]
+            self.answer += "{}"
             return
 
         markers_num = len(self.markers_list)
@@ -48,14 +52,20 @@ class Query:
         first_m_sup: Union[BeginMarker, EndMarker] = type(first_m).__bases__[0]
 
         if (markers_num == 1) and (first_m_sup == BeginMarker):
-            self.sub_queries = [Query(text=self.text[first_m.get_end_id(self.text):], begin_marker=first_m)]
+            if first_m.start_id != 1:
+                self.answer += self.text[:first_m.start_id] + " {}"
+            else:
+                self.answer += "{}"
+            self.sub_queries = [Query(text=self.text[first_m.get_end_id(self.text):], begin_marker=first_m,
+                                      supporter=self.supporter)]
             return
         elif (markers_num >= 1) and first_m_sup == EndMarker:
             return WrongMarkerUse(marker=first_m)
 
         marker_id = 0
         self.sub_queries = []
-        self.answer += self.text[:self.markers_list[0].start_id]
+        if first_m.start_id != 1:
+            self.answer = self.text[:first_m.start_id]
         while marker_id < markers_num-1:
             current_m = self.markers_list[marker_id]
             current_m_sup: Union[BeginMarker, EndMarker] = type(current_m).__bases__[0]
@@ -65,7 +75,7 @@ class Query:
             if current_m_sup != next_m_sup:
                 if current_m_sup == BeginMarker:
                     self.sub_queries.append(Query(text=self.text[current_m.get_end_id(self.text):next_m.start_id],
-                                                  begin_marker=current_m))
+                                                  begin_marker=current_m, supporter=self.supporter))
                     self.answer += "{}"
                 else:
                     self.answer += self.text[current_m.get_end_id(self.text):next_m.start_id]
@@ -73,3 +83,8 @@ class Query:
                 return WrongMarkerUse(marker=next_m)
             marker_id += 1
         self.answer += self.text[self.markers_list[marker_id].get_end_id(self.text):]
+
+    async def answer_query(self) -> str:
+        gpt = GPT(OPEN_AI_KEY)
+        gpt_func = self.begin_marker.get_gpt_func(gpt)
+        return await gpt_func(**self.begin_marker.add_salt(self.text, self.supporter))

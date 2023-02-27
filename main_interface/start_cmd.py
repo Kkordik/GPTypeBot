@@ -1,5 +1,5 @@
 from aiogram import Dispatcher, types
-from classes.main_classes import User
+from classes.MainClasses import User
 from database.run_db import user_tb
 from texts import texts
 

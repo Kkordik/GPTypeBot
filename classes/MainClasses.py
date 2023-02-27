@@ -1,6 +1,6 @@
 from aiogram import types
 from run_bot import bot
-from classes.database_classes import Table, UsersTable
+from classes.Tables import Table, UsersTable
 from config import BASIC_LANGUAGE
 from texts import texts
 

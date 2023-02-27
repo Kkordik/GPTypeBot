@@ -1,5 +1,5 @@
 import asyncio
-from classes.database_classes import Database, UsersTable
+from classes.Tables import Database, UsersTable
 from config import HOST, USER, PASSWORD, NAME, PORT
 
 

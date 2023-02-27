@@ -51,7 +51,7 @@ class Table:
             results.append(dict(zip(self.__columns, row)))
         return results
 
-    def __check_parameters(self, parameters: dict) -> dict[str: str]:
+    def __check_parameters(self, parameters: dict) -> dict:
         """
         Checking if given columns in parameters dict exist in table.
 

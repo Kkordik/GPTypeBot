@@ -1,3 +1,7 @@
+from classes.GPTSession import GPT
+from config import SUPPORTER_MAX_TOKEN
+
+
 def ends_with_marker(text: str) -> bool:
     for end_marker_p in [EndMarker, EndSign]:
         for end_marker in end_marker_p.__subclasses__():
@@ -16,7 +20,7 @@ class Marker:
         self._end_id = end_id
 
     def get_end_id(self, text: str):
-        return self.start_id + len(self.marker)
+        return self._end_id or self.start_id + len(self.marker)
 
     def get_marker(self):
         return self.marker
@@ -33,7 +37,24 @@ class Marker:
 
 
 class BeginMarker(Marker):
+    model: str = "text-davinci-003"
+    temperature: int = 1
     salt: str
+
+    @staticmethod
+    def get_gpt_func(gpt: GPT):
+        return gpt.completion
+
+    def add_salt(self, prompt: str, supporter: bool = None) -> dict:
+        if supporter:
+            return {"prompt": self.salt + prompt,
+                    "max_tokens": SUPPORTER_MAX_TOKEN,
+                    "model": self.model,
+                    "temperature": self.temperature}
+        else:
+            return {"prompt": self.salt + prompt,
+                    "model": self.model,
+                    "temperature": self.temperature}
 
 
 class EndMarker(Marker):
@@ -51,21 +72,37 @@ class SimpleMarker(BeginMarker):
 
 class MistakeMarker(BeginMarker):
     marker = "m."
-    salt = ""
+    salt = "Correct mistakes"
+
+    @staticmethod
+    def get_gpt_func(gpt: GPT):
+        return gpt.edit
+
+    def add_salt(self, prompt: str, supporter: bool = None) -> dict:
+        if supporter:
+            return {"edit_input": prompt,
+                    "model": self.model,
+                    "temperature": self.temperature}
+        else:
+            return {"prompt": self.salt + prompt,
+                    "model": self.model,
+                    "temperature": self.temperature}
 
 
 class FormalMarker(BeginMarker):
     marker = "f."
-    salt = ""
+    salt = "Write formal message about: "
 
 
 class PostMarker(BeginMarker):
     marker = "p."
-    salt = ""
+    salt = "Write post about: "
 
 
 class TranslateMarker(BeginMarker):
     marker = "t_"
+    model = "text-curie-001"
+    salt = "Translate following text to {}: "
     language: str
 
     def __int__(self, start_id: int, end_id: int = None, language: str = None):
@@ -75,9 +112,19 @@ class TranslateMarker(BeginMarker):
     def get_end_id(self, text: str):
         _marker_end_id = self.start_id + len(self.marker)
         self._end_id = text[_marker_end_id:].find(" ") + _marker_end_id
-        self.language = text[_marker_end_id:self._end_id]
-        print(self._end_id)
+        self.language = text[_marker_end_id-1:self._end_id]
         return self._end_id
+
+    def add_salt(self, prompt: str, supporter: bool = None) -> dict:
+        if supporter:
+            return {"edit_input": self.salt.format(self.language) + prompt,
+                    "model": self.model,
+                    "max_tokens": SUPPORTER_MAX_TOKEN,
+                    "temperature": self.temperature}
+        else:
+            return {"prompt": self.salt + prompt,
+                    "model": self.model,
+                    "temperature": self.temperature}
 
 
 class SimpleEndMarker(EndMarker):
@@ -94,4 +141,3 @@ class ExclamationSign(EndSign):
 
 class QuestionSign(EndSign):
     marker = "?"
-
