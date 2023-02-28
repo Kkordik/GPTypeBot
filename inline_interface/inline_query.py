@@ -11,13 +11,15 @@ from classes.Markers import ends_with_marker
 
 
 async def answer_fact_inline_query(inline_query: InlineQuery, result_id: str, fact_name: str, lang: str, *kwargs):
-    text = facts[lang][fact_name].format(*kwargs)
+    text = facts[lang][fact_name]["title"].format(*kwargs)
 
     answers = [
         InlineQueryResultArticle(
             id=result_id,
             title=text,
-            input_message_content=InputTextMessageContent(message_text=text)
+            input_message_content=InputTextMessageContent(message_text=texts[lang]["share"],
+                                                          parse_mode='HTML'),
+            thumb_url=facts[lang][fact_name]["photo"],
         )
     ]
     await inline_query.answer(
@@ -48,7 +50,8 @@ async def inline_echo(inline_query: InlineQuery):
             InlineQueryResultArticle(
                 id=result_id,
                 title=query_t.answer,
-                input_message_content=InputTextMessageContent(message_text=query_t.answer)
+                input_message_content=InputTextMessageContent(message_text=query_t.answer, parse_mode='HTML'),
+                thumb_url="https://cdn-icons-png.flaticon.com/128/463/463574.png"
             )
         ]
         await inline_query.answer(
@@ -67,7 +70,6 @@ async def use_end_signs(inline_query: InlineQuery):
     await user_db.insert_user()
     lang = await user_db.get_language()
 
-    print(len(inline_query.query))
     if len(inline_query.query) > 255:
         await answer_fact_inline_query(inline_query, result_id, "too_long_query", lang)
         return

@@ -1,7 +1,7 @@
 from aiogram import Dispatcher, types
 from classes.MainClasses import User
 from database.run_db import user_tb
-from texts import texts, facts, facts_desc
+from texts import texts, facts
 
 
 async def simple_start_cmd(message: types.Message):
@@ -15,7 +15,7 @@ async def parameter_start_cmd(message: types.Message):
     user = User(user_tb, message.from_user.id, user=message.from_user)
     await user.get_language()
     await user.insert_user()
-    await message.answer(facts_desc[user.language][message.text.split(" ")[1]], parse_mode="HTML")
+    await message.answer(facts[user.language][message.text.split(" ")[1]]["description"], parse_mode="HTML")
 
 
 def register_main_start_cmd(dp: Dispatcher):
