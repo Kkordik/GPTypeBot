@@ -4,19 +4,25 @@ texts = {
     "en": {
         "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!",
         "see_more_but": "See more..",
-        "share": "Hello I use @GPTypeBot, it is very convenient!"
+        "share": "Hello I use @GPTypeBot, it is very convenient!",
+        "guide_but": "guide",
+        "start_use_but": "start use"
     },
     "uk": {
         "start_text": "Могутній, унікальний та безкоштовний.\nПереглянь короткий гайд нижче,"
                       " перш ніж користуватися мною, або почни прямо зараз!",
         "see_more_but": "Подробиці..",
-        "share": "Привіт, я використовую @GPTypeBot, це дуже зручно!"
+        "share": "Привіт, я використовую @GPTypeBot, це дуже зручно!",
+        "guide_but": "guide",
+        "start_use_but": "start use"
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
                       " прежде чем использовать меня, или начни прямо сейчас!",
         "see_more_but": "Подробнее..",
-        "share": "Привет, я использую @GPTypeBot, это очень удобно!"
+        "share": "Привет, я использую @GPTypeBot, это очень удобно!",
+        "guide_but": "guide",
+        "start_use_but": "start use"
     }
 }
 

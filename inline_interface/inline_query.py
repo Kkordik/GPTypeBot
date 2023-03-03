@@ -40,11 +40,11 @@ async def inline_echo(inline_query: InlineQuery):
         await answer_fact_inline_query(inline_query, result_id, "too_long_query", lang)
         return
 
-    query_t = Query(text=inline_query.query, user=inline_query.from_user)
+    query_t = Query(text=inline_query.query, inline_query=inline_query)
     mistake = query_t.divide_query(query_t.get_markers_list())
 
     if not mistake:
-        answers = [await query.answer_query() for query in query_t.sub_queries]
+        answers = await query_t.answer_sub_queries()
         query_t.answer = query_t.answer.format(*answers)
         answers = [
             InlineQueryResultArticle(

@@ -1,5 +1,3 @@
-from classes.GPTSession import GPT
-from config import SUPPORTER_MAX_TOKEN
 from aiogram.types import User
 
 
@@ -38,24 +36,11 @@ class Marker:
 
 
 class BeginMarker(Marker):
-    model: str = "text-davinci-003"
     temperature: int = 1
     salt: str
 
-    @staticmethod
-    def get_gpt_func(gpt: GPT):
-        return gpt.completion
-
-    def add_salt(self, prompt: str, supporter: bool = None, user: User = None) -> dict:
-        if supporter:
-            return {"prompt": self.salt + prompt,
-                    "max_tokens": SUPPORTER_MAX_TOKEN,
-                    "model": self.model,
-                    "temperature": self.temperature}
-        else:
-            return {"prompt": self.salt + prompt,
-                    "model": self.model,
-                    "temperature": self.temperature}
+    def add_salt(self, prompt: str, user: User = None) -> str:
+        return self.salt + prompt
 
 
 class EndMarker(Marker):
@@ -81,17 +66,8 @@ class FormalMarker(BeginMarker):
     marker = "-f"
     salt = "Write formal message from {} about: "
 
-    def add_salt(self, prompt: str, supporter: bool = None, user: User = None) -> dict:
-        self.salt = self.salt.format(user.first_name)
-        if supporter:
-            return {"prompt": self.salt + prompt,
-                    "max_tokens": SUPPORTER_MAX_TOKEN,
-                    "model": self.model,
-                    "temperature": self.temperature}
-        else:
-            return {"prompt": self.salt + prompt,
-                    "model": self.model,
-                    "temperature": self.temperature}
+    def add_salt(self, prompt: str, user: User = None) -> str:
+        return self.salt.format(user.first_name) + prompt
 
 
 class PostMarker(BeginMarker):
@@ -115,17 +91,8 @@ class TranslateMarker(BeginMarker):
         self.language = text[_marker_end_id-1:self._end_id]
         return self._end_id
 
-    def add_salt(self, prompt: str, supporter: bool = None, user: User = None) -> dict:
-        self.salt = self.salt.format(self.language)
-        if supporter:
-            return {"edit_input": self.salt + prompt,
-                    "model": self.model,
-                    "max_tokens": SUPPORTER_MAX_TOKEN,
-                    "temperature": self.temperature}
-        else:
-            return {"prompt": self.salt + prompt,
-                    "model": self.model,
-                    "temperature": self.temperature}
+    def add_salt(self, prompt: str, user: User = None) -> str:
+        return self.salt.format(self.language) + prompt
 
 
 class SimpleEndMarker(EndMarker):

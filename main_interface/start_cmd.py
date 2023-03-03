@@ -2,13 +2,16 @@ from aiogram import Dispatcher, types
 from classes.MainClasses import User
 from database.run_db import user_tb
 from texts import texts, facts
+from keyboards import start_keyboard
 
 
 async def simple_start_cmd(message: types.Message):
     user = User(user_tb, message.from_user.id, user=message.from_user)
     await user.get_language()
     await user.insert_user()
-    await message.answer(texts[user.language]['start_text'], parse_mode="HTML")
+    await message.answer(texts[user.language]['start_text'],
+                         parse_mode="HTML",
+                         reply_markup=start_keyboard(user.language))
 
 
 async def parameter_start_cmd(message: types.Message):
