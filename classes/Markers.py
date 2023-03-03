@@ -67,7 +67,7 @@ class EndSign(Marker):
 
 
 class SimpleMarker(BeginMarker):
-    marker = "-q"
+    marker = "-s"
     salt = ""
 
 
@@ -129,7 +129,7 @@ class TranslateMarker(BeginMarker):
 
 
 class SimpleEndMarker(EndMarker):
-    marker = "-e"
+    marker = "-q"
 
 
 class DotSign(EndSign):
