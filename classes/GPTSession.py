@@ -7,7 +7,7 @@ BOT_ROLE = "assistant"
 
 
 class PrevMessages:
-    messages_list: list[dict]
+    messages_list: list
 
     def __init__(self):
         self.messages_list = [{"role": "system", "content": f"You are a helpful {BOT_ROLE}."}]

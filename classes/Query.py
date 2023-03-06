@@ -100,7 +100,7 @@ class Query:
         else:
             self.answer += self.text[next_m.get_end_id(self.text):]
 
-    async def answer_sub_queries(self) -> list[str]:
+    async def answer_sub_queries(self) -> list:
         gpt = GPT(OPEN_AI_KEY)
         answers = []
         for query in self.sub_queries:

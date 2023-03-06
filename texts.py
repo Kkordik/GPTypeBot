@@ -1,5 +1,4 @@
-from classes.Markers import DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
-
+from classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
 texts = {
     "en": {
         "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!",
@@ -28,6 +27,12 @@ texts = {
 
 facts = {
     "en": {
+        "start_with_marker": {
+            "title": "Ask or start with marker: '{}'".format("' / '".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])),
+            "description": "Please read documentation https://docs.google.com/document/d/"
+                           "1hlicXB2bXyMTzR2qT5vUPJWUc4gEyIEIydRmepH7p0Y/edit?usp=drivesdk",
+            "photo": "https://i.ibb.co/fMJrVdD/information.png"
+        },
         "end_with_sign": {
             "title": "Remember query ends with '{}' / '{}' / '{}' / '{}'".format(
                 DotSign.marker,
@@ -53,6 +58,13 @@ facts = {
         }
     },
     "uk": {
+        "start_with_marker": {
+            "title": "Запитуй або юзай маркер: '{}'".format("' / '".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])),
+            "description": "Please read documentation https://docs.google.com/document/d/"
+                           "1hlicXB2bXyMTzR2qT5vUPJWUc4gEyIEIydRmepH7p0Y/edit?usp=drivesdk",
+            "photo": "https://i.ibb.co/fMJrVdD/information.png"
+
+        },
         "end_with_sign": {
             "title": "Пам'ятай, запит закінчується на '{}' / '{}' / '{}' / '{}'".format(
                 DotSign.marker,
@@ -78,6 +90,12 @@ facts = {
         }
     },
     "ru": {
+        "start_with_marker": {
+            "title": "Спрашивай или юзай маркер: '{}'".format("' / '".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])),
+            "description": "Please read documentation https://docs.google.com/document/d/"
+                           "1hlicXB2bXyMTzR2qT5vUPJWUc4gEyIEIydRmepH7p0Y/edit?usp=drivesdk",
+            "photo": "https://i.ibb.co/fMJrVdD/information.png"
+        },
         "end_with_sign": {
             "title": "Помни, запрос заканчивается на '{}' / '{}' / '{}' / '{}'".format(
                 DotSign.marker,

@@ -69,12 +69,14 @@ async def use_end_signs(inline_query: InlineQuery):
     user_db = User(user_tb, user_id=inline_query.from_user.id, user=inline_query.from_user)
     await user_db.insert_user()
     lang = await user_db.get_language()
+    query_len = len(inline_query.query)
 
-    if len(inline_query.query) > 255:
+    if query_len == 0:
+        await answer_fact_inline_query(inline_query, result_id, "start_with_marker", lang)
+    elif query_len > 255:
         await answer_fact_inline_query(inline_query, result_id, "too_long_query", lang)
-        return
-
-    await answer_fact_inline_query(inline_query, result_id, "end_with_sign", lang)
+    else:
+        await answer_fact_inline_query(inline_query, result_id, "end_with_sign", lang)
 
 
 def register_inline_query_handler(dp: Dispatcher):
