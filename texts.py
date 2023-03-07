@@ -1,4 +1,5 @@
 from classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
+
 texts = {
     "en": {
         "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!",
@@ -118,6 +119,60 @@ facts = {
             "description": "Please read documentation https://docs.google.com/document/d/"
                            "1hlicXB2bXyMTzR2qT5vUPJWUc4gEyIEIydRmepH7p0Y/edit?usp=drivesdk",
             "photo": "https://i.ibb.co/HN8RcKs/cancel.png"
+        }
+    }
+}
+
+guide_texts = {
+    "en": {
+        "inline_bot": {
+            "description": "It is an inline bot...",
+            "button": "Inline bot",
+            "examples": []
+        },
+        "tmporar_1": {
+            "description": "Temp1 It is an inline bot...",
+            "button": "Temp1",
+            "examples": [{"button": "ex1", "query": "temp1"}]
+        },
+        "tmporar_2": {
+            "description": "Temp2 It is an inline bot...",
+            "button": "Temp2",
+            "examples": [{"button": "ex1", "query": "temp1"}, {"button": "ex2", "query": "temp2"}]
+        }
+    },
+    "uk": {
+        "inline_bot": {
+            "description": "It is an inline bot...",
+            "button": "Inline bot",
+            "examples": []
+        },
+        "tmporar_1": {
+            "description": "Temp1 It is an inline bot...",
+            "button": "Temp1",
+            "examples": [{"button": "ex1", "query": "temp1"}]
+        },
+        "tmporar_2": {
+            "description": "Temp2 It is an inline bot...",
+            "button": "Temp2",
+            "examples": [{"button": "ex1", "query": "temp1"}, {"button": "ex2", "query": "temp2"}]
+        }
+    },
+    "ru": {
+        "inline_bot": {
+            "description": "It is an inline bot...",
+            "button": "Inline bot",
+            "examples": []
+        },
+        "tmporar_1": {
+            "description": "Temp1 It is an inline bot...",
+            "button": "Temp1",
+            "examples": [{"button": "ex1", "query": "temp1"}]
+        },
+        "tmporar_2": {
+            "description": "Temp2 It is an inline bot...",
+            "button": "Temp2",
+            "examples": [{"button": "ex1", "query": "temp1"}, {"button": "ex2", "query": "temp2"}]
         }
     }
 }

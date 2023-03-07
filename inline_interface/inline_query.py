@@ -1,6 +1,4 @@
-import asyncio
 from aiogram import Dispatcher
-from run_bot import bot
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 import hashlib
 from classes.Query import Query
