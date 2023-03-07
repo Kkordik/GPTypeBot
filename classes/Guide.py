@@ -10,6 +10,7 @@ class Guide:
 
 class GuidePage(Guide):
     video: str
+    text_name: str
 
     def __init__(self, language: str, text_name: str):
         self.lang = language
@@ -46,6 +47,10 @@ class GuidePage(Guide):
 
     async def send_page(self, bot,  chat_id, message: Message = None):
         if message:
-            await message.edit_text(text=self.text["description"], reply_markup=self.create_keyboard())
+            await message.edit_text(text="<i><b>Guide</b></i>\n\n" + self.text["description"],
+                                    reply_markup=self.create_keyboard(),
+                                    parse_mode='HTML')
         else:
-            await bot.send_message(chat_id, text=self.text["description"], reply_markup=self.create_keyboard())
+            await bot.send_message(chat_id, text="<i><b>Guide</b></i>\n\n" + self.text["description"],
+                                   reply_markup=self.create_keyboard(),
+                                   parse_mode='HTML')
