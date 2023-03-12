@@ -17,8 +17,11 @@ async def simple_start_cmd(message: types.Message):
                              parse_mode="HTML",
                              reply_markup=start_keyboard(user.language))
     else:
-        guide_page = GuidePage(language=user.language, text_name=message.text.split(" ")[1])
-        await guide_page.send_page(bot=bot, chat_id=message.chat.id)
+        param_type = message.text.split(" ")[1].split("-")[0]
+        param = message.text.split(" ")[1].split("-")[1]
+        if param_type == "guide":
+            guide_page = GuidePage(language=user.language, text_name=param)
+            await guide_page.send_page(bot=bot, chat_id=message.chat.id)
 
 
 def register_main_start_cmd(dp: Dispatcher):

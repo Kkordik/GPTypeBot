@@ -9,8 +9,12 @@ BOT_ROLE = "assistant"
 class PrevMessages:
     messages_list: list
 
-    def __init__(self):
-        self.messages_list = [{"role": "system", "content": f"You are a helpful {BOT_ROLE}."}]
+    def __init__(self, short_answers: bool = True):
+        if short_answers:
+            salt = " Answer shortly."
+        else:
+            salt = ""
+        self.messages_list = [{"role": "system", "content": f"You are a helpful {BOT_ROLE}.{salt}"}]
 
     def add_message(self, message: str, user: str = BOT_ROLE):
         self.messages_list.append({"role": user, "content": message})
@@ -94,6 +98,7 @@ class GPT:
         self.temperature = temperature or 1
         self.n = n or 1
         self.echo = echo or False
+        print(self.messages.messages_list)
 
         self.data = {
             "model": self.model,

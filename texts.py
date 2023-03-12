@@ -3,27 +3,33 @@ from config import TELEGRAM_CHAR_LIMIT
 
 texts = {
     "en": {
-        "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!",
+        "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!\nFeedback: @kkordik",
         "see_more_but": "See more..",
+        "buy_subs_but": "Buy now..",
         "share": "Hello I use @GPTypeBot, it is very convenient!",
         "guide_but": "guide",
-        "start_use_but": "start use"
+        "start_use_but": "start use",
+        "wait_for_answer": "Please wait♻️"
     },
     "uk": {
         "start_text": "Могутній, унікальний та безкоштовний.\nПереглянь короткий гайд нижче,"
-                      " перш ніж користуватися мною, або почни прямо зараз!",
+                      " перш ніж користуватися мною, або почни прямо зараз!\nFeedback: @kkordik",
         "see_more_but": "Подробиці..",
+        "buy_subs_but": "Придбати..",
         "share": "Привіт, я використовую @GPTypeBot, це дуже зручно!",
         "guide_but": "Гайд",
-        "start_use_but": "Почати використовувати"
+        "start_use_but": "Почати використовувати",
+        "wait_for_answer": "Будь ласка зачекайте♻️"
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
-                      " прежде чем использовать меня, или начни прямо сейчас!",
+                      " прежде чем использовать меня, или начни прямо сейчас!\nFeedback: @kkordik",
         "see_more_but": "Подробнее..",
+        "buy_subs_but": "Купить..",
         "share": "Привет, я использую @GPTypeBot, это очень удобно!",
         "guide_but": "Гайд",
-        "start_use_but": "Начать использовать"
+        "start_use_but": "Начать использовать",
+        "wait_for_answer": "Пожалуйста подождите♻️"
     }
 }
 
@@ -39,9 +45,10 @@ facts = {
                            QuestionSign.marker,
                            SimpleEndMarker.marker
         ),
-        "wrong_marker_use": "Check correctness of marker {}",
+        "wrong_marker_use": "Check correctness of marker '{}'",
         "too_long_query": f"Query is over {TELEGRAM_CHAR_LIMIT} symbols. Telegram limit😢",
-        "waiting_time": "Genereting responce tates up to 5s"
+        "waiting_time": "Generating response takes up to 10 seconds",
+        "no_subscription": "This feature is only for paid subscribers"
     },
     "uk": {
         "start_with_marker":  "Запитуй або юзай маркер: '{}'".format(
@@ -53,9 +60,10 @@ facts = {
                           QuestionSign.marker,
                           SimpleEndMarker.marker
         ),
-        "wrong_marker_use": "Перевір правильність маркеру {}",
+        "wrong_marker_use": "Перевір правильність маркеру '{}'",
         "too_long_query": f"Запит більше ніж {TELEGRAM_CHAR_LIMIT} символів. Це ліміт Телеграму😢",
-        "waiting_time": "В середньому відповідь генерується приблизно 5 секунд"
+        "waiting_time": "В середньому відповідь генерується приблизно 10 секунд",
+        "no_subscription": "Ця функція тільки для преміум підписників"
     },
     "ru": {
         "start_with_marker": "Спрашивай или юзай маркер: '{}'".format(
@@ -68,9 +76,10 @@ facts = {
                           QuestionSign.marker,
                           SimpleEndMarker.marker
         ),
-        "wrong_marker_use": "Проверь правильность маркера {}",
+        "wrong_marker_use": "Проверь правильность маркера '{}'",
         "too_long_query": f"Запрос больше {TELEGRAM_CHAR_LIMIT} символов. Это лимит Телеграма😢",
-        "waiting_time": "В среднем ответ генерируется примерно 5 секунд"
+        "waiting_time": "В среднем ответ генерируется примерно 10 секунд",
+        "no_subscription": "Эта функция только для премиум подписчиков"
     }
 }
 

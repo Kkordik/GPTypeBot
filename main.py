@@ -3,12 +3,14 @@ from run_bot import dp
 from main_interface.start_cmd import register_main_start_cmd
 from inline_interface.inline_query import register_inline_query_handler
 from main_interface.guide_call import register_guide_call
+from main_interface.message_query import register_message_query_cmd
 
 
 async def main(_loop):
     register_main_start_cmd(dp)
     register_inline_query_handler(dp)
     register_guide_call(dp)
+    register_message_query_cmd(dp)
     await dp.start_polling()
 
 

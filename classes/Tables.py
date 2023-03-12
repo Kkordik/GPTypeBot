@@ -146,12 +146,11 @@ class UsersTable(Table):
     """
     id: smallint unsigned auto_increment
     user_id: bigint
-    donation: smallint
-    api_key: text
     date_time: datetime
+    subscriber: boolean
     """
     __name = "users"
-    __columns = ["id", "user_id", "donation", "api_key", "date_time"]
+    __columns = ["user_id", "date_time", "subscriber"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)

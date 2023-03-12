@@ -72,7 +72,7 @@ class FormalMarker(BeginMarker):
 
 class PostMarker(BeginMarker):
     marker = "-p"
-    salt = "Write not very big post about: "
+    salt = "Write short post about: "
 
 
 class TranslateMarker(BeginMarker):

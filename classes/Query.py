@@ -3,7 +3,7 @@ from typing import Union
 from classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
 from classes.GPTSession import GPT
 from config import OPEN_AI_KEY
-from aiogram.types import InlineQuery
+from aiogram.types import User
 from classes.GPTSession import PrevMessages, BOT_ROLE
 from classes.Tip import WrongMarkerUse
 
@@ -11,11 +11,11 @@ from classes.Tip import WrongMarkerUse
 class Query:
     def __init__(self, language: str, text: str = None, supporter: bool = False, begin_marker: BeginMarker = None,
                  markers_list: list = None, sub_queries: list = None, answer: str = None,
-                 inline_query: InlineQuery = None, prev_messages: PrevMessages = None):
-        self.prev_messages: PrevMessages = prev_messages or PrevMessages()
+                 from_user: User = None, prev_messages: PrevMessages = None, short_answers: bool = True):
+        self.prev_messages: PrevMessages = prev_messages or PrevMessages(short_answers=short_answers)
         self.text: str = text
         self.supporter: bool = supporter
-        self.inline_query: InlineQuery = inline_query
+        self.from_user: User = from_user
         self.begin_marker: BeginMarker = begin_marker
         self.markers_list: list[Marker] = markers_list or []  # [(start_id, end_id, marker's class)]
         self.sub_queries: list[Query] = sub_queries or []
@@ -51,8 +51,8 @@ class Query:
         # Returning full query text as subquery if no markers in it
         if not self.markers_list or self.markers_list == []:
             self.sub_queries = [Query(language=self.lang, text=self.text, supporter=self.supporter,
-                                      begin_marker=SimpleMarker(start_id=0, end_id=0), inline_query=self.inline_query)]
-            self.answer += "{}"
+                                      begin_marker=SimpleMarker(start_id=0, end_id=0), from_user=self.from_user)]
+            self.answer += f"{self.text}\n" + "{}"
             return
 
         markers_num = len(self.markers_list)
@@ -68,7 +68,7 @@ class Query:
                 self.answer += "{}"
             self.sub_queries = [Query(language=self.lang, text=self.text[first_m.get_end_id(self.text):],
                                       begin_marker=first_m,
-                                      supporter=self.supporter, inline_query=self.inline_query)]
+                                      supporter=self.supporter, from_user=self.from_user)]
             return
         elif (markers_num >= 1) and first_m_sup == EndMarker:
             return WrongMarkerUse(language=self.lang, marker=first_m)
@@ -96,7 +96,7 @@ class Query:
                                                   text=self.text[current_m.get_end_id(self.text):next_m.start_id],
                                                   begin_marker=current_m,
                                                   supporter=self.supporter,
-                                                  inline_query=self.inline_query))
+                                                  from_user=self.from_user))
                     self.answer += "{}"
                 else:
                     self.answer += self.text[current_m.get_end_id(self.text):next_m.start_id]
@@ -107,7 +107,7 @@ class Query:
         if next_m_sup == BeginMarker:
             self.sub_queries.append(Query(text=self.text[next_m.get_end_id(self.text):],
                                           begin_marker=next_m, supporter=self.supporter,
-                                          inline_query=self.inline_query))
+                                          from_user=self.from_user))
             self.answer += "{}"
         else:
             self.answer += self.text[next_m.get_end_id(self.text):]
@@ -116,7 +116,7 @@ class Query:
         gpt = GPT(OPEN_AI_KEY)
         answers = []
         for query in self.sub_queries:
-            self.prev_messages.add_message(query.begin_marker.add_salt(query.text, self.inline_query.from_user), "user")
+            self.prev_messages.add_message(query.begin_marker.add_salt(query.text, self.from_user), "user")
             answer = await gpt.chat_completion(messages=self.prev_messages, temperature=query.begin_marker.temperature)
             answers.append(answer)
             self.prev_messages.add_message(answer, BOT_ROLE)
