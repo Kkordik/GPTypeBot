@@ -19,6 +19,9 @@ class PrevMessages:
     def add_message(self, message: str, user: str = BOT_ROLE):
         self.messages_list.append({"role": user, "content": message})
 
+    def del_last_message(self):
+        self.messages_list.pop()
+
 
 class GPT:
     url: str

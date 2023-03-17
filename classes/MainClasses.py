@@ -1,31 +1,19 @@
 from aiogram import types
 from run_bot import bot
-from classes.Tables import Table, UsersTable
+from classes.Tables import Table, UsersTable, QueryTable
 from config import BASIC_LANGUAGE
 from texts import texts
 
 
-class MainClassBase:
-    def __init__(self, table, row_id: int = None):
-        self.table: Table = table
-        self.row_id = row_id
-
-
-class User(MainClassBase):
-    def __init__(self, table: UsersTable, user_id, user: types.User = None, row_id: int = None,
+class User:
+    def __init__(self, table: UsersTable, user_id, user: types.User = None,
                  language: str = BASIC_LANGUAGE, date_time: str = None, subscriber: bool = False):
-        super().__init__(table, row_id)
-
+        self.table: Table = table
         self.user: types.User = user
         self.user_id: int = int(user_id)
         self.language = language
         self.date_time: str = date_time
         self.subscriber: bool = subscriber
-
-    async def __get_row_id(self):
-        res = await self.table.select_vals(user_id=self.user_id)
-        self.row_id = res[0]["id"]
-        return self.row_id
 
     async def get_language(self, user: types.User = None):
         if user:
@@ -56,3 +44,24 @@ class User(MainClassBase):
         else:
             self.subscriber = True
         return self.subscriber
+
+
+class QueryDb:
+    def __init__(self, table: QueryTable, result_id: str = None, query: str = None, answer: str = None,
+                 sent: bool = False):
+        self.table: Table = table
+        self.result_id: str = result_id
+        self.query: str = query
+        self.answer: str = answer
+        self.sent: bool = sent
+
+    async def insert_query(self, result_id: str = None, query: str = None, answer: str = None):
+        self.result_id: str = result_id or self.result_id
+        self.query: str = query or self.result_id
+        self.answer: str = answer or self.result_id
+
+        return await self.table.insert_vals(result_id=result_id, query=query, answer=answer)
+
+    async def set_as_sent(self, result_id: str = None):
+        self.result_id: str = result_id or self.result_id
+        return await self.table.update_val(where={"result_id": result_id}, sent=1)

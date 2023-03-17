@@ -17,16 +17,18 @@ class Database:
                                                  password=self.__password, db=self.__name, autocommit=False, loop=loop)
         return self.__pool
 
-    async def execute_db(self, command: str):
+    async def execute_db(self, command: str, values: list = None):
         """
         Execute any given command and return fetchall
 
         :param command: MySQL executable command
+        :param values: Values to replace %s
         :return: list of fetched rows
         """
         async with self.__pool.acquire() as con:
             async with con.cursor() as cur:
-                await cur.execute(command)
+                print(command, [(type(k), k) for k in values])
+                await cur.execute(command, values)
                 res = await cur.fetchall()
             await con.commit()
         return res
@@ -38,14 +40,15 @@ class Table:
         self.db = db
         self.__columns = columns
 
-    async def execute_tb(self, command: str):
+    async def execute_tb(self, command: str, values: list = None):
         """
         Execute any given command and return dict with values
 
         :param command: MySQL executable command
+        :param values: Values to replace %s
         :return: dict with values
         """
-        res = await self.db.execute_db(command)
+        res = await self.db.execute_db(command, values)
         results = []
         for row in res:
             results.append(dict(zip(self.__columns, row)))
@@ -62,12 +65,8 @@ class Table:
             # Checking if given columns in parameters exist in table and adding values to list
             if column in self.__columns:
                 # Changing "string" to "'string'" to execute it in sql command as string
-                if isinstance(parameters[column], str):
-                    parameters[column] = "'{}'".format(parameters[column])
-                elif isinstance(parameters[column], list):
+                if isinstance(parameters[column], list):
                     parameters[column] = str(parameters[column][0])
-                else:
-                    parameters[column] = str(parameters[column])
             else:
                 raise Exception("In table '{}' is no such column: '{}'".format(self.__name, column))
         return parameters
@@ -87,15 +86,17 @@ class Table:
         if len(where) != 0:
             where_str = "WHERE"
             where_equations = []
+            where_values = list(where.values())
             for column in where.keys():
-                where_equations.append(" {}={} ".format(column, where[column]))
+                where_equations.append(" {}=%s ".format(column))
             where_str += logical_expr.join(where_equations)
         else:
             where_str = ""
+            where_values = []
 
-        return await self.execute_tb("{} {}".format(command.format(self.__name), where_str))
+        return await self.execute_tb("{} {}".format(command.format(self.__name), where_str), where_values)
 
-    async def delete_line(self, command: str = "DELETE FROM {}", logical_expr: str = "AND", **where):
+    async def delete_line(self, command: str = "DELETE FROM {} WHERE {}", logical_expr: str = "AND", **where):
         """
         Deletes all from table must be executed with WHERE, you may use AND or other logical_expression
 
@@ -108,15 +109,15 @@ class Table:
 
         # Create string WHERE expression
         if len(where) != 0:
-            where_str = "WHERE"
             where_equations = []
+            where_values = list(where.values())
             for column in where.keys():
-                where_equations.append(" {}={} ".format(column, where[column]))
-            where_str += logical_expr.join(where_equations)
+                where_equations.append(" {}=%s ".format(column))
+            where_str = logical_expr.join(where_equations)
         else:
             raise Exception("No where arguments given. It is impossible to delete all from table")
 
-        return await self.execute_tb("{} {}".format(command.format(self.__name), where_str))
+        return await self.execute_tb(command.format(self.__name, where_str), where_values)
 
     async def insert_vals(self, command: str = "INSERT IGNORE INTO {}({}) VALUES ({})", **columns_vals):
         """
@@ -131,15 +132,37 @@ class Table:
 
         columns_vals = self.__check_parameters(columns_vals)
 
-        unpack_values = ', '.join(columns_vals.values())
         unpack_columns = ', '.join(columns_vals.keys())
-        return await self.execute_tb(command.format(self.__name, unpack_columns, unpack_values))
+        values = list(columns_vals.values())
+        replace_chars = ', '.join('%s' for _ in range(len(columns_vals)))
+        return await self.execute_tb(command.format(self.__name, unpack_columns, replace_chars), values)
 
     async def launch_table(self,  *args, **kwargs):
         pass
 
-    async def update_val(self, *args, **kwargs):
-        pass
+    async def update_val(self, where: dict, command: str = "UPDATE {} SET {} WHERE {}", logical_expr: str = "AND",
+                         **column_new_vals):
+        where = self.__check_parameters(where)
+        column_new_vals = self.__check_parameters(column_new_vals)
+
+        if len(where) != 0:
+            where_equations = []
+            where_values = list(where.values())
+            for column in where.keys():
+                where_equations.append(" {}=%s ".format(column))
+            where_str = logical_expr.join(where_equations)
+        else:
+            raise Exception("No where arguments given. It is impossible to update all table")
+        if len(column_new_vals) != 0:
+            new_vals_equations = []
+            new_vals = list(column_new_vals.values())
+            for column in column_new_vals.keys():
+                new_vals_equations.append(" {}=%s ".format(column))
+            new_vals_str = ",".join(new_vals_equations)
+        else:
+            raise Exception("No new arguments given. It is impossible to update table without them")
+        print(column_new_vals)
+        return await self.execute_tb(command.format(self.__name, new_vals_str, where_str), new_vals + where_values)
 
 
 class UsersTable(Table):
@@ -151,6 +174,21 @@ class UsersTable(Table):
     """
     __name = "users"
     __columns = ["user_id", "date_time", "subscriber"]
+
+    def __init__(self, db: Database):
+        super().__init__(self.__name, db, self.__columns)
+
+
+class QueryTable(Table):
+    """
+    id	smallint unsigned
+    result_id	varchar(37)
+    query	text
+    answer	text
+    sent	boolean
+    """
+    __name = "queries"
+    __columns = ["id", "result_id", "query", "answer", "sent"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)

@@ -26,18 +26,18 @@ class GuidePage(Guide):
         if self.id == 0:
             right_page = GuidePage(language=self.lang, text_name=self.texts_names_l[self.id + 1])
             keyboard.add(InlineKeyboardButton(text=right_page.text["button"] + " ➡",
-                                              callback_data="guide." + right_page.text_name))
+                                              callback_data="guide-" + right_page.text_name))
         elif self.id == self.length:
             left_page = GuidePage(language=self.lang, text_name=self.texts_names_l[self.id - 1])
             keyboard.add(InlineKeyboardButton(text="⬅ " + left_page.text["button"],
-                                              callback_data="guide." + left_page.text_name))
+                                              callback_data="guide-" + left_page.text_name))
         else:
             left_page = GuidePage(language=self.lang, text_name=self.texts_names_l[self.id - 1])
             right_page = GuidePage(language=self.lang, text_name=self.texts_names_l[self.id + 1])
             keyboard.add(InlineKeyboardButton(text="⬅ " + left_page.text["button"],
-                                              callback_data="guide." + left_page.text_name),
+                                              callback_data="guide-" + left_page.text_name),
                          InlineKeyboardButton(text=right_page.text["button"] + " ➡",
-                                              callback_data="guide." + right_page.text_name))
+                                              callback_data="guide-" + right_page.text_name))
 
         for example in self.text["examples"]:
             keyboard.add(InlineKeyboardButton(text=example["button"],

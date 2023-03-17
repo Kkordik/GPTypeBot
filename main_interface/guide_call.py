@@ -6,7 +6,7 @@ from run_bot import bot
 
 
 async def guide_callback(call: types.CallbackQuery):
-    page_name = call.data.split(".")[1]
+    page_name = call.data.split("-")[1]
     user = User(user_tb, call.from_user.id, user=call.from_user)
     await user.get_language()
     guide_page = GuidePage(language=user.language, text_name=page_name)
@@ -14,4 +14,4 @@ async def guide_callback(call: types.CallbackQuery):
 
 
 def register_guide_call(dp: Dispatcher):
-    dp.register_callback_query_handler(guide_callback, lambda call: call.data.split(".")[0] == "guide")
+    dp.register_callback_query_handler(guide_callback, lambda call: call.data.split("-")[0] == "guide")

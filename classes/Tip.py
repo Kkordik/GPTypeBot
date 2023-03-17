@@ -37,7 +37,7 @@ class Tip:
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter=self.guide_page_name
+            switch_pm_parameter="guide-" + self.guide_page_name
         )
 
     async def send_message_tip(self, message: Message):
@@ -67,12 +67,12 @@ class InfoTip(Tip):
 
 class EndWithSign(WarningTip):
     text_name = "end_with_sign"
-    guide_page_name = "guide-marked_query"
+    guide_page_name = "marked_query"
 
 
 class WrongMarkerUse(MistakeTip):
     text_name = "wrong_marker_use"
-    guide_page_name = "guide-marked_query"
+    guide_page_name = "marked_query"
 
     def __init__(self, language: str, marker: Union[BeginMarker, EndMarker]):
         super().__init__(language)
@@ -92,7 +92,7 @@ class WrongMarkerUse(MistakeTip):
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter=self.guide_page_name
+            switch_pm_parameter="guide-" + self.guide_page_name
         )
 
     async def send_message_tip(self, message: Message):
@@ -104,22 +104,26 @@ class WrongMarkerUse(MistakeTip):
 
 class TooLongQuery(MistakeTip):
     text_name = "too_long_query"
-    guide_page_name = "guide-simple_query"
+    guide_page_name = "simple_query"
 
 
 class NoSubscription(MistakeTip):
     text_name = "no_subscription"
-    guide_page_name = "guide-simple_query"
+    guide_page_name = "simple_query"
     bot_but_text_name = "buy_subs_but"
 
 
 class StartWithMarker(WarningTip):
     photo = INFO_PHOTO
     text_name = "start_with_marker"
-    guide_page_name = "guide-simple_query"
+    guide_page_name = "simple_query"
 
 
 class WaitingTime(InfoTip):
     text_name = "waiting_time"
-    guide_page_name = "guide-simple_query"
+    guide_page_name = "simple_query"
 
+
+class MsgAnswerMistake(MistakeTip):
+    text_name = "unknown_error"
+    guide_page_name = "simple_query"

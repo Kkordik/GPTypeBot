@@ -48,7 +48,8 @@ facts = {
         "wrong_marker_use": "Check correctness of marker '{}'",
         "too_long_query": f"Query is over {TELEGRAM_CHAR_LIMIT} symbols. Telegram limit😢",
         "waiting_time": "Generating response takes up to 10 seconds",
-        "no_subscription": "This feature is only for paid subscribers"
+        "no_subscription": "This feature is only for paid subscribers",
+        "unknown_error": "Sorry, try again"
     },
     "uk": {
         "start_with_marker":  "Запитуй або юзай маркер: '{}'".format(
@@ -63,7 +64,8 @@ facts = {
         "wrong_marker_use": "Перевір правильність маркеру '{}'",
         "too_long_query": f"Запит більше ніж {TELEGRAM_CHAR_LIMIT} символів. Це ліміт Телеграму😢",
         "waiting_time": "В середньому відповідь генерується приблизно 10 секунд",
-        "no_subscription": "Ця функція тільки для преміум підписників"
+        "no_subscription": "Ця функція тільки для преміум підписників",
+        "unknown_error": "Вибач, спробуй ще раз"
     },
     "ru": {
         "start_with_marker": "Спрашивай или юзай маркер: '{}'".format(
@@ -79,7 +81,8 @@ facts = {
         "wrong_marker_use": "Проверь правильность маркера '{}'",
         "too_long_query": f"Запрос больше {TELEGRAM_CHAR_LIMIT} символов. Это лимит Телеграма😢",
         "waiting_time": "В среднем ответ генерируется примерно 10 секунд",
-        "no_subscription": "Эта функция только для премиум подписчиков"
+        "no_subscription": "Эта функция только для премиум подписчиков",
+        "unknown_error": "Извини, попробуй еще раз"
     }
 }
 
