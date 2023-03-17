@@ -3,14 +3,15 @@ from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResul
 import hashlib
 from classes.Query import Query
 from texts import texts, facts
-from classes.MainClasses import User
-from database.run_db import user_tb
+from classes.MainClasses import User, QueryDb
+from database.run_db import user_tb, query_tb
 from classes.Markers import ends_with_marker
 from classes.Tip import *
 from config import TELEGRAM_CHAR_LIMIT, END_TIP_PROBABILITY
 import random
 import string
 from time import time
+from config import BOT_ROLE, USER_ROLE
 
 
 async def inline_echo(inline_query: InlineQuery):
@@ -31,20 +32,27 @@ async def inline_echo(inline_query: InlineQuery):
             await TooLongQuery(language=lang).send_inline_tip(inline_query, result_id)
 
         else:
-            query_db = Query(language=lang, text=inline_query.query, from_user=inline_query.from_user,
-                             repeat_question=True)
-            mistake = query_db.divide_query(query_db.get_markers_list())
+            query_t = Query(language=lang, text=inline_query.query, from_user=inline_query.from_user,
+                            repeat_question=True)
+            mistake = query_t.divide_query(query_t.get_markers_list())
 
             if not mistake:
 
                 if ends_with_marker(inline_query.query):
-                    answers = await query_db.answer_sub_queries()
-                    query_db.answer = query_db.answer.format(*answers)
+                    topic_id = await user_db.get_current_topic_id()
+                    query_db = QueryDb(query_tb)
+
+                    for prev_query_db in await query_db.get_previous_queries(topic_id=topic_id):
+                        query_t.prev_messages.add_message(message=prev_query_db.query, user=USER_ROLE)
+                        query_t.prev_messages.add_message(message=prev_query_db.answer, user=BOT_ROLE)
+
+                    answers = await query_t.answer_sub_queries()
+                    query_t.answer = query_t.answer.format(*answers)
                     answers = [
                         InlineQueryResultArticle(
                             id=result_id,
-                            title=query_db.answer,
-                            input_message_content=InputTextMessageContent(message_text=query_db.answer,
+                            title=query_t.answer,
+                            input_message_content=InputTextMessageContent(message_text=query_t.answer,
                                                                           parse_mode='HTML'),
                             thumb_url="https://cdn-icons-png.flaticon.com/128/463/463574.png"
                         )
@@ -57,9 +65,12 @@ async def inline_echo(inline_query: InlineQuery):
                     print(time_f - time_st)
                     print(result_id)
 
-                    for sub_query in query_db.sub_queries:
-                        await query_db.insert_query(result_id=result_id, query=sub_query.text, answer=sub_query.answer)
-
+                    for sub_query in query_t.sub_queries:
+                        await query_db.insert_query(result_id=result_id,
+                                                    query=sub_query.text,
+                                                    answer=sub_query.answer,
+                                                    topic_id=topic_id,
+                                                    user_id=user_db.user_id)
                 else:
 
                     if query_len <= 20:

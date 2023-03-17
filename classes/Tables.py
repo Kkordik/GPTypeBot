@@ -27,7 +27,6 @@ class Database:
         """
         async with self.__pool.acquire() as con:
             async with con.cursor() as cur:
-                print(command, [(type(k), k) for k in values])
                 await cur.execute(command, values)
                 res = await cur.fetchall()
             await con.commit()
@@ -161,7 +160,6 @@ class Table:
             new_vals_str = ",".join(new_vals_equations)
         else:
             raise Exception("No new arguments given. It is impossible to update table without them")
-        print(column_new_vals)
         return await self.execute_tb(command.format(self.__name, new_vals_str, where_str), new_vals + where_values)
 
 
@@ -171,9 +169,10 @@ class UsersTable(Table):
     user_id: bigint
     date_time: datetime
     subscriber: boolean
+    current_topic: smallint
     """
     __name = "users"
-    __columns = ["user_id", "date_time", "subscriber"]
+    __columns = ["user_id", "date_time", "subscriber", "current_topic"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)
@@ -186,9 +185,24 @@ class QueryTable(Table):
     query	text
     answer	text
     sent	boolean
+    topic_id  smallint
+    user_id  bigint
     """
     __name = "queries"
-    __columns = ["id", "result_id", "query", "answer", "sent"]
+    __columns = ["id", "result_id", "query", "answer", "sent", "topic_id", "user_id"]
+
+    def __init__(self, db: Database):
+        super().__init__(self.__name, db, self.__columns)
+
+
+class TopicTable(Table):
+    """
+    topic_id	smallint	NO	PRI
+    user_id	bigint	NO	MUL
+    topic_title	tinytext	YES
+    """
+    __name = "topics"
+    __columns = ["topic_id", "user_id", "topic_title"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)

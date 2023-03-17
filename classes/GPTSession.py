@@ -1,9 +1,7 @@
 from builtins import list
 
 import aiohttp
-from config import DEFAULT_TOKEN_NUM
-
-BOT_ROLE = "assistant"
+from config import DEFAULT_TOKEN_NUM, BOT_ROLE, USER_ROLE
 
 
 class PrevMessages:
@@ -16,7 +14,7 @@ class PrevMessages:
             salt = ""
         self.messages_list = [{"role": "system", "content": f"You are a helpful {BOT_ROLE}.{salt}"}]
 
-    def add_message(self, message: str, user: str = BOT_ROLE):
+    def add_message(self, message: str, user: str):
         self.messages_list.append({"role": user, "content": message})
 
     def del_last_message(self):
@@ -101,7 +99,6 @@ class GPT:
         self.temperature = temperature or 1
         self.n = n or 1
         self.echo = echo or False
-        print(self.messages.messages_list)
 
         self.data = {
             "model": self.model,
