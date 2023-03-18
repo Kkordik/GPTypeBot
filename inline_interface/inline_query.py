@@ -6,7 +6,7 @@ from texts import texts, facts
 from classes.MainClasses import User, QueryDb
 from database.run_db import user_tb, query_tb
 from classes.Markers import ends_with_marker
-from classes.Tip import *
+from classes.Tip import NoSubscription, StartWithMarker, TooLongQuery, MsgAnswerMistake, EndWithSign
 from config import TELEGRAM_CHAR_LIMIT, END_TIP_PROBABILITY
 import random
 import string
@@ -39,38 +39,42 @@ async def inline_echo(inline_query: InlineQuery):
             if not mistake:
 
                 if ends_with_marker(inline_query.query):
-                    topic_id = await user_db.get_current_topic_id()
-                    query_db = QueryDb(query_tb)
+                    try:
+                        topic_id = await user_db.get_current_topic_id()
+                        query_db = QueryDb(query_tb)
 
-                    for prev_query_db in await query_db.get_previous_queries(topic_id=topic_id):
-                        query_t.prev_messages.add_message(message=prev_query_db.query, user=USER_ROLE)
-                        query_t.prev_messages.add_message(message=prev_query_db.answer, user=BOT_ROLE)
+                        for prev_query_db in await query_db.get_previous_queries(topic_id=topic_id):
+                            query_t.prev_messages.add_message(message=prev_query_db.query, user=USER_ROLE)
+                            query_t.prev_messages.add_message(message=prev_query_db.answer, user=BOT_ROLE)
 
-                    answers = await query_t.answer_sub_queries()
-                    query_t.answer = query_t.answer.format(*answers)
-                    answers = [
-                        InlineQueryResultArticle(
-                            id=result_id,
-                            title=query_t.answer,
-                            input_message_content=InputTextMessageContent(message_text=query_t.answer,
-                                                                          parse_mode='HTML'),
-                            thumb_url="https://cdn-icons-png.flaticon.com/128/463/463574.png"
+                        answers = await query_t.answer_sub_queries()
+                        query_t.answer = query_t.answer.format(*answers)
+                        answers = [
+                            InlineQueryResultArticle(
+                                id=result_id,
+                                title=query_t.answer,
+                                input_message_content=InputTextMessageContent(message_text=query_t.answer,
+                                                                              parse_mode='HTML'),
+                                thumb_url="https://cdn-icons-png.flaticon.com/128/463/463574.png"
+                            )
+                        ]
+                        await inline_query.answer(
+                            results=answers,
+                            cache_time=1
                         )
-                    ]
-                    await inline_query.answer(
-                        results=answers,
-                        cache_time=1
-                    )
-                    time_f = time()
-                    print(time_f - time_st)
-                    print(result_id)
+                        time_f = time()
+                        print(time_f - time_st)
+                        print(result_id)
 
-                    for sub_query in query_t.sub_queries:
-                        await query_db.insert_query(result_id=result_id,
-                                                    query=sub_query.text,
-                                                    answer=sub_query.answer,
-                                                    topic_id=topic_id,
-                                                    user_id=user_db.user_id)
+                        for sub_query in query_t.sub_queries:
+                            await query_db.insert_query(result_id=result_id,
+                                                        query=sub_query.text,
+                                                        answer=sub_query.answer,
+                                                        topic_id=topic_id,
+                                                        user_id=user_db.user_id)
+                    except Exception as ex:
+                        print(datetime.datetime.now(), ex, sep="   inline  ")
+                        await MsgAnswerMistake(language=user.language)
                 else:
 
                     if query_len <= 20:

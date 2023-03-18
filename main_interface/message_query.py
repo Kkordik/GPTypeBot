@@ -43,6 +43,7 @@ async def message_query(message: types.Message):
                 answers = await query_t.answer_sub_queries()
                 query_t.answer = query_t.answer.format(*answers)
                 await waiting_msg.edit_text(text=query_t.answer)
+                await query_db.delete_all_unsent(user_id=result.from_user.id)
                 time_f = time()
                 print(time_f - time_st)
                 print(result_id)
@@ -66,7 +67,7 @@ async def message_query(message: types.Message):
         else:
             await mistake.send_message_tip(waiting_msg)
     except Exception as ex:
-        print(datetime.datetime.now(), ex, sep="     ")
+        print(datetime.datetime.now(), ex, sep="   msg  ")
         await MsgAnswerMistake(language=user.language).send_message_tip(waiting_msg)
 
 

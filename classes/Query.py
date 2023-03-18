@@ -10,6 +10,7 @@ from classes.GPTSession import PrevMessages, BOT_ROLE
 from classes.Tip import WrongMarkerUse
 from classes.GPTSession import USER_ROLE
 
+
 class Query:
     def __init__(self, language: str, text: str = None, supporter: bool = False, begin_marker: BeginMarker = None,
                  markers_list: list = None, sub_queries: list = None, answer: str = None,
