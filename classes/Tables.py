@@ -70,12 +70,14 @@ class Table:
                 raise Exception("In table '{}' is no such column: '{}'".format(self.__name, column))
         return parameters
 
-    async def select_vals(self, command: str = "SELECT * FROM {}", logical_expr: str = "AND", **where):
+    async def select_vals(self, command: str = "SELECT * FROM {}", logical_expr: str = "AND", ending_text: str = "",
+                          **where):
         """
         Selects all from table can be executed with WHERE using AND or other logical_expression
 
         :param command: MySQL executable command
         :param logical_expr: logical expression 'AND'/'OR'...
+        :param ending_text: text to add after where expression
         :param where: optional parameters for WHERE expression
         :return: dict with values if they are
         """
@@ -93,7 +95,8 @@ class Table:
             where_str = ""
             where_values = []
 
-        return await self.execute_tb("{} {}".format(command.format(self.__name), where_str), where_values)
+        return await self.execute_tb("{} {} {}".format(command.format(self.__name), where_str, ending_text),
+                                     where_values)
 
     async def delete_line(self, command: str = "DELETE FROM {} WHERE {}", logical_expr: str = "AND", **where):
         """

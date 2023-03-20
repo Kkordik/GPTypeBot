@@ -1,4 +1,5 @@
 import copy
+import datetime
 import re
 import asyncio
 from typing import Union
@@ -14,9 +15,9 @@ from classes.GPTSession import USER_ROLE
 class Query:
     def __init__(self, language: str, text: str = None, supporter: bool = False, begin_marker: BeginMarker = None,
                  markers_list: list = None, sub_queries: list = None, answer: str = None,
-                 from_user: User = None, prev_messages: PrevMessages = None, short_answers: bool = True,
-                 repeat_question: bool = False):
-        self.prev_messages: PrevMessages = prev_messages or PrevMessages(short_answers=short_answers)
+                 from_user: User = None,  short_answers: bool = True, repeat_question: bool = False):
+        print(datetime.datetime.now())
+        self.prev_messages: PrevMessages = PrevMessages(short_answers=short_answers)
         self.text: str = text
         self.supporter: bool = supporter
         self.from_user: User = from_user
@@ -49,14 +50,16 @@ class Query:
 
         return self.markers_list
 
-    def divide_query(self, markers_list: list = None) -> Union[WrongMarkerUse, None]:
+    def divide_query(self, markers_list: list = None) -> Union[WrongMarkerUse, list]:
         if markers_list:
             self.markers_list = markers_list
 
         # Returning full query text as subquery if no markers in it
         if not self.markers_list or self.markers_list == []:
-            self.sub_queries = [Query(language=self.lang, text=self.text, supporter=self.supporter,
-                                      begin_marker=SimpleMarker(start_id=0, end_id=0), from_user=self.from_user)]
+            self.sub_queries = [Query(language=self.lang, text=self.text,
+                                      supporter=self.supporter,
+                                      begin_marker=SimpleMarker(start_id=0, end_id=0),
+                                      from_user=self.from_user)]
             if self.repeat_question:
                 self.answer += f"{self.text}\n" + "{}"
             else:
@@ -74,7 +77,8 @@ class Query:
                 self.answer += self.text[:first_m.start_id] + " {}"
             else:
                 self.answer += "{}"
-            self.sub_queries = [Query(language=self.lang, text=self.text[first_m.get_end_id(self.text):],
+            self.sub_queries = [Query(language=self.lang,
+                                      text=self.text[first_m.get_end_id(self.text):],
                                       begin_marker=first_m,
                                       supporter=self.supporter, from_user=self.from_user)]
             return
@@ -122,15 +126,21 @@ class Query:
         else:
             self.answer += self.text[next_m.get_end_id(self.text):]
 
+        return self.sub_queries
+
     async def answer_sub_queries(self) -> list:
         gpt = GPT(OPEN_AI_KEY)
         tasks = []
 
+        print(" ANSWER ", self.prev_messages.get_messages_list())
+
         for query in self.sub_queries:
             prev_msg_sub = copy.deepcopy(self.prev_messages)
-            prev_msg_sub.add_message(query.begin_marker.add_salt(query.text, self.from_user), USER_ROLE)
+            left_space = prev_msg_sub.add_last_query(query.begin_marker.add_salt(query.text, self.from_user), USER_ROLE)
+            print("left space: ", left_space)
             task = asyncio.create_task(gpt.chat_completion(messages=prev_msg_sub,
-                                                           temperature=query.begin_marker.temperature))
+                                                           temperature=query.begin_marker.temperature,
+                                                           max_tokens=left_space))
             tasks.append(task)
 
         results = await asyncio.gather(*tasks)
@@ -139,4 +149,3 @@ class Query:
             query.answer = result
 
         return results
-

@@ -53,9 +53,10 @@ class User:
 
 
 class QueryDb:
-    def __init__(self, table: QueryTable, result_id: str = None, query: str = None, answer: str = None,
+    def __init__(self, table: QueryTable, row_id: int = None, result_id: str = None, query: str = None, answer: str = None,
                  sent: bool = False, topic_id=None, user_id: int = None):
         self.table: Table = table
+        self.row_id: int = row_id
         self.result_id: str = result_id
         self.query: str = query
         self.answer: str = answer
@@ -82,10 +83,13 @@ class QueryDb:
         return await self.table.delete_line(sent=0, user_id=self.user_id)
 
     async def get_previous_queries(self, topic_id) -> list:
-        sel_results = await self.table.select_vals(topic_id=topic_id, sent=1)
+        """Returns list sorted in descending order"""
+        sel_results = await self.table.select_vals(topic_id=topic_id,
+                                                   sent=1, ending_text="ORDER BY id DESC")
         results = []
         for res in sel_results:
             results.append(QueryDb(self.table,
+                                   row_id=res["id"],
                                    result_id=res["result_id"],
                                    query=res["query"],
                                    answer=res["answer"],
