@@ -3,6 +3,7 @@ import tiktoken
 import aiohttp
 from config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE
 from classes.MainClasses import QueryDb
+from typing import List
 
 
 class PrevMessages:
@@ -47,7 +48,7 @@ class PrevMessages:
     def del_last_message(self):
         self.__messages_list.pop(0)
 
-    def add_previous_queries(self, prev_queries_db: list[QueryDb]):
+    def add_previous_queries(self, prev_queries_db: List[QueryDb]):
         for prev_query_db in prev_queries_db:
             answer_is_added = self.add_previous_message(message=prev_query_db.answer, user=BOT_ROLE)
             query_is_added = self.add_previous_message(message=prev_query_db.query, user=USER_ROLE)
@@ -60,21 +61,24 @@ class PrevMessages:
 
 
 class GPT:
-    url: str
-    model: str
-    prompt: str
-    edit_input: str
-    instruction: str
-    max_tokens: int = 100
-    temperature: int = 1
-    n: int = 1
-    echo: bool = False
-    data: dict
-    headers: dict
-    response: dict
-    messages: PrevMessages
+    session = aiohttp.ClientSession()
 
-    def __init__(self, token: str):
+    def __init__(self, token: str, url: str= None, model: str = None, prompt: str = None, edit_input: str = None,
+                 instruction: str = None, data: dict = None, headers: dict = None, response: dict = None,
+                 messages: PrevMessages = None):
+        self.url: str = url
+        self.model: str = model
+        self.prompt: str = prompt
+        self.edit_input: str = edit_input
+        self.instruction: str = instruction
+        self.max_tokens: int = 100
+        self.temperature: int = 1
+        self.n: int = 1
+        self.echo: bool = False
+        self.data: dict = data
+        self.headers: dict = headers
+        self.response: dict = response
+        self.messages: PrevMessages = messages
         self.token = token
 
     async def completion(self, prompt: str, max_tokens: int = None, model: str = None, temperature: int = None,
@@ -98,9 +102,8 @@ class GPT:
             "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json"
         }
-        async with aiohttp.ClientSession(trust_env=True) as session:
-            async with session.post(self.url, headers=self.headers, json=self.data) as response:
-                self.response = await response.json()
+        response = await self.session.post(self.url, headers=self.headers, json=self.data)
+        self.response = await response.json()
         return self.response['choices'][0]['text']
 
     async def edit(self, edit_input: str, instruction: str, model: str = None, temperature: int = None,
@@ -123,9 +126,8 @@ class GPT:
             "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json"
         }
-        async with aiohttp.ClientSession(trust_env=True) as session:
-            async with session.post(self.url, headers=self.headers, json=self.data) as response:
-                self.response = await response.json()
+        response = await self.session.post(self.url, headers=self.headers, json=self.data)
+        self.response = await response.json()
         return self.response['choices'][0]['text']
 
     async def chat_completion(self, messages: PrevMessages, max_tokens: int = None, temperature: int = None,
@@ -150,7 +152,6 @@ class GPT:
             "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json"
         }
-        async with aiohttp.ClientSession(trust_env=True) as session:
-            async with session.post(self.url, headers=self.headers, json=self.data) as response:
-                self.response = await response.json()
+        response = await self.session.post(self.url, headers=self.headers, json=self.data)
+        self.response = await response.json()
         return self.response['choices'][0]['message']['content']

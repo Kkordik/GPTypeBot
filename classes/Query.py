@@ -10,6 +10,7 @@ from aiogram.types import User
 from classes.GPTSession import PrevMessages, BOT_ROLE
 from classes.Tip import WrongMarkerUse
 from classes.GPTSession import USER_ROLE
+from typing import List
 
 
 class Query:
@@ -22,8 +23,8 @@ class Query:
         self.supporter: bool = supporter
         self.from_user: User = from_user
         self.begin_marker: BeginMarker = begin_marker
-        self.markers_list: list[Marker] = markers_list or []  # [(start_id, end_id, marker's class)]
-        self.sub_queries: list[Query] = sub_queries or []
+        self.markers_list: List[Marker] = markers_list or []  # [(start_id, end_id, marker's class)]
+        self.sub_queries: List[Query] = sub_queries or []
         self.answer: str = answer or ""
         self.lang: str = language
         self.repeat_question: bool = repeat_question

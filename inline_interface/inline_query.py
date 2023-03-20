@@ -16,9 +16,9 @@ import datetime
 
 
 async def inline_echo(inline_query: InlineQuery):
-    time_st = time()
     rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
     result_id: str = hashlib.md5(inline_query.query.encode()).hexdigest() + rand_str
+    print(result_id)
     user_db = User(user_tb, user_id=inline_query.from_user.id, user=inline_query.from_user)
     await user_db.insert_user()
     lang = await user_db.get_language()
@@ -43,11 +43,14 @@ async def inline_echo(inline_query: InlineQuery):
                     try:
                         topic_id = await user_db.get_current_topic_id()
                         query_db = QueryDb(query_tb)
-                        prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
-                        query_t.prev_messages.add_previous_queries(prev_queries_db)
+                        # prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
+                        # query_t.prev_messages.add_previous_queries(prev_queries_db)
 
+                        time_st = time()
                         answers = await query_t.answer_sub_queries()
                         query_t.answer = query_t.answer.format(*answers)
+                        time_f = time()
+                        print(time_f - time_st)
                         answers = [
                             InlineQueryResultArticle(
                                 id=result_id,
@@ -61,9 +64,6 @@ async def inline_echo(inline_query: InlineQuery):
                             results=answers,
                             cache_time=1
                         )
-                        time_f = time()
-                        print(time_f - time_st)
-                        print(result_id)
 
                         for sub_query in query_t.sub_queries:
                             await query_db.insert_query(result_id=result_id,
@@ -72,6 +72,7 @@ async def inline_echo(inline_query: InlineQuery):
                                                         topic_id=topic_id,
                                                         user_id=user_db.user_id)
                     except Exception as ex:
+                        print(result_id)
                         print(datetime.datetime.now(), ex, sep="   inline  ")
                         await MsgAnswerMistake(language=lang).send_inline_tip(inline_query, result_id)
                 else:

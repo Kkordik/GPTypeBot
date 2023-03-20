@@ -127,3 +127,35 @@ class WaitingTime(InfoTip):
 class MsgAnswerMistake(MistakeTip):
     text_name = "unknown_error"
     guide_page_name = "simple_query"
+
+
+class WaitAskLater(MistakeTip):
+    text_name = "ask_later"
+    guide_page_name = "simple_query"
+
+    def __init__(self, language: str, waiting_time: int):
+        super().__init__(language)
+        self.waiting_time = waiting_time
+
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+        answers = [
+            InlineQueryResultArticle(
+                id=result_id,
+                title=self.text.format(self.waiting_time),
+                input_message_content=InputTextMessageContent(message_text=texts[self.lang]["share"],
+                                                              parse_mode='HTML'),
+                thumb_url=self.photo,
+            )
+        ]
+        await inline_query.answer(
+            results=answers,
+            cache_time=1,
+            switch_pm_text=self.bot_but_text,
+            switch_pm_parameter="guide-" + self.guide_page_name
+        )
+
+    async def send_message_tip(self, message: Message):
+        await message.edit_text(
+            text="❌" + self.text.format(self.waiting_time),
+            reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
+        )
