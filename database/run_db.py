@@ -1,5 +1,5 @@
 import asyncio
-from classes.Tables import Database, UsersTable, QueryTable
+from classes.Tables import Database, UsersTable, QueryTable, TopicTable
 from config import HOST, USER, PASSWORD, NAME, PORT
 
 
@@ -17,3 +17,4 @@ if __name__ == "database.run_db":
     # Register main tables
     user_tb = UsersTable(db)
     query_tb = QueryTable(db)
+    topic_tb = TopicTable(db)

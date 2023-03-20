@@ -7,10 +7,20 @@ texts = {
         "see_more_but": "See more..",
         "buy_subs_but": "Buy now..",
         "share": "Hello I use @GPTypeBot, it is very convenient!",
-        "guide_but": "guide",
-        "start_use_but": "start use",
+        "guide_but": "📖 Guide",
+        "start_use_but": "🟢 Start using",
         "getting_query_ready": "Processing your request ♻️",
-        "waiting_for_openai": "Waiting for OpenAI answer ⏳"
+        "context_but": "⚙️ Context",
+        "waiting_for_openai": "Waiting for OpenAI answer ⏳",
+        "topics_msg": "Your topics, click to choose which topic you want to use:",
+        "create_topic_but": "➕ Create new",
+        "no_topic": "⚡️ No context",
+        "topics_not_subs": "Oops, looks like you don't have a subscription, context is available only for premium "
+                           "subscribers, see more such features and become a subscriber by button below:",
+        "send_topic_title": "Send title for a new topic",
+        "already_chosen": "⛔️ It is already chosen",
+        "cancel_but": "❌ Cancel",
+        "canceled": "☑️ Canceled"
     },
     "uk": {
         "start_text": "Могутній, унікальний та безкоштовний.\nПереглянь короткий гайд нижче,"
@@ -18,10 +28,20 @@ texts = {
         "see_more_but": "Подробиці..",
         "buy_subs_but": "Придбати..",
         "share": "Привіт, я використовую @GPTypeBot, це дуже зручно!",
-        "guide_but": "Гайд",
-        "start_use_but": "Почати використовувати",
+        "guide_but": "📖 Гайд",
+        "start_use_but": "🟢 Почати використовувати",
         "getting_query_ready": "Опрацювання запиту ♻️",
-        "waiting_for_openai": "Очікування відповіді від OpenAI ⏳"
+        "context_but": "⚙️ Контекст",
+        "waiting_for_openai": "Очікування відповіді від OpenAI ⏳",
+        "topics_msg": "Твої теми, натисни щоб ту, яку хочеш використовувати:",
+        "create_topic_but": "➕ Створити нову",
+        "no_topic": "⚡️ Без контексту",
+        "topics_not_subs": "Упс, схоже що у вас немає підписки, контекст доступний тільки для преміум підписників, "
+                           "більше таких фішок та підписка за кнопкою:",
+        "send_topic_title": "Надійшли назву для нової теми:",
+        "already_chosen": "⛔️ Це вже обрано",
+        "cancel_but": "❌ Скасувати",
+        "canceled": "☑️ Скасовано"
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
@@ -29,10 +49,20 @@ texts = {
         "see_more_but": "Подробнее..",
         "buy_subs_but": "Купить..",
         "share": "Привет, я использую @GPTypeBot, это очень удобно!",
-        "guide_but": "Гайд",
-        "start_use_but": "Начать использовать",
+        "guide_but": "📖 Гайд",
+        "start_use_but": "🟢 Начать использовать",
         "getting_query_ready": "Обработка запроса ♻️",
-        "waiting_for_openai": "Ожидание ответа OpenAI ⏳"
+        "context_but": "⚙️ Контекст",
+        "waiting_for_openai": "Ожидание ответа OpenAI ⏳",
+        "topics_msg": "Твои темы, нажми чтобы выбрать ту, которую хочешь использовать:",
+        "create_topic_but": "➕ Создать новую",
+        "no_topic": "⚡️ Без контекста",
+        "topics_not_subs": "Упс, походе что у вас нету подписки, контекст доступный только для премиум родписчиков, "
+                           "больше таких фишек и подписка по кнопке:",
+        "send_topic_title": "Пришли название для новой темы:",
+        "already_chosen": "⛔️ Это уже выбрано",
+        "cancel_but": "❌ Отменить",
+        "canceled": "☑️ Отменено"
     }
 }
 
@@ -51,7 +81,7 @@ facts = {
         "wrong_marker_use": "Check correctness of marker '{}'",
         "too_long_query": f"Query is over {TELEGRAM_CHAR_LIMIT} symbols. Telegram limit😢",
         "waiting_time": "Generating response takes up to 10 seconds",
-        "no_subscription": "This feature is only for paid subscribers",
+        "no_subscription": "This feature is only for premium subscribers",
         "unknown_error": "Sorry, try again",
         "ask_later": "Wait {}s to ask new query"
     },

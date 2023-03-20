@@ -1,6 +1,6 @@
 from aiogram import types
 from run_bot import bot
-from classes.Tables import Table, UsersTable, QueryTable
+from classes.Tables import Table, UsersTable, QueryTable, TopicTable
 from config import BASIC_LANGUAGE
 from texts import texts
 
@@ -51,6 +51,9 @@ class User:
         res = await self.table.select_vals(user_id=self.user_id)
         return res[0]["current_topic"]
 
+    async def set_new_topic(self, new_topic_id):
+        return await self.table.update_val(where={"user_id": self.user_id}, current_topic=new_topic_id)
+
 
 class QueryDb:
     def __init__(self, table: QueryTable, row_id: int = None, result_id: str = None, query: str = None, answer: str = None,
@@ -99,14 +102,30 @@ class QueryDb:
 
 
 class Topic:
-    def __init__(self, table: UsersTable, topic_id, user_id=None, topic_title: str = None):
+    def __init__(self, table: TopicTable, topic_id=None, user_id=None, topic_title: str = None):
         self.table: Table = table
-        self.topic_id: int = int(topic_id)
-        self.user_id: int = int(user_id)
+        self.topic_id: int = topic_id
+        self.user_id: int = user_id
         self.topic_title: str = topic_title
 
     async def get_topic(self):
         result = await self.table.select_vals(topic_id=self.topic_id)
         self.topic_title = result[0]["topic_title"]
         self.user_id = result[0]["user_id"]
+        return self
+
+    async def get_user_topics(self, user_id):
+        res_topics = await self.table.select_vals(user_id=user_id)
+        results = []
+        for res in res_topics:
+            results.append(Topic(self.table,
+                                 topic_id=res["topic_id"],
+                                 user_id=res["user_id"],
+                                 topic_title=res["topic_title"]))
+        return results
+
+    async def create_topic(self, topic_title: str, user_id):
+        self.topic_title = topic_title
+        self.user_id = user_id
+        await self.table.insert_vals(topic_title=topic_title, user_id=user_id)
         return self

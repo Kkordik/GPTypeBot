@@ -51,8 +51,9 @@ async def message_query(message: types.Message):
         mistake = query_t.divide_query(query_t.get_markers_list())
 
         if not mistake:
-            if await user_db.check_subscription():
-                topic_id = await user_db.get_current_topic_id()
+            topic_id = await user_db.get_current_topic_id()
+
+            if await user_db.check_subscription() and topic_id != 0:
                 query_db = QueryDb(query_tb)
                 prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
                 query_t.prev_messages.add_previous_queries(prev_queries_db)
@@ -70,6 +71,7 @@ async def message_query(message: types.Message):
                     await query_db.set_as_sent(result_id=result_id)
 
             else:
+                await waiting_msg.edit_text(text=texts[user_db.language]["waiting_for_openai"])
                 answers = await query_t.answer_sub_queries()
                 query_t.answer = query_t.answer.format(*answers)
                 await waiting_msg.delete()

@@ -43,8 +43,9 @@ async def inline_echo(inline_query: InlineQuery):
                     try:
                         topic_id = await user_db.get_current_topic_id()
                         query_db = QueryDb(query_tb)
-                        # prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
-                        # query_t.prev_messages.add_previous_queries(prev_queries_db)
+                        # if topic_id != 0:
+                        #     prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
+                        #     query_t.prev_messages.add_previous_queries(prev_queries_db)
 
                         time_st = time()
                         answers = await query_t.answer_sub_queries()
@@ -65,12 +66,13 @@ async def inline_echo(inline_query: InlineQuery):
                             cache_time=1
                         )
 
-                        for sub_query in query_t.sub_queries:
-                            await query_db.insert_query(result_id=result_id,
-                                                        query=sub_query.text,
-                                                        answer=sub_query.answer,
-                                                        topic_id=topic_id,
-                                                        user_id=user_db.user_id)
+                        if topic_id != 0:
+                            for sub_query in query_t.sub_queries:
+                                await query_db.insert_query(result_id=result_id,
+                                                            query=sub_query.text,
+                                                            answer=sub_query.answer,
+                                                            topic_id=topic_id,
+                                                            user_id=user_db.user_id)
                     except Exception as ex:
                         print(result_id)
                         print(datetime.datetime.now(), ex, sep="   inline  ")

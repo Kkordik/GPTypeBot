@@ -154,4 +154,5 @@ class GPT:
         }
         response = await self.session.post(self.url, headers=self.headers, json=self.data)
         self.response = await response.json()
+        print(self.response)
         return self.response['choices'][0]['message']['content']
