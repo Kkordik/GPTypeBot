@@ -100,13 +100,22 @@ class QueryDb:
                                    sent=1))
         return results
 
+    async def count_messages(self, topic_id: int):
+        self.topic_id = topic_id
+        result = await self.table.db.execute_db(
+            command="SELECT COUNT(*) FROM {} WHERE topic_id=%s".format(self.table.get_table_name()),
+            values=[self.topic_id]
+        )
+        return result[0][0]
+
 
 class Topic:
-    def __init__(self, table: TopicTable, topic_id=None, user_id=None, topic_title: str = None):
+    def __init__(self, table: TopicTable, topic_id=None, user_id=None, topic_title: str = None, msg_amount: int = None):
         self.table: Table = table
         self.topic_id: int = topic_id
         self.user_id: int = user_id
         self.topic_title: str = topic_title
+        self.msg_amount: int = msg_amount
 
     async def get_topic(self):
         result = await self.table.select_vals(topic_id=self.topic_id)
@@ -114,18 +123,24 @@ class Topic:
         self.user_id = result[0]["user_id"]
         return self
 
-    async def get_user_topics(self, user_id):
-        res_topics = await self.table.select_vals(user_id=user_id)
+    async def get_user_topics(self, user_id, query_tb):
+        self.user_id = user_id
+        res_topics = await self.table.select_vals(user_id=self.user_id)
+
         results = []
         for res in res_topics:
-            results.append(Topic(self.table,
-                                 topic_id=res["topic_id"],
-                                 user_id=res["user_id"],
-                                 topic_title=res["topic_title"]))
+            topic = Topic(
+                self.table,
+                topic_id=res["topic_id"],
+                user_id=res["user_id"],
+                topic_title=res["topic_title"],
+            )
+            topic.msg_amount = await QueryDb(query_tb).count_messages(res["topic_id"])
+            results.append(topic)
         return results
 
     async def create_topic(self, topic_title: str, user_id):
         self.topic_title = topic_title
         self.user_id = user_id
-        await self.table.insert_vals(topic_title=topic_title, user_id=user_id)
+        await self.table.insert_vals(topic_title=self.topic_title, user_id=self.user_id)
         return self

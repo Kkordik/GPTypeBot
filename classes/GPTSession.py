@@ -30,28 +30,35 @@ class PrevMessages:
         num_tokens += 2  # every reply is primed with <im_start>assistant
         return num_tokens
 
-    def add_previous_message(self, message: str, user: str) -> bool:
+    def add_previous_message(self, message: str, user: str, default_token_num: int, max_token_num: int) -> bool:
         self.__messages_list.insert(0, {"role": user, "content": message})
-        if self.count_tokens() + DEFAULT_TOKEN_NUM < MAX_TOKEN_NUM:
+        if self.count_tokens() + default_token_num < max_token_num:
             return True
         else:
             self.del_last_message()
             return False
 
-    def add_last_query(self, query_text: str, user: str) -> int:
+    def add_last_query(self, query_text: str, user: str, max_token_num: int) -> int:
         """
         Returns approximately left token free space
         """
         self.__messages_list.append({"role": user, "content": query_text})
-        return MAX_TOKEN_NUM - self.count_tokens()
+        return max_token_num - self.count_tokens()
 
     def del_last_message(self):
         self.__messages_list.pop(0)
 
-    def add_previous_queries(self, prev_queries_db: List[QueryDb]):
+    def add_previous_queries(self, prev_queries_db: List[QueryDb], default_token_num: int = DEFAULT_TOKEN_NUM,
+                             max_token_num: int = MAX_TOKEN_NUM):
         for prev_query_db in prev_queries_db:
-            answer_is_added = self.add_previous_message(message=prev_query_db.answer, user=BOT_ROLE)
-            query_is_added = self.add_previous_message(message=prev_query_db.query, user=USER_ROLE)
+            answer_is_added = self.add_previous_message(message=prev_query_db.answer,
+                                                        user=BOT_ROLE,
+                                                        default_token_num=default_token_num,
+                                                        max_token_num=max_token_num)
+            query_is_added = self.add_previous_message(message=prev_query_db.query,
+                                                       user=USER_ROLE,
+                                                       default_token_num=default_token_num,
+                                                       max_token_num=max_token_num)
             # Avoid not answered questions or answers without questions
             if query_is_added != answer_is_added:
                 self.del_last_message()

@@ -25,15 +25,21 @@ def topics_keyboard(topics: List[Topic], lang: str, chosen_topic_id: int):
     keyboard = InlineKeyboardMarkup()
 
     if chosen_topic_id == 0:
-        keyboard.add(InlineKeyboardButton(text=texts[lang]["no_topic"] + " 📌", callback_data="topic-0"))
+        keyboard.add(InlineKeyboardButton(text="📌 " + texts[lang]["no_topic"], callback_data="topic-0"))
     else:
         keyboard.add(InlineKeyboardButton(text=texts[lang]["no_topic"], callback_data="topic-0"))
 
     for topic in topics:
         if topic.topic_id == chosen_topic_id:
-            keyboard.add(InlineKeyboardButton(text=topic.topic_title + " 📌", callback_data=f"topic-{topic.topic_id}"))
+            keyboard.add(InlineKeyboardButton(
+                text=texts[lang]["topic_but_chosen"].format(topic.topic_title, topic.msg_amount),
+                callback_data=f"topic-{topic.topic_id}")
+            )
         else:
-            keyboard.add(InlineKeyboardButton(text=topic.topic_title, callback_data=f"topic-{topic.topic_id}"))
+            keyboard.add(InlineKeyboardButton(
+                text=texts[lang]["topic_but"].format(topic.topic_title, topic.msg_amount),
+                callback_data=f"topic-{topic.topic_id}")
+            )
 
     keyboard.add(InlineKeyboardButton(text=texts[lang]["create_topic_but"], callback_data="create_topic"))
 

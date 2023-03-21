@@ -5,7 +5,7 @@ import asyncio
 from typing import Union
 from classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
 from classes.GPTSession import GPT
-from config import OPEN_AI_KEY
+from config import OPEN_AI_KEY, MAX_TOKEN_NUM
 from aiogram.types import User
 from classes.GPTSession import PrevMessages, BOT_ROLE
 from classes.Tip import WrongMarkerUse
@@ -129,7 +129,7 @@ class Query:
 
         return self.sub_queries
 
-    async def answer_sub_queries(self) -> list:
+    async def answer_sub_queries(self, max_token_num: int = MAX_TOKEN_NUM) -> list:
         gpt = GPT(OPEN_AI_KEY)
         tasks = []
 
@@ -137,7 +137,9 @@ class Query:
 
         for query in self.sub_queries:
             prev_msg_sub = copy.deepcopy(self.prev_messages)
-            left_space = prev_msg_sub.add_last_query(query.begin_marker.add_salt(query.text, self.from_user), USER_ROLE)
+            left_space = prev_msg_sub.add_last_query(query_text=query.begin_marker.add_salt(query.text, self.from_user),
+                                                     user=USER_ROLE,
+                                                     max_token_num=max_token_num)
             print("left space: ", left_space)
             task = asyncio.create_task(gpt.chat_completion(messages=prev_msg_sub,
                                                            temperature=query.begin_marker.temperature,

@@ -62,7 +62,9 @@ async def message_query(message: types.Message):
                 answers = await query_t.answer_sub_queries()
                 query_t.answer = query_t.answer.format(*answers)
                 await waiting_msg.delete()
-                waiting_msg = await bot.send_message(chat_id=message.chat.id, text=query_t.answer)
+                waiting_msg = await bot.send_message(chat_id=message.chat.id,
+                                                     text=query_t.answer,
+                                                     parse_mode="html")
                 await query_db.delete_all_unsent(user_id=message.from_user.id)
 
                 for sub_query in query_t.sub_queries:
@@ -75,7 +77,8 @@ async def message_query(message: types.Message):
                 answers = await query_t.answer_sub_queries()
                 query_t.answer = query_t.answer.format(*answers)
                 await waiting_msg.delete()
-                waiting_msg = await bot.send_message(chat_id=message.chat.id, text=query_t.answer)
+                waiting_msg = await bot.send_message(chat_id=message.chat.id,
+                                                     text=query_t.answer)
 
         else:
             await mistake.send_message_tip(waiting_msg)

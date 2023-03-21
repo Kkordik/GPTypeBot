@@ -1,6 +1,6 @@
 from aiogram import Dispatcher, types
 from classes.MainClasses import User, Topic
-from database.run_db import user_tb, topic_tb
+from database.run_db import user_tb, topic_tb, query_tb
 from run_bot import bot
 from keyboards import topics_keyboard, buy_subs_keyboard, cancel_state_keyboard
 from texts import texts
@@ -49,7 +49,7 @@ async def topic_title_msg(message: types.Message, state: FSMContext):
     await user.get_language()
     if await user.check_subscription():
         current_topic = await user.get_current_topic_id()
-        topics = await Topic(topic_tb).get_user_topics(user_id=user.user_id)
+        topics = await Topic(topic_tb).get_user_topics(user_id=user.user_id, query_tb=query_tb)
         keyboard = topics_keyboard(topics=topics, lang=user.language, chosen_topic_id=current_topic)
 
         await bot.send_message(message.chat.id,

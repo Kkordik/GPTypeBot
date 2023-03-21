@@ -39,6 +39,9 @@ class Table:
         self.db = db
         self.__columns = columns
 
+    def get_table_name(self):
+        return self.__name
+
     async def execute_tb(self, command: str, values: list = None):
         """
         Execute any given command and return dict with values
