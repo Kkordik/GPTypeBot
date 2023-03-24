@@ -17,7 +17,6 @@ class Query:
     def __init__(self, language: str, text: str = None, supporter: bool = False, begin_marker: BeginMarker = None,
                  markers_list: list = None, sub_queries: list = None, answer: str = None,
                  from_user: User = None,  short_answers: bool = True, repeat_question: bool = False):
-        print(datetime.datetime.now())
         self.prev_messages: PrevMessages = PrevMessages(short_answers=short_answers)
         self.text: str = text
         self.supporter: bool = supporter
@@ -133,14 +132,11 @@ class Query:
         gpt = GPT(OPEN_AI_KEY)
         tasks = []
 
-        print(" ANSWER ", self.prev_messages.get_messages_list())
-
         for query in self.sub_queries:
             prev_msg_sub = copy.deepcopy(self.prev_messages)
             left_space = prev_msg_sub.add_last_query(query_text=query.begin_marker.add_salt(query.text, self.from_user),
                                                      user=USER_ROLE,
                                                      max_token_num=max_token_num)
-            print("left space: ", left_space)
             task = asyncio.create_task(gpt.chat_completion(messages=prev_msg_sub,
                                                            temperature=query.begin_marker.temperature,
                                                            max_tokens=left_space))

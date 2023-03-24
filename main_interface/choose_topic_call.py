@@ -10,6 +10,7 @@ from texts import texts
 async def choose_topic_callback(call: types.CallbackQuery):
     user = User(user_tb, call.from_user.id, user=call.from_user)
     await user.get_language()
+
     if await user.check_subscription():
         new_topic_id = call.data.split("-")[1]
         await user.set_new_topic(new_topic_id=new_topic_id)

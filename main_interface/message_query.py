@@ -13,86 +13,120 @@ from classes.Tip import MsgAnswerMistake, WaitAskLater
 import hashlib
 import random
 import string
-from config import USER_ROLE, BOT_ROLE, WAIT_TIME
+from config import USER_ROLE, BOT_ROLE, WAIT_TIME, MISTAKE_WAIT_TIME
 
 
+# A dict for users that sent a message query less than 30s (or other timeout time (see config)) ago.
 waiting_dict = {}  # {user_id: <datetime_query>}
 
 
 async def message_query(message: types.Message):
     time_st = time()
+    # Returning if message sent by bot (any inline bot or in a group)
     if message.via_bot:
         return
 
-    user_db = User(user_tb, message.from_user.id, user=message.from_user)
+    # Inserting user to db and getting user's language
+    user_db = User(
+        user_tb,
+        message.from_user.id,
+        user=message.from_user
+    )
     await user_db.get_language()
     await user_db.insert_user()
 
+    # Sending wait message to show that bot received the query
     waiting_msg = await message.answer(text=texts[user_db.language]["getting_query_ready"])
 
+    # Sending a waiting tip if user is in a waiting dict and asked query less than waiting_time(see config) ago
     if message.from_user.id in waiting_dict:
         last_query_time = waiting_dict[message.from_user.id]
         spent_time = int(time() - last_query_time)
+
         if spent_time <= WAIT_TIME:
             left_time = WAIT_TIME - spent_time
         else:
             left_time = 0
-        await WaitAskLater(user_db.language, left_time).send_message_tip(waiting_msg)
-        return
+            del waiting_dict[message.from_user.id]
+
+        return await WaitAskLater(user_db.language, left_time).send_message_tip(waiting_msg)
+
     else:
-        waiting_dict[message.from_user.id] = time()
+        waiting_dict[message.from_user.id] = time()  # Adding user to the waiting dict if he wasn't
 
     rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
     result_id: str = hashlib.md5(message.text.encode()).hexdigest() + rand_str
 
     try:
-
-        query_t = Query(language=user_db.language, text=message.text, from_user=message.from_user, short_answers=False)
+        # Dividing query into sub-queries or if only one query - getting it as a sub-query.
+        # And replacing sub-queries in answer text with {} to make possible later add answers at the same places
+        query_t = Query(
+            language=user_db.language,
+            text=message.text,
+            from_user=message.from_user,
+            short_answers=False
+        )
         mistake = query_t.divide_query(query_t.get_markers_list())
 
-        if not mistake:
-            topic_id = await user_db.get_current_topic_id()
+        # Returning mistake marker if while dividing query found wrong markers usage
+        if mistake:
+            return await mistake.send_message_tip(waiting_msg)
 
-            if await user_db.check_subscription() and topic_id != 0:
-                query_db = QueryDb(query_tb)
-                prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
-                query_t.prev_messages.add_previous_queries(prev_queries_db)
+        # Adding previous messages to the query based on the user's current chosen topic.
+        # If topic_id is 0 than no history is taken
+        topic_id = await user_db.get_current_topic_id()
+        query_db = QueryDb(query_tb)
+        prev_queries_db = await query_db.get_previous_queries(topic_id=topic_id)
+        query_t.prev_messages.add_previous_queries(prev_queries_db)
 
-                await waiting_msg.edit_text(text=texts[user_db.language]["waiting_for_openai"])
-                answers = await query_t.answer_sub_queries()
-                query_t.answer = query_t.answer.format(*answers)
-                await waiting_msg.delete()
-                waiting_msg = await bot.send_message(chat_id=message.chat.id,
-                                                     text=query_t.answer,
-                                                     parse_mode="html")
-                await query_db.delete_all_unsent(user_id=message.from_user.id)
+        # Editing the wait message to show that bot is waiting for the openai answers
+        await waiting_msg.edit_text(text=texts[user_db.language]["waiting_for_openai"])
 
-                for sub_query in query_t.sub_queries:
-                    await query_db.insert_query(result_id=result_id, query=sub_query.text, answer=sub_query.answer,
-                                                topic_id=topic_id, user_id=message.from_user.id)
-                    await query_db.set_as_sent(result_id=result_id)
+        # Receiving answers to the sub-queries
+        answers = await query_t.answer_sub_queries()
+        query_t.answer = query_t.answer.format(*answers)  # Replacing {} with answers in the answer text
 
-            else:
-                await waiting_msg.edit_text(text=texts[user_db.language]["waiting_for_openai"])
-                answers = await query_t.answer_sub_queries()
-                query_t.answer = query_t.answer.format(*answers)
-                await waiting_msg.delete()
-                waiting_msg = await bot.send_message(chat_id=message.chat.id,
-                                                     text=query_t.answer)
+        # Deleting waiting message and sending an answer (not editing because of lack of a notification)
+        await waiting_msg.delete()
+        waiting_msg = await bot.send_message(
+            chat_id=message.chat.id,
+            text=query_t.answer,
+            parse_mode="html",
+            disable_web_page_preview=True
+        )
 
-        else:
-            await mistake.send_message_tip(waiting_msg)
+        # Delete all unsent messages from the database (only to free the memory because
+        # such messages aren't taken to the context)
+        await query_db.delete_all_unsent(user_id=message.from_user.id)
+
+        # Adding sub-queries to the database and setting as already sent
+        for sub_query in query_t.sub_queries:
+            await query_db.insert_query(
+                result_id=result_id,
+                query=sub_query.text,
+                answer=sub_query.answer,
+                topic_id=topic_id,
+                user_id=message.from_user.id
+            )
+            await query_db.set_as_sent(
+                result_id=result_id
+            )
+
+        program_time = time() - time_st
+        print(program_time, result_id, sep="  msg  ")
+
+        # Waiting the wait_time minus time spent by the program
+        await asyncio.sleep(WAIT_TIME - program_time)
 
     except Exception as ex:
-        print(datetime.datetime.now(), ex, sep="   msg  ")
         await MsgAnswerMistake(language=user_db.language).send_message_tip(waiting_msg)
+        print(datetime.datetime.now(), ex, sep="  msg  ")
 
-    finally:
-        program_time = time() - time_st
-        await asyncio.sleep(WAIT_TIME-program_time)
-        del waiting_dict[message.from_user.id]
-        print(program_time)
-        print(result_id)
+        # Waiting mistake wait time (less that wait time) to make asking query again faster
+        await asyncio.sleep(MISTAKE_WAIT_TIME)
+
+    # Deleting the user from waiting dict after he waited the waiting time
+    del waiting_dict[message.from_user.id]
 
 
 def register_message_query_cmd(dp: Dispatcher):

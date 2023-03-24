@@ -72,7 +72,7 @@ class QueryDb:
         self.result_id: str = result_id or self.result_id
         self.query: str = query or self.result_id
         self.answer: str = answer or self.result_id
-        self.topic_id: str = topic_id or self.topic_id
+        self.topic_id: int = topic_id
         self.user_id: int = user_id or self.user_id
         return await self.table.insert_vals(result_id=self.result_id, query=self.query,
                                             answer=self.answer, topic_id=self.topic_id, user_id=self.user_id)
@@ -87,9 +87,13 @@ class QueryDb:
 
     async def get_previous_queries(self, topic_id) -> list:
         """Returns list sorted in descending order"""
+        if topic_id == 0:
+            return []
+
         sel_results = await self.table.select_vals(topic_id=topic_id,
                                                    sent=1, ending_text="ORDER BY id DESC")
         results = []
+
         for res in sel_results:
             results.append(QueryDb(self.table,
                                    row_id=res["id"],

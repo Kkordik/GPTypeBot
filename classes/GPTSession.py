@@ -18,15 +18,35 @@ class PrevMessages:
             salt = ""
         return [{"role": "system", "content": f"You are a helpful {BOT_ROLE}.{salt}"}] + self.__messages_list
 
-    def count_tokens(self) -> int:
-        encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    def count_tokens(self, model="gpt-3.5-turbo-0301"):
+        """Returns the number of tokens used by a list of messages."""
+        try:
+            encoding = tiktoken.encoding_for_model(model)
+        except KeyError:
+            print("Warning: model not found. Using cl100k_base encoding.")
+            encoding = tiktoken.get_encoding("cl100k_base")
+        if model == "gpt-3.5-turbo":
+            print("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
+            return num_tokens_from_messages(messages, model="gpt-3.5-turbo-0301")
+        elif model == "gpt-4":
+            print("Warning: gpt-4 may change over time. Returning num tokens assuming gpt-4-0314.")
+            return num_tokens_from_messages(messages, model="gpt-4-0314")
+        elif model == "gpt-3.5-turbo-0301":
+            tokens_per_message = 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+            tokens_per_name = -1  # if there's a name, the role is omitted
+        elif model == "gpt-4-0314":
+            tokens_per_message = 3
+            tokens_per_name = 1
+        else:
+            raise NotImplementedError(
+                f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
         num_tokens = 0
         for message in self.get_messages_list():
-            num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+            num_tokens += tokens_per_message
             for key, value in message.items():
                 num_tokens += len(encoding.encode(value))
-                if key == "name":  # if there's a name, the role is omitted
-                    num_tokens += -1  # role is always required and always 1 token
+                if key == "name":
+                    num_tokens += tokens_per_name
         num_tokens += 2  # every reply is primed with <im_start>assistant
         return num_tokens
 
@@ -43,7 +63,7 @@ class PrevMessages:
         Returns approximately left token free space
         """
         self.__messages_list.append({"role": user, "content": query_text})
-        return max_token_num - self.count_tokens()
+        return max_token_num - self.count_tokens() - 1
 
     def del_last_message(self):
         self.__messages_list.pop(0)
@@ -140,7 +160,7 @@ class GPT:
     async def chat_completion(self, messages: PrevMessages, max_tokens: int = None, temperature: int = None,
                               n: int = None, echo: bool = None):
         self.url = "https://api.openai.com/v1/chat/completions"
-        self.model = "gpt-3.5-turbo"
+        self.model = "gpt-3.5-turbo-0301"
         self.messages: PrevMessages = messages
         self.max_tokens = max_tokens or DEFAULT_TOKEN_NUM
         self.temperature = temperature or 1
@@ -161,5 +181,4 @@ class GPT:
         }
         response = await self.session.post(self.url, headers=self.headers, json=self.data)
         self.response = await response.json()
-        print(self.response)
         return self.response['choices'][0]['message']['content']
