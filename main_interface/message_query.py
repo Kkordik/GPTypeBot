@@ -38,22 +38,6 @@ async def message_query(message: types.Message):
     # Sending wait message to show that bot received the query
     waiting_msg = await message.answer(text=texts[user_db.language]["getting_query_ready"])
 
-    # Sending a waiting tip if user is in a waiting dict and asked query less than waiting_time(see config) ago
-    if message.from_user.id in waiting_dict:
-        last_query_time = waiting_dict[message.from_user.id]
-        spent_time = int(time() - last_query_time)
-
-        if spent_time <= WAIT_TIME:
-            left_time = WAIT_TIME - spent_time
-        else:
-            left_time = 0
-            del waiting_dict[message.from_user.id]
-
-        return await WaitAskLater(user_db.language, left_time).send_message_tip(waiting_msg)
-
-    else:
-        waiting_dict[message.from_user.id] = time()  # Adding user to the waiting dict if he wasn't
-
     rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
     result_id: str = hashlib.md5(message.text.encode()).hexdigest() + rand_str
 
@@ -71,6 +55,22 @@ async def message_query(message: types.Message):
         # Returning mistake marker if while dividing query found wrong markers usage
         if mistake:
             return await mistake.send_message_tip(waiting_msg)
+
+        # Sending a waiting tip if user is in a waiting dict and asked query less than waiting_time(see config) ago
+        now_time = time()
+        if message.from_user.id in waiting_dict:
+            next_query_time = waiting_dict[message.from_user.id]
+
+            if now_time < next_query_time:
+                left_time = int(next_query_time - now_time)
+            else:
+                left_time = 0
+                del waiting_dict[message.from_user.id]
+
+            return await WaitAskLater(user_db.language, left_time).send_message_tip(waiting_msg)
+
+        else:
+            waiting_dict[message.from_user.id] = now_time + WAIT_TIME  # Adding user to the waiting dict if he wasn't
 
         # Adding previous messages to the query based on the user's current chosen topic.
         # If topic_id is 0 than no history is taken
@@ -122,6 +122,7 @@ async def message_query(message: types.Message):
         await MsgAnswerMistake(language=user_db.language).send_message_tip(waiting_msg)
         print(datetime.datetime.now(), ex, sep="  msg  ")
 
+        waiting_dict[message.from_user.id] = time() + MISTAKE_WAIT_TIME  # Editing next query time in waiting dict
         # Waiting mistake wait time (less that wait time) to make asking query again faster
         await asyncio.sleep(MISTAKE_WAIT_TIME)
 
