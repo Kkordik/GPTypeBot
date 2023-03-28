@@ -33,6 +33,24 @@ class Database:
         return res
 
 
+class Value:
+    def __init__(self, value, format_value):
+        self.value: list = value
+        self.format_value = format_value
+
+
+class SecureValue(Value):
+    replace_marker = '%s'
+
+    def __init__(self, value):
+        super().__init__([value], format_value=self.replace_marker)
+
+
+class NotFormatedValue(Value):
+    def __init__(self, value):
+        super().__init__([], format_value=value)
+
+
 class Table:
     def __init__(self, name: str, db: Database, columns: list):
         self.__name = name
@@ -66,12 +84,35 @@ class Table:
         for column in parameters.keys():
             # Checking if given columns in parameters exist in table and adding values to list
             if column in self.__columns:
-                # Changing "string" to "'string'" to execute it in sql command as string
-                if isinstance(parameters[column], list):
-                    parameters[column] = str(parameters[column][0])
+                print(parameters[column])
+                if not isinstance(parameters[column], NotFormatedValue):
+                    print(parameters[column])
+                    parameters[column] = SecureValue(parameters[column])
             else:
                 raise Exception("In table '{}' is no such column: '{}'".format(self.__name, column))
         return parameters
+
+    @staticmethod
+    def _create_where_expression(where_vals_dict: dict, logical_expr: str) -> tuple:
+        """
+        where_vals_dict: dict ("column_name": SecureValue / NotFormatedValue)
+        return: tuple(where_string, where_values)
+        in which where_string is a part of sql command
+        and where_values is a list of vales to replace %s
+        """
+        if len(where_vals_dict) != 0:
+            where_str = "WHERE"
+            where_equations = []
+            where_values = []
+            for column in where_vals_dict.keys():
+                where_values += where_vals_dict[column].value
+                where_equations.append(" {}={} ".format(column, where_vals_dict[column].format_value))
+            where_str += logical_expr.join(where_equations)
+        else:
+            where_str = ""
+            where_values = []
+
+        return where_str, where_values
 
     async def select_vals(self, command: str = "SELECT * FROM {}", logical_expr: str = "AND", ending_text: str = "",
                           **where):
@@ -87,16 +128,7 @@ class Table:
         where = self.__check_parameters(where)
 
         # Create string WHERE expression
-        if len(where) != 0:
-            where_str = "WHERE"
-            where_equations = []
-            where_values = list(where.values())
-            for column in where.keys():
-                where_equations.append(" {}=%s ".format(column))
-            where_str += logical_expr.join(where_equations)
-        else:
-            where_str = ""
-            where_values = []
+        where_str, where_values = self._create_where_expression(where, logical_expr)
 
         return await self.execute_tb("{} {} {}".format(command.format(self.__name), where_str, ending_text),
                                      where_values)
@@ -112,15 +144,11 @@ class Table:
         """
         where = self.__check_parameters(where)
 
-        # Create string WHERE expression
-        if len(where) != 0:
-            where_equations = []
-            where_values = list(where.values())
-            for column in where.keys():
-                where_equations.append(" {}=%s ".format(column))
-            where_str = logical_expr.join(where_equations)
-        else:
+        if len(where) == 0:
             raise Exception("No where arguments given. It is impossible to delete all from table")
+
+        # Create string WHERE expression
+        where_str, where_values = self._create_where_expression(where, logical_expr)
 
         return await self.execute_tb(command.format(self.__name, where_str), where_values)
 
@@ -138,9 +166,21 @@ class Table:
         columns_vals = self.__check_parameters(columns_vals)
 
         unpack_columns = ', '.join(columns_vals.keys())
-        values = list(columns_vals.values())
-        replace_chars = ', '.join('%s' for _ in range(len(columns_vals)))
-        return await self.execute_tb(command.format(self.__name, unpack_columns, replace_chars), values)
+
+        values = []
+        for column in columns_vals.keys():
+            values += columns_vals[column].value
+
+        replace_chars = ', '.join(val.format_value for val in columns_vals.values())
+
+        return await self.execute_tb(
+            command=command.format(
+                self.__name,
+                unpack_columns,
+                replace_chars
+            ),
+            values=values
+        )
 
     async def launch_table(self,  *args, **kwargs):
         pass

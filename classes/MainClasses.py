@@ -1,6 +1,6 @@
 from aiogram import types
 from run_bot import bot
-from classes.Tables import Table, UsersTable, QueryTable, TopicTable
+from classes.Tables import Table, UsersTable, QueryTable, TopicTable, NotFormatedValue
 from config import BASIC_LANGUAGE
 from texts import texts
 
@@ -37,7 +37,7 @@ class User:
     async def insert_user(self, user_id=None):
         if user_id:
             self.user_id = int(user_id)
-        return await self.table.insert_vals(user_id=int(self.user_id), date_time=['now()'])
+        return await self.table.insert_vals(user_id=int(self.user_id), date_time=NotFormatedValue('now()'))
 
     async def check_subscription(self) -> bool:
         res = await self.table.select_vals(user_id=self.user_id)
