@@ -74,26 +74,26 @@ texts = {
 
 facts = {
     "en": {
-        "start_with_marker":  "Ask or start with marker: '{}'".format(
-            "' / '".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
+        "start_with_marker":  "Ask or use marker ({})".format(
+            " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
 
-        "end_with_sign":  "Remember query ends with '{}' / '{}' / '{}' / '{}'".format(
+        "end_with_sign":  "To end use ({} / {} / {} / {})".format(
                            DotSign.marker,
                            ExclamationSign.marker,
                            QuestionSign.marker,
                            SimpleEndMarker.marker
         ),
-        "wrong_marker_use": "Check correctness of marker '{}'",
+        "wrong_marker_use": "Looks like '{}' is wrongly used",
         "too_long_query": f"Query is over {TELEGRAM_CHAR_LIMIT} symbols. Telegram limit😢",
-        "waiting_time": "Generating response takes up to 10 seconds",
-        "no_subscription": "This feature is only for premium subscribers",
-        "unknown_error": "Sorry, try again",
+        "waiting_time": "10s - average answering time",
+        "no_subscription": "Only for premium subscribers",
+        "unknown_error": "Sorry, try again later",
         "ask_later": "Wait {}s to ask new query"
     },
     "uk": {
-        "start_with_marker":  "Запитуй або юзай маркер: '{}'".format(
-            "' / '".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
+        "start_with_marker":  "Запитуй або юзай маркер ({})".format(
+            " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
         "end_with_sign": "Пам'ятай, запит закінчується на '{}' / '{}' / '{}' / '{}'".format(
                           DotSign.marker,
