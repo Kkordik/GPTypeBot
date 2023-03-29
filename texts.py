@@ -86,44 +86,44 @@ facts = {
         ),
         "wrong_marker_use": "Looks like '{}' is wrongly used",
         "too_long_query": f"Query is over {TELEGRAM_CHAR_LIMIT} symbols. Telegram limit😢",
-        "waiting_time": "10s - average answering time",
+        "waiting_time": "10s is average answering time",
         "no_subscription": "Only for premium subscribers",
         "unknown_error": "Sorry, try again later",
         "ask_later": "Wait {}s to ask new query"
     },
     "uk": {
-        "start_with_marker":  "Запитуй або юзай маркер ({})".format(
+        "start_with_marker":  "Запитуй або пиши маркер ({})".format(
             " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
-        "end_with_sign": "Пам'ятай, запит закінчується на '{}' / '{}' / '{}' / '{}'".format(
+        "end_with_sign": "Закінчуй маркером ({} / {} / {} / {})".format(
                           DotSign.marker,
                           ExclamationSign.marker,
                           QuestionSign.marker,
                           SimpleEndMarker.marker
         ),
-        "wrong_marker_use": "Перевір правильність маркеру '{}'",
+        "wrong_marker_use": "Схоже, що '{}' неправильно використано",
         "too_long_query": f"Запит більше ніж {TELEGRAM_CHAR_LIMIT} символів. Це ліміт Телеграму😢",
-        "waiting_time": "В середньому відповідь генерується приблизно 10 секунд",
-        "no_subscription": "Ця функція тільки для преміум підписників",
-        "unknown_error": "Вибач, спробуй ще раз",
+        "waiting_time": "10 сек. це середній час відповіді",
+        "no_subscription": "Тільки для преміум підписників",
+        "unknown_error": "Вибач, спробуй ще раз пізніше",
         "ask_later": "Почекай ще {} сек для можливості нового запиту"
     },
     "ru": {
-        "start_with_marker": "Спрашивай или юзай маркер: '{}'".format(
-            "' / '".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
+        "start_with_marker": "Спрашивай или юзай маркер ({})".format(
+            " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
 
-        "end_with_sign": "Помни, запрос заканчивается на '{}' / '{}' / '{}' / '{}'".format(
+        "end_with_sign": "Заканчивай маркером ({} / {} / {} / {})".format(
                           DotSign.marker,
                           ExclamationSign.marker,
                           QuestionSign.marker,
                           SimpleEndMarker.marker
         ),
-        "wrong_marker_use": "Проверь правильность маркера '{}'",
+        "wrong_marker_use": "Похоже, что '{}' неправильно использовано",
         "too_long_query": f"Запрос больше {TELEGRAM_CHAR_LIMIT} символов. Это лимит Телеграма😢",
-        "waiting_time": "В среднем ответ генерируется примерно 10 секунд",
-        "no_subscription": "Эта функция только для премиум подписчиков",
-        "unknown_error": "Извини, попробуй еще раз",
+        "waiting_time": "10 сек. это среднее время ответа",
+        "no_subscription": "Только для премиум подписчиков",
+        "unknown_error": "Извини, попробуй еще раз позже",
         "ask_later": "Подожди ещё {} сек для нового запроса"
     }
 }
