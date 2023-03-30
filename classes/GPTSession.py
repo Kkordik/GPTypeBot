@@ -167,6 +167,7 @@ class GPT:
         self.n = n or 1
         self.echo = echo or False
 
+        print(self.messages.get_messages_list())
         self.data = {
             "model": self.model,
             "messages": self.messages.get_messages_list(),

@@ -27,6 +27,7 @@ class Database:
         """
         async with self.__pool.acquire() as con:
             async with con.cursor() as cur:
+                print(command)
                 await cur.execute(command, values)
                 res = await cur.fetchall()
             await con.commit()
@@ -91,7 +92,7 @@ class Table:
         return parameters
 
     @staticmethod
-    def _create_where_expression(where_vals_dict: dict, logical_expr: str) -> tuple:
+    def _create_where_expression(where_vals_dict: dict, logical_expr: str, prefix: str = 'WHERE') -> tuple:
         """
         where_vals_dict: dict ("column_name": SecureValue / NotFormatedValue)
         return: tuple(where_string, where_values)
@@ -99,7 +100,7 @@ class Table:
         and where_values is a list of vales to replace %s
         """
         if len(where_vals_dict) != 0:
-            where_str = "WHERE"
+            where_str = prefix
             where_equations = []
             where_values = []
             for column in where_vals_dict.keys():
@@ -131,7 +132,7 @@ class Table:
         return await self.execute_tb("{} {} {}".format(command.format(self.__name), where_str, ending_text),
                                      where_values)
 
-    async def delete_line(self, command: str = "DELETE FROM {} {}", logical_expr: str = "AND", **where):
+    async def delete_line(self, command: str = "DELETE FROM {} WHERE {}", logical_expr: str = "AND", **where):
         """
         Deletes all from table must be executed with WHERE, you may use AND or other logical_expression
 
@@ -146,7 +147,7 @@ class Table:
             raise Exception("No where arguments given. It is impossible to delete all from table")
 
         # Create string WHERE expression
-        where_str, where_values = self._create_where_expression(where, logical_expr)
+        where_str, where_values = self._create_where_expression(where, logical_expr,  prefix="")
 
         return await self.execute_tb(command.format(self.__name, where_str), where_values)
 
@@ -188,23 +189,12 @@ class Table:
         where = self.__check_parameters(where)
         column_new_vals = self.__check_parameters(column_new_vals)
 
-        if len(where) != 0:
-            where_equations = []
-            where_values = list(where.values())
-            for column in where.keys():
-                where_equations.append(" {}=%s ".format(column))
-            where_str = logical_expr.join(where_equations)
-        else:
-            raise Exception("No where arguments given. It is impossible to update all table")
-        if len(column_new_vals) != 0:
-            new_vals_equations = []
-            new_vals = list(column_new_vals.values())
-            for column in column_new_vals.keys():
-                new_vals_equations.append(" {}=%s ".format(column))
-            new_vals_str = ",".join(new_vals_equations)
-        else:
+        if len(column_new_vals) == 0:
             raise Exception("No new arguments given. It is impossible to update table without them")
-        return await self.execute_tb(command.format(self.__name, new_vals_str, where_str), new_vals + where_values)
+        where_str, where_vals = self._create_where_expression(where, logical_expr, prefix="")
+        new_vals_str, new_vals = self._create_where_expression(column_new_vals, logical_expr, prefix="")
+
+        return await self.execute_tb(command.format(self.__name, new_vals_str, where_str), new_vals + where_vals)
 
 
 class UsersTable(Table):

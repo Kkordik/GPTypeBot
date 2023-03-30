@@ -52,6 +52,7 @@ class User:
         return res[0]["current_topic"]
 
     async def set_new_topic(self, new_topic_id):
+        print("updating", self.user_id, " v dbgdb   ", new_topic_id)
         return await self.table.update_val(where={"user_id": self.user_id}, current_topic=new_topic_id)
 
 
