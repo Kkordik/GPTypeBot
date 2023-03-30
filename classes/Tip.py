@@ -1,5 +1,5 @@
 from texts import facts, texts
-from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message
+from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message, User
 from random import choices
 from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO
 from classes.Guide import GuidePage
@@ -7,6 +7,9 @@ from classes.Markers import BeginMarker, EndMarker
 from typing import Union
 from random import choices
 from keyboards import message_tip_keyboard
+from classes.MainClasses import User, Topic
+from database.run_db import user_tb, topic_tb
+from main_interface.context_call import context_message
 
 
 class Tip:
@@ -37,7 +40,7 @@ class Tip:
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="guide-" + self.guide_page_name
+            switch_pm_parameter="tip-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):
@@ -45,6 +48,10 @@ class Tip:
             text=self.text,
             reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
         )
+    
+    async def pm_button_reaction(self, bot, chat_id, user: User):
+        guide_page = GuidePage(language=self.language, text_name=self.guide_page_name)
+        await guide_page.send_page(bot=bot, chat_id=chat_id)
 
 
 class WarningTip(Tip):
@@ -62,6 +69,7 @@ class InfoTip(Tip):
         """
         :return: object of randomly chosen type (subclass of InfoTip)
         """
+        print(InfoTip.__subclasses__())
         return choices(InfoTip.__subclasses__())[0](self.lang)
 
 
@@ -74,7 +82,7 @@ class WrongMarkerUse(MistakeTip):
     text_name = "wrong_marker_use"
     guide_page_name = "marked_query"
 
-    def __init__(self, language: str, marker: Union[BeginMarker, EndMarker]):
+    def __init__(self, language: str, marker: Union[BeginMarker, EndMarker] = None):
         super().__init__(language)
         self.marker = marker
 
@@ -92,7 +100,7 @@ class WrongMarkerUse(MistakeTip):
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="guide-" + self.guide_page_name
+            switch_pm_parameter="tip-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):
@@ -129,11 +137,51 @@ class MsgAnswerMistake(MistakeTip):
     guide_page_name = "simple_query"
 
 
+class CurrentTopic(InfoTip):
+    text_name = "current_topic"
+    guide_page_name = "simple_query"
+
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+        user = User(user_tb, inline_query.from_user.id, user=inline_query.from_user)
+        current_topic_id = await user.get_current_topic_id()
+
+        if current_topic_id == 0:
+            topic_title = texts[self.lang]["no_topic"]
+        else:
+            current_topic = await Topic(topic_tb, topic_id=current_topic_id).get_topic()
+            topic_title = current_topic.topic_title
+
+        answers = [
+            InlineQueryResultArticle(
+                id=result_id,
+                title=self.text.format(topic_title),
+                input_message_content=InputTextMessageContent(message_text=texts[self.lang]["share"],
+                                                              parse_mode='HTML'),
+                thumb_url=self.photo,
+            )
+        ]
+        await inline_query.answer(
+            results=answers,
+            cache_time=1,
+            switch_pm_text=self.bot_but_text,
+            switch_pm_parameter="tip-" + self.__class__.__name__
+        )
+
+    async def send_message_tip(self, message: Message):
+        await message.edit_text(
+            text="❌" + self.text.format(self.marker.marker),
+            reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
+        )
+
+    async def pm_button_reaction(self, bot, chat_id, user: User):
+        await context_message(user=user, chat_id=chat_id)
+
+
 class WaitAskLater(MistakeTip):
     text_name = "ask_later"
     guide_page_name = "simple_query"
 
-    def __init__(self, language: str, waiting_time: int):
+    def __init__(self, language: str, waiting_time: int = None):
         super().__init__(language)
         self.waiting_time = waiting_time
 
@@ -151,7 +199,7 @@ class WaitAskLater(MistakeTip):
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="guide-" + self.guide_page_name
+            switch_pm_parameter="tip-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):

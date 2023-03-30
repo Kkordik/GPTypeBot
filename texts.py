@@ -89,7 +89,8 @@ facts = {
         "waiting_time": "10s is average answering time",
         "no_subscription": "Only for premium subscribers",
         "unknown_error": "Sorry, try again later",
-        "ask_later": "Wait {}s to ask new query"
+        "ask_later": "Wait {}s to ask new query",
+        "current_topic": "Current topic: '{}'"
     },
     "uk": {
         "start_with_marker":  "Запитуй або пиши маркер ({})".format(
@@ -106,7 +107,8 @@ facts = {
         "waiting_time": "10 сек. це середній час відповіді",
         "no_subscription": "Тільки для преміум підписників",
         "unknown_error": "Вибач, спробуй ще раз пізніше",
-        "ask_later": "Почекай ще {} сек для можливості нового запиту"
+        "ask_later": "Почекай ще {} сек для можливості нового запиту",
+        "current_topic": "Обрана тема: '{}'"
     },
     "ru": {
         "start_with_marker": "Спрашивай или юзай маркер ({})".format(
@@ -124,7 +126,8 @@ facts = {
         "waiting_time": "10 сек. это среднее время ответа",
         "no_subscription": "Только для премиум подписчиков",
         "unknown_error": "Извини, попробуй еще раз позже",
-        "ask_later": "Подожди ещё {} сек для нового запроса"
+        "ask_later": "Подожди ещё {} сек для нового запроса",
+        "current_topic": "Используемая тема: '{}'"
     }
 }
 
