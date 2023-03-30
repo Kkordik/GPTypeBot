@@ -7,7 +7,7 @@ from texts import texts
 
 
 async def context_message(user: types.User, chat_id):
-    user = User(user_tb, user.user_id, user=user)
+    user = User(user_tb, user.id, user=user)
     await user.get_language()
     if await user.check_subscription():
         current_topic = await user.get_current_topic_id()

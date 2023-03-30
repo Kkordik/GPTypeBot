@@ -22,7 +22,7 @@ async def simple_start_cmd(message: types.Message):
         param = message.text.split(" ")[1].split("-")[1]
         if param_type == "tip":
             tip_type: Tip = globals()[param]
-            tip: Tip = tip_type
+            tip: Tip = tip_type(language=user.language)
             await tip.pm_button_reaction(bot=bot, chat_id=message.chat.id, user=message.from_user)
 
 

@@ -50,7 +50,7 @@ class Tip:
         )
     
     async def pm_button_reaction(self, bot, chat_id, user: User):
-        guide_page = GuidePage(language=self.language, text_name=self.guide_page_name)
+        guide_page = GuidePage(language=self.lang, text_name=self.guide_page_name)
         await guide_page.send_page(bot=bot, chat_id=chat_id)
 
 
