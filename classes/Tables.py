@@ -84,9 +84,7 @@ class Table:
         for column in parameters.keys():
             # Checking if given columns in parameters exist in table and adding values to list
             if column in self.__columns:
-                print(parameters[column])
                 if not isinstance(parameters[column], NotFormatedValue):
-                    print(parameters[column])
                     parameters[column] = SecureValue(parameters[column])
             else:
                 raise Exception("In table '{}' is no such column: '{}'".format(self.__name, column))
@@ -133,7 +131,7 @@ class Table:
         return await self.execute_tb("{} {} {}".format(command.format(self.__name), where_str, ending_text),
                                      where_values)
 
-    async def delete_line(self, command: str = "DELETE FROM {} WHERE {}", logical_expr: str = "AND", **where):
+    async def delete_line(self, command: str = "DELETE FROM {} {}", logical_expr: str = "AND", **where):
         """
         Deletes all from table must be executed with WHERE, you may use AND or other logical_expression
 
@@ -228,14 +226,16 @@ class QueryTable(Table):
     """
     id	smallint unsigned
     result_id	varchar(37)
+    subquery_id	tinyint
+    orig_query	text
     query	text
     answer	text
-    sent	boolean
-    topic_id  smallint
-    user_id  bigint
+    sent	tinyint(1)
+    topic_id	smallint
+    user_id	bigint
     """
     __name = "queries"
-    __columns = ["id", "result_id", "query", "answer", "sent", "topic_id", "user_id"]
+    __columns = ["id", "result_id", "subquery_id", "orig_query", "query", "answer", "sent", "topic_id", "user_id"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)

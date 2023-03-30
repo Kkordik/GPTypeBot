@@ -50,7 +50,7 @@ async def message_query(message: types.Message):
             from_user=message.from_user,
             short_answers=False
         )
-        mistake = query_t.divide_query(query_t.get_markers_list())
+        mistake, _ = query_t.divide_query(query_t.get_markers_list())
 
         # Returning mistake marker if while dividing query found wrong markers usage
         if mistake:
@@ -91,7 +91,6 @@ async def message_query(message: types.Message):
         waiting_msg = await bot.send_message(
             chat_id=message.chat.id,
             text=query_t.answer,
-            parse_mode="html",
             disable_web_page_preview=True
         )
 
@@ -99,21 +98,20 @@ async def message_query(message: types.Message):
         # such messages aren't taken to the context)
         await query_db.delete_all_unsent(user_id=message.from_user.id)
 
-        # Adding sub-queries to the database and setting as already sent
-        for sub_query in query_t.sub_queries:
+        # Adding sub-queries to the database and setting as sent
+        for sub_query_id, sub_query in enumerate(query_t.sub_queries):
             await query_db.insert_query(
                 result_id=result_id,
+                subquery_id=sub_query_id,
+                orig_query=query_t.text,
                 query=sub_query.text,
                 answer=sub_query.answer,
                 topic_id=topic_id,
-                user_id=message.from_user.id
+                user_id=user_db.user_id
             )
-            await query_db.set_as_sent(
-                result_id=result_id
-            )
+        await query_db.set_as_sent(result_id=result_id)
 
         program_time = time() - time_st
-        print(program_time, result_id, sep="  msg  ")
 
         # Waiting the wait_time minus time spent by the program
         await asyncio.sleep(WAIT_TIME - program_time)

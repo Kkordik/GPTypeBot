@@ -6,8 +6,8 @@ from texts import texts, facts
 from classes.MainClasses import User, QueryDb
 from database.run_db import user_tb, query_tb
 from classes.Markers import ends_with_marker
-from classes.Tip import NoSubscription, StartWithMarker, TooLongQuery, MsgAnswerMistake, EndWithSign, InfoTip
-from config import TELEGRAM_CHAR_LIMIT, END_TIP_PROBABILITY, INLINE_DEF_TOKEN_NUM, INLINE_MAX_TOKEN_NUM
+from classes.Tip import NoSubscription, StartWithMarker, TooLongQuery, MsgAnswerMistake, EndWithSign, InfoTip, AnswerTip
+from config import TELEGRAM_CHAR_LIMIT, END_TIP_PROBABILITY, INLINE_DEF_TOKEN_NUM, INLINE_MAX_TOKEN_NUM, ANSWER_PHOTO
 import random
 import string
 from time import time
@@ -49,7 +49,7 @@ async def inline_echo(inline_query: InlineQuery):
             from_user=inline_query.from_user,
             repeat_question=True
         )
-        mistake = query_t.divide_query(
+        mistake, _ = query_t.divide_query(
             query_t.get_markers_list()
         )
 
@@ -84,28 +84,15 @@ async def inline_echo(inline_query: InlineQuery):
         answers = await query_t.answer_sub_queries(max_token_num=INLINE_MAX_TOKEN_NUM)
         query_t.answer = query_t.answer.format(*answers)  # Replacing {} with answers in the answer text
 
-        # Creating list with one answer
-        answers = [InlineQueryResultArticle(
-            id=result_id,
-            title=query_t.answer,
-            input_message_content=InputTextMessageContent(
-                message_text=query_t.answer,
-                parse_mode='HTML'
-            ),
-            thumb_url="https://cdn-icons-png.flaticon.com/128/463/463574.png"
-            )]
-
-        # Answering on the inline query
-        await inline_query.answer(
-            results=answers,
-            cache_time=1
-        )
-        print(datetime.datetime.now(), time() - time_st, result_id, sep="  inline  ")
+        answer_tip = AnswerTip(language=lang, text=query_t.answer)
+        await answer_tip.send_inline_tip(inline_query=inline_query, result_id=result_id)
 
         # Adding sub-queries to the database
-        for sub_query in query_t.sub_queries:
+        for sub_query_id, sub_query in enumerate(query_t.sub_queries):
             await query_db.insert_query(
                 result_id=result_id,
+                subquery_id=sub_query_id,
+                orig_query=query_t.text,
                 query=sub_query.text,
                 answer=sub_query.answer,
                 topic_id=topic_id,
@@ -113,8 +100,7 @@ async def inline_echo(inline_query: InlineQuery):
             )
 
     except Exception as ex:
-        print(result_id)
-        print(datetime.datetime.now(), ex, sep="   inline   ")
+        print(result_id, datetime.datetime.now(), ex, sep="   inline   ")
         await MsgAnswerMistake(language=lang).send_inline_tip(inline_query, result_id)
 
 

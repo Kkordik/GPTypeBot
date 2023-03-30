@@ -50,7 +50,7 @@ class Query:
 
         return self.markers_list
 
-    def divide_query(self, markers_list: list = None) -> Union[WrongMarkerUse, list]:
+    def divide_query(self, markers_list: list = None) -> (WrongMarkerUse, list):
         if markers_list:
             self.markers_list = markers_list
 
@@ -64,7 +64,7 @@ class Query:
                 self.answer += f"{self.text}\n" + "{}"
             else:
                 self.answer += "{}"
-            return
+            return None, self.sub_queries
 
         markers_num = len(self.markers_list)
         first_m = self.markers_list[0]
@@ -81,9 +81,9 @@ class Query:
                                       text=self.text[first_m.get_end_id(self.text):],
                                       begin_marker=first_m,
                                       supporter=self.supporter, from_user=self.from_user)]
-            return
+            return None, self.sub_queries
         elif (markers_num >= 1) and first_m_sup == EndMarker:
-            return WrongMarkerUse(language=self.lang, marker=first_m)
+            return WrongMarkerUse(language=self.lang, marker=first_m), None
 
         marker_id = 0
         self.sub_queries = []
@@ -113,7 +113,7 @@ class Query:
                 else:
                     self.answer += self.text[current_m.get_end_id(self.text):next_m.start_id]
             else:
-                return WrongMarkerUse(language=self.lang, marker=next_m)
+                return WrongMarkerUse(language=self.lang, marker=next_m), None
             marker_id += 1
 
         if next_m_sup == BeginMarker:
@@ -126,7 +126,7 @@ class Query:
         else:
             self.answer += self.text[next_m.get_end_id(self.text):]
 
-        return self.sub_queries
+        return None, self.sub_queries
 
     async def answer_sub_queries(self, max_token_num: int = MAX_TOKEN_NUM) -> list:
         gpt = GPT(OPEN_AI_KEY)

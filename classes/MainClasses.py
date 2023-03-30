@@ -56,26 +56,56 @@ class User:
 
 
 class QueryDb:
-    def __init__(self, table: QueryTable, row_id: int = None, result_id: str = None, query: str = None, answer: str = None,
-                 sent: bool = False, topic_id=None, user_id: int = None):
+    def __init__(self, table: QueryTable, row_id: int = None, result_id: str = None, subquery_id: int = None,
+                 orig_query: str = None, query: str = None, answer: str = None, sent: bool = False,
+                 topic_id=None, user_id: int = None):
         self.table: Table = table
         self.row_id: int = row_id
-        self.result_id: str = result_id
+        self.result_id: int = result_id
+        self.subquery_id: int = subquery_id
+        self.orig_query: str = orig_query
         self.query: str = query
         self.answer: str = answer
         self.sent: bool = sent
         self.topic_id: int = topic_id
         self.user_id: int = user_id
 
-    async def insert_query(self, result_id: str = None, query: str = None, answer: str = None, topic_id=None,
+    async def insert_query(self, result_id: str = None, subquery_id: int = None, orig_query: str = None,
+                           query: str = None, answer: str = None, topic_id=None,
                            user_id: int = None):
         self.result_id: str = result_id or self.result_id
+        self.subquery_id: int = subquery_id or self.subquery_id
+        self.orig_query: str = orig_query or self.orig_query
         self.query: str = query or self.result_id
         self.answer: str = answer or self.result_id
         self.topic_id: int = topic_id
         self.user_id: int = user_id or self.user_id
-        return await self.table.insert_vals(result_id=self.result_id, query=self.query,
-                                            answer=self.answer, topic_id=self.topic_id, user_id=self.user_id)
+        return await self.table.insert_vals(
+            result_id=self.result_id,
+            subquery_id=self.subquery_id,
+            orig_query=self.orig_query,
+            query=self.query,
+            answer=self.answer,
+            topic_id=self.topic_id,
+            user_id=self.user_id,
+        )
+
+    async def get_queries_by_res_id(self, result_id: str = None) -> list:
+        self.result_id: str = result_id or self.result_id
+        sel_results = await self.table.select_vals(result_id=result_id, ending_text="ORDER BY subquery_id")
+        results = []
+
+        for res in sel_results:
+            results.append(QueryDb(self.table,
+                                   row_id=res["id"],
+                                   result_id=res["result_id"],
+                                   subquery_id=res["subquery_id"],
+                                   orig_query=res["orig_query"],
+                                   query=res["query"],
+                                   answer=res["answer"],
+                                   topic_id=res["topic_id"],
+                                   sent=1))
+        return results
 
     async def set_as_sent(self, result_id: str):
         self.result_id: str = result_id or self.result_id
@@ -98,6 +128,8 @@ class QueryDb:
             results.append(QueryDb(self.table,
                                    row_id=res["id"],
                                    result_id=res["result_id"],
+                                   subquery_id=res["subquery_id"],
+                                   orig_query=res["orig_query"],
                                    query=res["query"],
                                    answer=res["answer"],
                                    topic_id=topic_id,

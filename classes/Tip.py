@@ -1,7 +1,7 @@
 from texts import facts, texts
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message, User
 from random import choices
-from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO
+from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO
 from classes.Guide import GuidePage
 from classes.Markers import BeginMarker, EndMarker
 from typing import Union
@@ -17,6 +17,7 @@ class Tip:
     text_name: str = None
     guide_page_name: str
     bot_but_text_name: str = "see_more_but"
+    pm_parameter = "tip"
 
     def __init__(self, language: str):
         self.lang = language
@@ -40,7 +41,7 @@ class Tip:
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="tip-" + self.__class__.__name__
+            switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):
@@ -69,8 +70,33 @@ class InfoTip(Tip):
         """
         :return: object of randomly chosen type (subclass of InfoTip)
         """
-        print(InfoTip.__subclasses__())
         return choices(InfoTip.__subclasses__())[0](self.lang)
+
+
+class AnswerTip(Tip):
+    photo = ANSWER_PHOTO
+    bot_but_text_name = "get_in_pm_but"
+    pm_parameter = "query"
+
+    def __init__(self, language: str, text: str):
+        super().__init__(language)
+        self.text = text
+
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+        answers = [
+            InlineQueryResultArticle(
+                id=result_id,
+                title=self.text,
+                input_message_content=InputTextMessageContent(message_text=self.text),
+                thumb_url=self.photo,
+            )
+        ]
+        await inline_query.answer(
+            results=answers,
+            cache_time=1,
+            switch_pm_text=self.bot_but_text,
+            switch_pm_parameter=self.pm_parameter + "-" + result_id
+        )
 
 
 class EndWithSign(WarningTip):
@@ -100,7 +126,7 @@ class WrongMarkerUse(MistakeTip):
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="tip-" + self.__class__.__name__
+            switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):
@@ -164,7 +190,7 @@ class CurrentTopic(InfoTip):
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="tip-" + self.__class__.__name__
+            switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):
@@ -199,7 +225,7 @@ class WaitAskLater(MistakeTip):
             results=answers,
             cache_time=1,
             switch_pm_text=self.bot_but_text,
-            switch_pm_parameter="tip-" + self.__class__.__name__
+            switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
 
     async def send_message_tip(self, message: Message):
@@ -207,3 +233,5 @@ class WaitAskLater(MistakeTip):
             text="❌" + self.text.format(self.waiting_time),
             reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
         )
+
+
