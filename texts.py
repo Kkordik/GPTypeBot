@@ -1,5 +1,5 @@
 from classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
-from config import TELEGRAM_CHAR_LIMIT
+from config import TELEGRAM_CHAR_LIMIT, SUBSCRIPTION_PRICE
 
 texts = {
     "en": {
@@ -7,6 +7,7 @@ texts = {
         "see_more_but": "See more..",
         "buy_subs_but": "Buy now..",
         "get_in_pm_but": "Send in pm with bot",
+        "premium_but": "👑 Premium",
         "share": "Hello I use @GPTypeBot, it is very convenient!",
         "guide_but": "📖 Guide",
         "start_use_but": "🟢 Start using",
@@ -23,7 +24,25 @@ texts = {
         "cancel_but": "❌ Cancel",
         "canceled": "☑️ Canceled",
         "topic_but_chosen": "📌 '{}' ({} requests)",
-        "topic_but": "'{}' ({} msgs)"
+        "topic_but": "'{}' ({} msgs)",
+        "return_inline_but": "Return to the chat",
+        "return_approve_but": "Confirm returning",
+        "already_premium": "You are already premium subscriber❤️",
+        "premium_benefits": "What month premium subcription gives, click to see more:"
+                            "\n\n-Inline queries in any chat"
+                            "\n-Unlimited amount of queries"
+                            "\n-History of queries"
+                            f"\n\nPrice {SUBSCRIPTION_PRICE} dollars/month"
+                            "\n\nChoose payment method:",
+        "crypto_method_but": "🌑 Crypto",
+        "card_method_but": "💳 Visa | Mastercard",
+        "back_payment_but": "Return",
+        "crypto_invoice": "Pay by the button below, your subscription will be added automatically within 5 min:",
+        "card_invoice": "In developing🛠❤️",
+        "pay_but": "➡️Pay",
+        "paid_but": "✅ I've paid",
+        "successfully_paid": "Thank you for subscribing❤️, enjoy the full functionality of the bot, exactly in 28 days you will receive an invoice for a new payment, and after 30 in case of non-payment, the subscription will end",
+        "not_paid": "❌ Not paid"
     },
     "uk": {
         "start_text": "Могутній, унікальний та безкоштовний.\nПереглянь короткий гайд нижче,"
@@ -31,6 +50,7 @@ texts = {
         "see_more_but": "Подробиці..",
         "buy_subs_but": "Придбати..",
         "get_in_pm_but": "Надіслати в лс з ботом",
+        "premium_but": "👑 Преміум",
         "share": "Привіт, я використовую @GPTypeBot, це дуже зручно!",
         "guide_but": "📖 Гайд",
         "start_use_but": "🟢 Почати використовувати",
@@ -47,7 +67,25 @@ texts = {
         "cancel_but": "❌ Скасувати",
         "canceled": "☑️ Скасовано",
         "topic_but_chosen": "📌 '{}' ({} смс)",
-        "topic_but": "'{}' ({} смс)"
+        "topic_but": "'{}' ({} смс)",
+        "return_inline_but": "Повернутись до чату",
+        "return_approve_but": "Підтвердити повернення",
+        "already_premium": "Ти вже преміум підписник❤️",
+        "premium_benefits": "Що дає місячна преміум підписка, клацай щоб подивитись детальніше:"
+                            "\n\n-Інлайн запити в любих чатах"
+                            "\n-Безліміт кількості запитів"
+                            "\n-Пам'ять історії запитів"
+                            f"\n\nЦіна {SUBSCRIPTION_PRICE} доларів/міс"
+                            "\n\nОбери спосіб оплати:",
+        "crypto_method_but": "🌑 Криптовалюта",
+        "card_method_but": "💳 Visa | Mastercard",
+        "back_payment_but": "Назад",
+        "crypto_invoice": "Щоб сплатити перейди по кнопці нижче, твоя підписка обновиться автоматично на протязі 5хв:",
+        "card_invoice": "В розробці🛠❤️",
+        "pay_but": "➡️Оплатить",
+        "paid_but": "✅ Я сплатив",
+        "successfully_paid": "Дякуємо за підписку❤️, насолоджуйтесь повним функціоналом бота, рівно через 28 днів ви отримаєте рахунок на новий платіж, а через 30 у разі несплати підписка завершується",
+        "not_paid": "❌ Не сплачено"
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
@@ -55,6 +93,7 @@ texts = {
         "see_more_but": "Подробнее..",
         "buy_subs_but": "Купить..",
         "get_in_pm_but": "Прислать в лс с ботом",
+        "premium_but": "👑 Премиум",
         "share": "Привет, я использую @GPTypeBot, это очень удобно!",
         "guide_but": "📖 Гайд",
         "start_use_but": "🟢 Начать использовать",
@@ -71,7 +110,25 @@ texts = {
         "cancel_but": "❌ Отменить",
         "canceled": "☑️ Отменено",
         "topic_but_chosen": "📌 '{}' ({} смс)",
-        "topic_but": "'{}' ({} смс)"
+        "topic_but": "'{}' ({} смс)",
+        "return_inline_but": "Вернуться в чат",
+        "return_approve_but": "Подтвердить возвращение",
+        "already_premium": "У тебя уже есть премиум подписка❤️",
+        "premium_benefits": "Что даёт месячная премиум подписка, клацай чтобы посмотреть подробнее:"
+                            "\n\n-Инлайн запросы в любых чатах"
+                            "\n-Безлимит количества запросов"
+                            "\n-Память истории запросов"
+                            f"\n\nЦена {SUBSCRIPTION_PRICE} долларов/мес"
+                            "\n\nВыбери способ оплаты:",
+        "crypto_method_but": "🌑 Криптовалюта",
+        "card_method_but": "💳 Visa | Mastercard",
+        "back_payment_but": "Назад",
+        "crypto_invoice": "Чтобы оплатить перейди по кнопке ниже, твоя подписка обновиться автоматически в течении 5 мин:",
+        "card_invoice": "В разработке🛠❤️",
+        "pay_but": "➡️Оплатить",
+        "paid_but": "✅ Я оплатил",
+        "successfully_paid": "Спасибо за подписку❤️, наслаждайтесь полным функционалом бота, ровно через 28 дней вам придёт счет на новую оплату, а через 30 в случае неоплаты подписка закончится",
+        "not_paid": "❌ Не оплачено"
     }
 }
 

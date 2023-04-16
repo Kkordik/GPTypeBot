@@ -1,6 +1,6 @@
 from aiogram import types
 from run_bot import bot
-from classes.Tables import Table, UsersTable, QueryTable, TopicTable, NotFormatedValue
+from classes.Tables import Table, UsersTable, QueryTable, TopicTable, NotFormatedValue, PaymentTable
 from config import BASIC_LANGUAGE
 from texts import texts
 
@@ -52,8 +52,10 @@ class User:
         return res[0]["current_topic"]
 
     async def set_new_topic(self, new_topic_id):
-        print("updating", self.user_id, " v dbgdb   ", new_topic_id)
         return await self.table.update_val(where={"user_id": self.user_id}, current_topic=new_topic_id)
+
+    async def make_subscriber(self):
+        return await self.table.update_val(where={"user_id": self.user_id}, subscriber=1)
 
 
 class QueryDb:
@@ -181,3 +183,39 @@ class Topic:
         self.user_id = user_id
         await self.table.insert_vals(topic_title=self.topic_title, user_id=self.user_id)
         return self
+
+
+class Payment:
+    def __init__(self, table: PaymentTable, payment_id: int = None, user_id=None, date_time: str = None,
+                 currency: str = None, payment_method: str = None, amount: float = None,
+                 amount_usd: float = None, parameter: str = None):
+        self.table: Table = table
+        self.payment_id = payment_id
+        self.user_id = user_id
+        self.date_time = date_time
+        self.currency = currency
+        self.payment_method = payment_method
+        self.amount = amount
+        self.amount_usd = amount_usd
+        self.parameter = parameter
+
+    async def add_payment(self, user_id, currency: str, payment_method: str, amount: float, amount_usd: float,
+                          parameter: str = None):
+        self.user_id = user_id
+        self.currency = currency
+        self.payment_method = payment_method
+        self.amount = amount
+        self.amount_usd = amount_usd
+        self.parameter = parameter
+
+        await self.table.insert_vals(
+            user_id=self.user_id,
+            currency=self.currency,
+            payment_method=self.payment_method,
+            amount=self.amount,
+            amount_usd=self.amount_usd,
+            parameter=self.parameter
+        )
+        return self
+
+

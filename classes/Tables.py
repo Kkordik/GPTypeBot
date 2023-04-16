@@ -242,3 +242,22 @@ class TopicTable(Table):
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)
+
+
+class PaymentTable(Table):
+    """
+    payment_id	int unsigned
+    user_id	bigint
+    date_time	datetime
+    currency	tinytext
+    payment_method	tinytext
+    amount	float
+    amount_usd	float
+    parameter	tinytext
+    """
+
+    __name = "payments"
+    __columns = ["payment_id", "user_id", "date_time", "currency", "payment_method", "amount", "amount_usd", "parameter"]
+
+    def __init__(self, db: Database):
+        super().__init__(self.__name, db, self.__columns)

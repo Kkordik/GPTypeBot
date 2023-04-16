@@ -39,7 +39,7 @@ class Tip:
         ]
         await inline_query.answer(
             results=answers,
-            cache_time=1,
+            cache_time=0,
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
@@ -81,8 +81,10 @@ class AnswerTip(Tip):
     def __init__(self, language: str, text: str):
         super().__init__(language)
         self.text = text
+        self.bot_but_text = texts[self.lang][self.bot_but_text_name]
 
     async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+        print(" SENDING INLINE TIP", self.bot_but_text, " ", self.pm_parameter + "-" + result_id)
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
@@ -93,7 +95,7 @@ class AnswerTip(Tip):
         ]
         await inline_query.answer(
             results=answers,
-            cache_time=1,
+            cache_time=0,
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + result_id
         )
@@ -124,7 +126,7 @@ class WrongMarkerUse(MistakeTip):
         ]
         await inline_query.answer(
             results=answers,
-            cache_time=1,
+            cache_time=0,
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
@@ -188,7 +190,7 @@ class CurrentTopic(InfoTip):
         ]
         await inline_query.answer(
             results=answers,
-            cache_time=1,
+            cache_time=0,
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
@@ -223,7 +225,7 @@ class WaitAskLater(MistakeTip):
         ]
         await inline_query.answer(
             results=answers,
-            cache_time=1,
+            cache_time=0,
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )

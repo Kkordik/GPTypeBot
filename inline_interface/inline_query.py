@@ -84,6 +84,19 @@ async def inline_echo(inline_query: InlineQuery):
         answers = await query_t.answer_sub_queries(max_token_num=INLINE_MAX_TOKEN_NUM)
         query_t.answer = query_t.answer.format(*answers)  # Replacing {} with answers in the answer text
 
+        answers = [
+            InlineQueryResultArticle(
+                id=result_id,
+                title=query_t.answer,
+                input_message_content=InputTextMessageContent(message_text=query_t.answer),
+                thumb_url=ANSWER_PHOTO,
+            )
+        ]
+        await inline_query.answer(
+            results=answers,
+            cache_time=0
+        )
+
         answer_tip = AnswerTip(language=lang, text=query_t.answer)
         await answer_tip.send_inline_tip(inline_query=inline_query, result_id=result_id)
 

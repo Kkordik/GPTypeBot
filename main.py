@@ -9,6 +9,11 @@ from main_interface.context_call import register_context_call
 from main_interface.create_topic_call import register_new_topic_call
 from main_interface.choose_topic_call import register_choose_topic_call
 from main_interface.cancel_state import register_cancel_state
+from main_interface.return_inline_call import register_return_inline_call
+from main_interface.premium_call import register_premium_call
+from main_interface.payment_method_call import register_payment_method_call
+from main_interface.payment_currency_call import register_payment_currency_call
+from main_interface.check_payment_call import register_check_payment_call
 
 
 async def main(_loop):
@@ -21,6 +26,11 @@ async def main(_loop):
     register_new_topic_call(dp)
     register_choose_topic_call(dp)
     register_cancel_state(dp)
+    register_return_inline_call(dp)
+    register_premium_call(dp)
+    register_payment_method_call(dp)
+    register_payment_currency_call(dp)
+    register_check_payment_call(dp)
     await dp.start_polling()
 
 

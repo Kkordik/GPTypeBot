@@ -4,7 +4,7 @@ from classes.MainClasses import User, QueryDb
 from classes.Tip import *
 from database.run_db import user_tb, query_tb
 from texts import texts, facts
-from keyboards import start_keyboard
+from keyboards import start_keyboard, ask_return_inline
 from classes.Guide import GuidePage
 from run_bot import bot
 from classes.Tip import MsgAnswerMistake
@@ -49,7 +49,8 @@ async def simple_start_cmd(message: types.Message):
                 await bot.send_message(
                     chat_id=message.chat.id,
                     text=query_t.answer,
-                    disable_web_page_preview=True
+                    disable_web_page_preview=True,
+                    reply_markup=ask_return_inline(user_db.language)
                 )
 
                 await query_db.set_as_sent(result_id=param)

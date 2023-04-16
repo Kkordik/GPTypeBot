@@ -19,7 +19,6 @@ async def choose_topic_callback(call: types.CallbackQuery):
         keyboard = topics_keyboard(topics=topics, lang=user.language, chosen_topic_id=new_topic_id)
 
         if new_topic_id != current_topic:
-            print(new_topic_id, " dfbdgbdb ", current_topic)
             await user.set_new_topic(new_topic_id=new_topic_id)
             await call.message.edit_reply_markup(reply_markup=keyboard)
         else:
