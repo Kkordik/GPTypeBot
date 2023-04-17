@@ -17,9 +17,10 @@ async def simple_start_cmd(message: types.Message):
     await user_db.insert_user()
 
     if message.text == "/start":
-        await message.answer(texts[user_db.language]['start_text'],
-                             parse_mode="HTML",
-                             reply_markup=start_keyboard(user_db.language))
+        await bot.send_message(chat_id=message.chat.id,
+                               text=texts[user_db.language]['start_text'],
+                               parse_mode="HTML",
+                               reply_markup=start_keyboard(user_db.language))
     else:
         param_type = message.text.split(" ")[1].split("-")[0]
         param = message.text.split(" ")[1].split("-")[1]

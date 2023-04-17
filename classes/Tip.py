@@ -1,12 +1,11 @@
 from texts import facts, texts
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message, User
-from random import choices
 from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO
 from classes.Guide import GuidePage
 from classes.Markers import BeginMarker, EndMarker
 from typing import Union
 from random import choices
-from keyboards import message_tip_keyboard
+from keyboards import message_tip_keyboard, start_keyboard
 from classes.MainClasses import User, Topic
 from database.run_db import user_tb, topic_tb
 from main_interface.context_call import context_message
@@ -148,6 +147,12 @@ class NoSubscription(MistakeTip):
     guide_page_name = "simple_query"
     bot_but_text_name = "buy_subs_but"
 
+    async def pm_button_reaction(self, bot, chat_id, user: User):
+        await bot.send_message(chat_id=chat_id,
+                               text=texts[self.lang]['start_text'],
+                               parse_mode="HTML",
+                               reply_markup=start_keyboard(self.lang))
+
 
 class StartWithMarker(WarningTip):
     photo = INFO_PHOTO
@@ -193,12 +198,6 @@ class CurrentTopic(InfoTip):
             cache_time=0,
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
-        )
-
-    async def send_message_tip(self, message: Message):
-        await message.edit_text(
-            text="❌" + self.text.format(self.marker.marker),
-            reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
         )
 
     async def pm_button_reaction(self, bot, chat_id, user: User):

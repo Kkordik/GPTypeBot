@@ -1,7 +1,7 @@
 from aiocryptopay import AioCryptoPay, Networks
 from aiocryptopay.models.invoice import Invoice
 from config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, SUBSCRIPTION_PRICE
-from requests import Request, Session
+from requests import Session
 import json
 
 
@@ -53,7 +53,7 @@ class CryptoInvoice(MyInvoice):
     method_name = "crypto"
     _currencies_list = ["BTC", "TON", "ETH", "USDT", "USDC", "BUSD"]
     default_currency = "USDT"
-    crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.MAIN_NET)
+    crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.TEST_NET)  # Change from MAIN_NET on TEST_NET to test
     invoice_text_name = "crypto_invoice"
 
     def __init__(self, amount: float = None, currency: str = None, invoice: Invoice = None, invoice_status: bool = None):
@@ -86,7 +86,7 @@ class CryptoInvoice(MyInvoice):
 
         return SUBSCRIPTION_PRICE / currency_price
 
-    async def create_invoice_url(self) -> Invoice:
+    async def create_invoice_url(self) -> str:
         self.invoice = await self.crypto.create_invoice(asset=self.currency, amount=self.amount)
         self.invoice_parameter = str(self.invoice.invoice_id)
         return self.invoice.pay_url
@@ -96,8 +96,8 @@ class CryptoInvoice(MyInvoice):
             self.invoice_parameter = invoice_parameter
         elif self.invoice_parameter:
             pass
-        elif self.crypto.invoice:
-            self.invoice_parameter = self.invoice.invoice_id
+        elif self.invoice:
+            self.invoice_parameter = str(self.invoice.invoice_id)
         else:
             raise Exception("No invoice or invoice parameter specified to check status")
 
