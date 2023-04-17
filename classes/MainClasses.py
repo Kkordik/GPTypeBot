@@ -55,7 +55,8 @@ class User:
         return await self.table.update_val(where={"user_id": self.user_id}, current_topic=new_topic_id)
 
     async def make_subscriber(self):
-        return await self.table.update_val(where={"user_id": self.user_id}, subscriber=1)
+        self.subscriber = 1
+        return await self.table.update_val(where={"user_id": self.user_id}, subscriber=self.subscriber)
 
 
 class QueryDb:
