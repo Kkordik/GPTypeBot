@@ -53,7 +53,7 @@ class CryptoInvoice(MyInvoice):
     method_name = "crypto"
     _currencies_list = ["BTC", "TON", "ETH", "USDT", "USDC", "BUSD"]
     default_currency = "USDT"
-    crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.TEST_NET)  # Change from MAIN_NET on TEST_NET to test
+    crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.MAIN_NET)  # Change from MAIN_NET on TEST_NET to test
     invoice_text_name = "crypto_invoice"
 
     def __init__(self, amount: float = None, currency: str = None, invoice: Invoice = None, invoice_status: bool = None):
