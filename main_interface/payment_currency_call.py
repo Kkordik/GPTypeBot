@@ -4,8 +4,9 @@ from classes.MainClasses import User, Payment
 from classes.Invoice import MyInvoice
 from database.run_db import user_tb, payment_tb
 from texts import texts
-from keyboards import payment_url_keyboard
+from keyboards import payment_url_keyboard, after_pay_keyboard
 from config import PAY_WAIT_TIME, PAY_CHECK_INTERVAL, SUBSCRIPTION_PRICE
+from run_bot import bot
 
 
 async def payment_currency_callback(call: types.CallbackQuery):
@@ -41,9 +42,11 @@ async def payment_currency_callback(call: types.CallbackQuery):
                     amount_usd=SUBSCRIPTION_PRICE,
                     parameter=my_invoice.get_invoice_parameter()
                 )
-                await pay_msg.edit_text(texts[user.language]["successfully_paid"])
+                await pay_msg.delete()
+                await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
+                                       reply_markup=after_pay_keyboard(user.language))
                 await user.make_subscriber()
-
+                break
             else:
                 await asyncio.sleep(PAY_CHECK_INTERVAL)
 

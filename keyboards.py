@@ -13,7 +13,7 @@ def start_keyboard(lang: str):
                                       callback_data="guide-" + first_guide_page.text_name))
     keyboard.add(InlineKeyboardButton(texts[lang]["context_but"], callback_data="context"))
     keyboard.add(InlineKeyboardButton(texts[lang]["premium_but"], callback_data="premium"))
-    keyboard.add(InlineKeyboardButton(texts[lang]["start_use_but"], switch_inline_query=""))
+    keyboard.add(InlineKeyboardButton(texts[lang]["start_inline_use_but"], switch_inline_query=""))
     return keyboard
 
 
@@ -95,4 +95,14 @@ def payment_url_keyboard(lang: str, pay_url: str, payment_method: str, parameter
         keyboard.add(InlineKeyboardButton(text=texts[lang]["pay_but"], url=pay_url))
         keyboard.add(InlineKeyboardButton(text=texts[lang]["paid_but"],
                                           callback_data=f"check_payment-{payment_method}-{parameter}"))
+    return keyboard
+
+
+def after_pay_keyboard(lang: str):
+    first_guide_page = GuidePage(language=lang, text_name=Guide.texts_names_l[0])
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton(text=texts[lang]["guide_but"],
+                                      callback_data="guide-" + first_guide_page.text_name))
+    keyboard.add(InlineKeyboardButton(texts[lang]["context_but"], callback_data="context"))
+    keyboard.add(InlineKeyboardButton(texts[lang]["start_inline_use_but"], switch_inline_query=""))
     return keyboard

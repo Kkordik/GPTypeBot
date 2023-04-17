@@ -1,11 +1,11 @@
-import asyncio
 from aiogram import Dispatcher, types
 from classes.MainClasses import User, Payment
 from classes.Invoice import MyInvoice
 from database.run_db import user_tb, payment_tb
 from texts import texts
-from keyboards import payment_url_keyboard
-from config import PAY_WAIT_TIME, PAY_CHECK_INTERVAL, SUBSCRIPTION_PRICE
+from keyboards import after_pay_keyboard
+from config import SUBSCRIPTION_PRICE
+from run_bot import bot
 
 
 async def payment_status_callback(call: types.CallbackQuery):
@@ -22,9 +22,11 @@ async def payment_status_callback(call: types.CallbackQuery):
             payment_method=my_invoice.method_name,
             amount=my_invoice.amount,
             amount_usd=SUBSCRIPTION_PRICE,
-            parameter=my_invoice.get_invoice_parameter()
+            parameter=int(call.data.split("-")[2])
         )
-        await call.message.edit_text(texts[user.language]["successfully_paid"])
+        await call.message.delete()
+        await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
+                               reply_markup=after_pay_keyboard(user.language))
         await user.make_subscriber()
     else:
         await call.answer(text=texts[user.language]["not_paid"])
