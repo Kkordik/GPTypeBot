@@ -16,12 +16,13 @@ class MyInvoice:
     default_currency: str
     invoice_text_name: str
 
-    def __init__(self, amount: float = None, currency: str = None, client_user_id=None, client_name: str = None,
+    def __init__(self, amount: float = None, currency: str = None, product_name: str = None, client_user_id=None, client_name: str = None,
                  invoice_parameter: str = None, invoice_status: bool = None):
-        self.invoice_time = time.time()
+        self.invoice_time: int = int(time.time())
         self.client_user_id = client_user_id
         self.client_name = client_name
         self.currency = currency
+        self.product_name = product_name
         self.amount = amount
         self.invoice_parameter: str = invoice_parameter
         self.invoice_status: bool = invoice_status
@@ -34,7 +35,7 @@ class MyInvoice:
                 return sub_my_invoice_cl
         return None
 
-    def calculate_price(self, chosen_currency):
+    def calculate_price(self, chosen_currency, usd_price):
         pass
 
     async def create_invoice_url(self):
@@ -64,7 +65,7 @@ class CryptoInvoice(MyInvoice):
     invoice_text_name = "crypto_invoice"
 
     __price_url = "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest"
-    __crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.MAIN_NET)  # Change from MAIN_NET on TEST_NET to test
+    __crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.TEST_NET)  # Change MAIN_NET on TEST_NET to test bot
 
     def __init__(self, amount: float = None, currency: str = None, client_user_id=None, client_name: str = None,
                  invoice: Invoice = None, invoice_status: bool = None, invoice_parameter: str = None):
@@ -79,7 +80,7 @@ class CryptoInvoice(MyInvoice):
                 self._currencies_list.append(currency.code)
         return self._currencies_list
 
-    def calculate_price(self, chosen_currency):
+    async def calculate_price(self, chosen_currency, usd_price):
         parameters = {'symbol': chosen_currency,
                       'convert': 'USD'}
         headers = {
@@ -87,14 +88,13 @@ class CryptoInvoice(MyInvoice):
             'X-CMC_PRO_API_KEY': CURRENCIES_API_KEY
         }
 
-        session = Session()
+        session = aiohttp.ClientSession()
         session.headers.update(headers)
+        response = await session.get(self.__price_url, params=parameters)
+        response = await response.json()
+        currency_price = response['data'][chosen_currency][0]['quote']['USD']['price']
 
-        response = session.get(self.__price_url, params=parameters)
-
-        currency_price = json.loads(response.text)['data'][chosen_currency][0]['quote']['USD']['price']
-
-        return SUBSCRIPTION_PRICE / currency_price
+        return usd_price / currency_price
 
     async def create_invoice_url(self) -> str:
         self.invoice = await self.__crypto.create_invoice(asset=self.currency, amount=self.amount)
@@ -135,6 +135,7 @@ class CardInvoice(MyInvoice):
 
     __WFP_TOKEN = WAYFORPAY_TOKEN
     __merchant_name = "t_me_4381e"
+    __merchant_domain = "http://t.me/GPTypeBot"
     __wfp_url = "https://api.wayforpay.com/api"
     __wfp_session = aiohttp.ClientSession()
 
@@ -146,26 +147,52 @@ class CardInvoice(MyInvoice):
         if not self.client_user_id:
             raise Exception("No self.client_user_id specified before, cant create invoice_parameter")
 
-        param_to_hash = str(self.client_user_id) + str(self.invoice_time)
-        self.invoice_parameter = hashlib.md5(param_to_hash.encode()).hexdigest()
+        if not self.invoice_parameter:
+            param_to_hash = str(self.client_user_id) + str(self.invoice_time)
+            self.invoice_parameter = hashlib.md5(param_to_hash.encode()).hexdigest()
         return self.invoice_parameter
 
-    def generate_message_hash(self, message_vals: list = None, sep: str = ';') -> str:
-        message = sep.join(message_vals)
+    def __generate_message_hash(self, message_vals: list = None, sep: str = ';') -> str:
+        message = sep.join([str(obj) for obj in message_vals])
+        print(message)
+        print(self.__WFP_TOKEN)
         msg_hmac = hmac.new(key=self.__WFP_TOKEN.encode('utf-8'),
                             msg=message.encode('utf-8'),
                             digestmod='MD5')
         return msg_hmac.hexdigest()
 
-    def calculate_price(self, chosen_currency):
-        msg_hash = self.generate_message_hash([self.__merchant_name, self.invoice_time])
+    async def calculate_price(self, chosen_currency, usd_price):
+        msg_hash = self.__generate_message_hash([self.__merchant_name, self.invoice_time])
         data = {
             "apiVersion": "1",
             "transactionType": "CURRENCY_RATES",
             "merchantAccount": self.__merchant_name,
-             "orderDate": self.invoice_time,
+            "orderDate": self.invoice_time,
             "merchantSignature": msg_hash
         }
+        print(data)
         response = await self.__wfp_session.post(self.__wfp_url, json=data)
-        response = await response.json()
-        return SUBSCRIPTION_PRICE * int(response['RATES']['USD'])
+        response = await response.json(content_type='text/html')
+
+        return usd_price * int(response['rates']['USD'])
+
+    async def create_invoice_url(self) -> str:
+        msg_hash = self.__generate_message_hash([self.__merchant_name, self.invoice_time])
+        self.invoice_parameter = self.get_invoice_parameter()
+        self.
+
+        data = {
+            "merchantAccount": self.__merchant_name,
+            "merchantDomainName": self.__merchant_domain,
+            "merchantSignature": msg_hash,
+            "orderReference": self.invoice_parameter,
+            "orderDate": self.invoice_time,
+            "amount": self.amount,
+            "currency": self.currency,
+            "productName": [],
+            "productPrice": [self.amount],
+            "productCount": [],
+        }
+        print(data)
+        response = await self.__wfp_session.post(self.__wfp_url, json=data)
+        response = await response.json(content_type='text/html')
