@@ -14,6 +14,7 @@ from main_interface.premium_call import register_premium_call
 from main_interface.payment_method_call import register_payment_method_call
 from main_interface.payment_currency_call import register_payment_currency_call
 from main_interface.check_payment_call import register_check_payment_call
+from main_interface.successfull_pay_msg import register_successful_payment_msg
 
 
 async def main(_loop):
@@ -31,6 +32,7 @@ async def main(_loop):
     register_payment_method_call(dp)
     register_payment_currency_call(dp)
     register_check_payment_call(dp)
+    register_successful_payment_msg(dp)
     await dp.start_polling()
 
 

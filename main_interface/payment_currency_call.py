@@ -18,11 +18,12 @@ async def payment_currency_callback(call: types.CallbackQuery):
         my_invoice = MyInvoice.find_create_invoice_object(call.data.split("-")[1])
 
         my_invoice.currency = call.data.split("-")[2]
-        my_invoice.amount = await my_invoice.calculate_price(chosen_currency=my_invoice.currency, usd_price=SUBSCRIPTION_PRICE)
+        my_invoice.amount = await my_invoice.calculate_price(chosen_currency=my_invoice.currency,
+                                                             usd_price=SUBSCRIPTION_PRICE)
         my_invoice.client_user_id = call.from_user.id
         my_invoice.client_name = call.from_user.first_name
 
-        pay_url = await my_invoice.create_invoice_url(bot=bot)
+        pay_url = await my_invoice.create_invoice_url(lang=user.language, bot=bot)
         keyboard = my_invoice.payment_url_keyboard(
             lang=user.language,
             pay_url=pay_url,

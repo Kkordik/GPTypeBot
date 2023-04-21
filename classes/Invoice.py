@@ -1,5 +1,4 @@
 import time
-
 import aiogram
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiocryptopay import AioCryptoPay, Networks
@@ -39,13 +38,16 @@ class MyInvoice:
         return None
 
     @staticmethod
-    def payment_url_keyboard(lang: str, pay_url: str, payment_method: str, parameter: str) -> InlineKeyboardMarkup:
-        return InlineKeyboardMarkup()
+    def payment_url_keyboard(lang: str, pay_url: str, payment_method: str, parameter: str):
+        keyboard = InlineKeyboardMarkup()
+        if pay_url:
+            keyboard.add(InlineKeyboardButton(text=texts[lang]["pay_but"], url=pay_url))
+        return keyboard
 
     def calculate_price(self, chosen_currency, usd_price):
         pass
 
-    async def create_invoice_url(self, bot: aiogram.Bot):
+    async def create_invoice_url(self, lang: str, bot: aiogram.Bot) -> str:
         pass
 
     async def check_invoice(self, invoice_parameter: str = None):
@@ -73,7 +75,7 @@ class CryptoInvoice(MyInvoice):
     need_status_check_loop = True
 
     __price_url = "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest"
-    __crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.TEST_NET)  # Change MAIN_NET on TEST_NET to test bot
+    __crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.MAIN_NET)  # Change MAIN_NET on TEST_NET to test bot
 
     def __init__(self, amount: float = None, currency: str = None, client_user_id=None, client_name: str = None,
                  invoice: Invoice = None, invoice_status: bool = None, invoice_parameter: str = None):
@@ -110,11 +112,13 @@ class CryptoInvoice(MyInvoice):
         response = await session.get(self.__price_url, params=parameters)
         response = await response.json()
         currency_price = response['data'][chosen_currency][0]['quote']['USD']['price']
+        await session.close()
 
         return usd_price / currency_price
 
-    async def create_invoice_url(self, bot: aiogram.Bot) -> str:
+    async def create_invoice_url(self, lang: str, bot: aiogram.Bot) -> str:
         self.invoice = await self.__crypto.create_invoice(asset=self.currency, amount=self.amount)
+        print(self.invoice.invoice_id)
         self.invoice_parameter = str(self.invoice.invoice_id)
         return self.invoice.pay_url
 
@@ -128,6 +132,7 @@ class CryptoInvoice(MyInvoice):
         else:
             raise Exception("No self.invoice or self.invoice_parameter specified to check status")
 
+        print(int(self.invoice_parameter))
         gotten_invoice = await self.__crypto.get_invoices(invoice_ids=int(self.invoice_parameter))
 
         self.invoice_status = True if gotten_invoice.status == gotten_invoice.status.PAID else False
@@ -135,12 +140,7 @@ class CryptoInvoice(MyInvoice):
         return self.invoice_status
 
     def get_invoice_parameter(self) -> str:
-        if not self.invoice:
-            raise Exception("No self.invoice specified before, cant create invoice_parameter")
-
-        invoice_id = str(self.invoice.invoice_id)
-        self.invoice_parameter = hashlib.md5(invoice_id.encode()).hexdigest()
-        return self.invoice_parameter
+        return str(self.invoice.invoice_id)
 
 
 class CardInvoice(MyInvoice):
@@ -150,7 +150,6 @@ class CardInvoice(MyInvoice):
     default_currency = "UAH"
     invoice_text_name = "card_invoice"
     need_status_check_loop = False
-
 
     __WFP_TOKEN = WAYFORPAY_TOKEN
     __merchant_name = "t_me_4381e"
@@ -162,19 +161,8 @@ class CardInvoice(MyInvoice):
                  invoice_parameter: str = None, invoice_status: bool = None):
         super().__init__(amount, currency, client_user_id, client_name, invoice_parameter, invoice_status)
 
-    def get_invoice_parameter(self) -> str:
-        if not self.client_user_id:
-            raise Exception("No self.client_user_id specified before, cant create invoice_parameter")
-
-        if not self.invoice_parameter:
-            param_to_hash = str(self.client_user_id) + str(self.invoice_time)
-            self.invoice_parameter = hashlib.md5(param_to_hash.encode()).hexdigest()
-        return self.invoice_parameter
-
     def __generate_message_hash(self, message_vals: list = None, sep: str = ';') -> str:
         message = sep.join([str(obj) for obj in message_vals])
-        print(message)
-        print(self.__WFP_TOKEN)
         msg_hmac = hmac.new(key=self.__WFP_TOKEN.encode('utf-8'),
                             msg=message.encode('utf-8'),
                             digestmod='MD5')
@@ -189,19 +177,27 @@ class CardInvoice(MyInvoice):
             "orderDate": self.invoice_time,
             "merchantSignature": msg_hash
         }
-        print(data)
         response = await self.__wfp_session.post(self.__wfp_url, json=data)
         response = await response.json(content_type='text/html')
 
         return usd_price * int(response['rates']['USD'])
 
-    async def create_invoice_url(self, bot: aiogram.Bot) -> str:
+    async def create_invoice_url(self, lang: str, bot: aiogram.Bot) -> str:
         url = await bot.create_invoice_link(
-            title='GPTypeBot subscription',
-            description='Become premium user of t.me/GPTypeBot',
-            payload=self.invoice_parameter,
+            title=texts[lang]["subs_pay_title"],
+            description=texts[lang]["subs_pay_description"],
+            payload=self.get_invoice_parameter(),
             provider_token=LIQ_PAY_TOKEN,
             currency='UAH',
-            prices=[aiogram.types.LabeledPrice(label='premium', amount=int(self.amount) * 100)]
+            prices=[aiogram.types.LabeledPrice(label=texts[lang]["subs_pay_label"], amount=int(self.amount) * 100)]
         )
         return url
+
+    def get_invoice_parameter(self) -> str:
+        if not self.client_user_id:
+            raise Exception("No self.client_user_id specified before, cant create invoice_parameter")
+
+        if not self.invoice_parameter:
+            param_to_hash = str(self.client_user_id) + str(self.invoice_time)
+            self.invoice_parameter = hashlib.md5(param_to_hash.encode()).hexdigest()
+        return self.invoice_parameter

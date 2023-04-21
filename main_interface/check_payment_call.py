@@ -22,7 +22,7 @@ async def payment_status_callback(call: types.CallbackQuery):
             payment_method=my_invoice.method_name,
             amount=my_invoice.amount,
             amount_usd=SUBSCRIPTION_PRICE,
-            parameter=int(call.data.split("-")[2])
+            parameter=call.data.split("-")[2]
         )
         await call.message.delete()
         await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],

@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 import hashlib
 from classes.Query import Query
-from texts import texts, facts
+from texts import texts, facts, example_queries
 from classes.MainClasses import User, QueryDb
 from database.run_db import user_tb, query_tb
 from classes.Markers import ends_with_marker
@@ -16,7 +16,6 @@ import datetime
 
 
 async def inline_echo(inline_query: InlineQuery):
-    time_st = time()
     rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
     result_id: str = hashlib.md5(inline_query.query.encode()).hexdigest() + rand_str
 
@@ -31,7 +30,7 @@ async def inline_echo(inline_query: InlineQuery):
 
     try:
         # Returning inline tip if the user isn't a subscriber
-        if not await user_db.check_subscription():
+        if not (await user_db.check_subscription() or inline_query.query in example_queries):
             return await NoSubscription(language=lang).send_inline_tip(inline_query, result_id)
 
         # Returning mistake tips if length of query 0 or more than limit of the Telegram

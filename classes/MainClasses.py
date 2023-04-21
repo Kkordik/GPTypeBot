@@ -201,7 +201,7 @@ class Payment:
         self.parameter = parameter
 
     async def add_payment(self, user_id, currency: str, payment_method: str, amount: float, amount_usd: float,
-                          parameter: str = None):
+                          parameter=None):
         self.user_id = user_id
         self.currency = currency
         self.payment_method = payment_method

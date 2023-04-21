@@ -38,11 +38,14 @@ texts = {
         "card_method_but": "💳 Visa | Mastercard",
         "back_payment_but": "Return",
         "crypto_invoice": "Pay by the button below, your subscription will be added automatically within 5 min:",
-        "card_invoice": "In developing🛠❤️",
+        "card_invoice": "Pay by the button below, your subscription will be added automatically after payment",
         "pay_but": "➡️Pay",
         "paid_but": "✅ I've paid",
         "successfully_paid": "Thank you for subscribing❤️, enjoy the full functionality of the bot, exactly in 28 days you will receive an invoice for a new payment, and after 30 in case of non-payment, the subscription will end",
-        "not_paid": "❌ Not paid"
+        "not_paid": "❌ Not paid",
+        "subs_pay_title": "GPTypeBot subscription",
+        "subs_pay_description": "Become a t.me/GPTypeBot premium user",
+        "subs_pay_label": "Premium subscription"
     },
     "uk": {
         "start_text": "Могутній, унікальний та безкоштовний.\nПереглянь короткий гайд нижче,"
@@ -81,11 +84,14 @@ texts = {
         "card_method_but": "💳 Visa | Mastercard",
         "back_payment_but": "Назад",
         "crypto_invoice": "Щоб сплатити перейди по кнопці нижче, твоя підписка обновиться автоматично на протязі 5хв:",
-        "card_invoice": "В розробці🛠❤️",
+        "card_invoice": "Щоб сплатити перейди по кнопці нижче, твоя підписка обновиться автоматично після оплати",
         "pay_but": "➡️Оплатить",
         "paid_but": "✅ Я сплатив",
         "successfully_paid": "Дякуємо за підписку❤️, насолоджуйтесь повним функціоналом бота, рівно через 28 днів ви отримаєте рахунок на новий платіж, а через 30 у разі несплати підписка завершується",
-        "not_paid": "❌ Не сплачено"
+        "not_paid": "❌ Не сплачено",
+        "subs_pay_title": "GPTypeBot підписка",
+        "subs_pay_description": "Стань t.me/GPTypeBot преміум юзером",
+        "subs_pay_label": "Преміум підписка"
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
@@ -124,11 +130,14 @@ texts = {
         "card_method_but": "💳 Visa | Mastercard",
         "back_payment_but": "Назад",
         "crypto_invoice": "Чтобы оплатить перейди по кнопке ниже, твоя подписка обновиться автоматически в течении 5 мин:",
-        "card_invoice": "В разработке🛠❤️",
+        "card_invoice": "Чтобы оплатить перейди по кнопке ниже, твоя подписка обновиться автоматически после оплаты",
         "pay_but": "➡️Оплатить",
         "paid_but": "✅ Я оплатил",
         "successfully_paid": "Спасибо за подписку❤️, наслаждайтесь полным функционалом бота, ровно через 28 дней вам придёт счет на новую оплату, а через 30 в случае неоплаты подписка закончится",
-        "not_paid": "❌ Не оплачено"
+        "not_paid": "❌ Не оплачено",
+        "subs_pay_title": "GPTypeBot подписка",
+        "subs_pay_description": "Стань t.me/GPTypeBot премиум юзером",
+        "subs_pay_label": "Пермиум подписка"
     }
 }
 
@@ -336,11 +345,11 @@ guide_texts = {
                            "<b>'-q'</b>   это маркер конца запросов и подзапросов.",
             "button": "Маркеры",
             "examples": [
-                        {"button": "Пример -f", "query": "-f Alex, I am late, sorry, traffic jams!"},
-                        {"button": "Пример -p", "query": "-p We have to stop climate changing or it will kill us!"},
-                        {"button": "Пример -t", "query": "-t-spanish Hi! My name is Max, glad to see you in this chat!"},
-                        {"button": "Пример -m", "query": "-m I have jast told u thet I will continu sleping!"},
-                        {"button": "Пример -q", "query": "-s Give me 5 reasons why should I start exercising -q"},
+                {"button": "Пример -f", "query": "-f Alex, I am late, sorry, traffic jams!"},
+                {"button": "Пример -p", "query": "-p We have to stop climate changing or it will kill us!"},
+                {"button": "Пример -t", "query": "-t-spanish Hi! My name is Max, glad to see you in this chat!"},
+                {"button": "Пример -m", "query": "-m I have jast told u thet I will continu sleping!"},
+                {"button": "Пример -q", "query": "-s Give me 5 reasons why should I start exercising -q"},
             ],
         },
         "last_page": {
@@ -350,3 +359,12 @@ guide_texts = {
         }
     }
 }
+
+example_queries = []
+
+# Add all example queries to the list
+for lang in guide_texts.values():
+    for text_dict in lang.values():
+        if text_dict["examples"]:
+            for example in text_dict["examples"]:
+                example_queries.append(example["query"])

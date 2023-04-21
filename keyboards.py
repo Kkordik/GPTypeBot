@@ -6,14 +6,15 @@ from typing import List
 from classes.Invoice import MyInvoice
 
 
-def start_keyboard(lang: str):
+def start_keyboard(lang: str, start_using_but: bool = True):
     first_guide_page = GuidePage(language=lang, text_name=Guide.texts_names_l[0])
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton(text=texts[lang]["guide_but"],
                                       callback_data="guide-" + first_guide_page.text_name))
     keyboard.add(InlineKeyboardButton(texts[lang]["context_but"], callback_data="context"))
     keyboard.add(InlineKeyboardButton(texts[lang]["premium_but"], callback_data="premium"))
-    keyboard.add(InlineKeyboardButton(texts[lang]["start_inline_use_but"], switch_inline_query=""))
+    if start_using_but:
+        keyboard.add(InlineKeyboardButton(texts[lang]["start_inline_use_but"], switch_inline_query=""))
     return keyboard
 
 

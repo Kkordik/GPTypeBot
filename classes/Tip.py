@@ -83,7 +83,6 @@ class AnswerTip(Tip):
         self.bot_but_text = texts[self.lang][self.bot_but_text_name]
 
     async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
-        print(" SENDING INLINE TIP", self.bot_but_text, " ", self.pm_parameter + "-" + result_id)
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
@@ -151,7 +150,7 @@ class NoSubscription(MistakeTip):
         await bot.send_message(chat_id=chat_id,
                                text=texts[self.lang]['start_text'],
                                parse_mode="HTML",
-                               reply_markup=start_keyboard(self.lang))
+                               reply_markup=start_keyboard(self.lang, start_using_but=False))
 
 
 class StartWithMarker(WarningTip):
