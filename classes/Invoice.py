@@ -1,9 +1,11 @@
 import time
+
+import aiogram
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiocryptopay import AioCryptoPay, Networks
 from aiocryptopay.models.invoice import Invoice
-from config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, SUBSCRIPTION_PRICE, WAYFORPAY_TOKEN
-from requests import Session
-import json
+from config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, WAYFORPAY_TOKEN, LIQ_PAY_TOKEN
+from texts import texts
 import hashlib
 import hmac
 import aiohttp
@@ -15,6 +17,7 @@ class MyInvoice:
     _currencies_list: list
     default_currency: str
     invoice_text_name: str
+    need_status_check_loop: bool
 
     def __init__(self, amount: float = None, currency: str = None, product_name: str = None, client_user_id=None, client_name: str = None,
                  invoice_parameter: str = None, invoice_status: bool = None):
@@ -35,10 +38,14 @@ class MyInvoice:
                 return sub_my_invoice_cl
         return None
 
+    @staticmethod
+    def payment_url_keyboard(lang: str, pay_url: str, payment_method: str, parameter: str) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup()
+
     def calculate_price(self, chosen_currency, usd_price):
         pass
 
-    async def create_invoice_url(self):
+    async def create_invoice_url(self, bot: aiogram.Bot):
         pass
 
     async def check_invoice(self, invoice_parameter: str = None):
@@ -63,6 +70,7 @@ class CryptoInvoice(MyInvoice):
     _currencies_list = ["BTC", "TON", "ETH", "USDT", "USDC", "BUSD"]
     default_currency = "USDT"
     invoice_text_name = "crypto_invoice"
+    need_status_check_loop = True
 
     __price_url = "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest"
     __crypto = AioCryptoPay(token=CRYPTOBOT_TOKEN, network=Networks.TEST_NET)  # Change MAIN_NET on TEST_NET to test bot
@@ -71,6 +79,15 @@ class CryptoInvoice(MyInvoice):
                  invoice: Invoice = None, invoice_status: bool = None, invoice_parameter: str = None):
         super().__init__(amount, currency, client_user_id, client_name, invoice_parameter, invoice_status)
         self.invoice: Invoice = invoice
+
+    @staticmethod
+    def payment_url_keyboard(lang: str, pay_url: str, payment_method: str, parameter: str):
+        keyboard = InlineKeyboardMarkup()
+        if pay_url:
+            keyboard.add(InlineKeyboardButton(text=texts[lang]["pay_but"], url=pay_url))
+            keyboard.add(InlineKeyboardButton(text=texts[lang]["paid_but"],
+                                              callback_data=f"check_payment-{payment_method}-{parameter}"))
+        return keyboard
 
     async def get_currencies_list(self):
         currencies_list = await self.__crypto.get_currencies()
@@ -96,7 +113,7 @@ class CryptoInvoice(MyInvoice):
 
         return usd_price / currency_price
 
-    async def create_invoice_url(self) -> str:
+    async def create_invoice_url(self, bot: aiogram.Bot) -> str:
         self.invoice = await self.__crypto.create_invoice(asset=self.currency, amount=self.amount)
         self.invoice_parameter = str(self.invoice.invoice_id)
         return self.invoice.pay_url
@@ -132,6 +149,8 @@ class CardInvoice(MyInvoice):
     _currencies_list = ["UAH"]
     default_currency = "UAH"
     invoice_text_name = "card_invoice"
+    need_status_check_loop = False
+
 
     __WFP_TOKEN = WAYFORPAY_TOKEN
     __merchant_name = "t_me_4381e"
@@ -176,23 +195,13 @@ class CardInvoice(MyInvoice):
 
         return usd_price * int(response['rates']['USD'])
 
-    async def create_invoice_url(self) -> str:
-        msg_hash = self.__generate_message_hash([self.__merchant_name, self.invoice_time])
-        self.invoice_parameter = self.get_invoice_parameter()
-        self.
-
-        data = {
-            "merchantAccount": self.__merchant_name,
-            "merchantDomainName": self.__merchant_domain,
-            "merchantSignature": msg_hash,
-            "orderReference": self.invoice_parameter,
-            "orderDate": self.invoice_time,
-            "amount": self.amount,
-            "currency": self.currency,
-            "productName": [],
-            "productPrice": [self.amount],
-            "productCount": [],
-        }
-        print(data)
-        response = await self.__wfp_session.post(self.__wfp_url, json=data)
-        response = await response.json(content_type='text/html')
+    async def create_invoice_url(self, bot: aiogram.Bot) -> str:
+        url = await bot.create_invoice_link(
+            title='GPTypeBot subscription',
+            description='Become premium user of t.me/GPTypeBot',
+            payload=self.invoice_parameter,
+            provider_token=LIQ_PAY_TOKEN,
+            currency='UAH',
+            prices=[aiogram.types.LabeledPrice(label='premium', amount=int(self.amount) * 100)]
+        )
+        return url

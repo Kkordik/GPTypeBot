@@ -4,7 +4,7 @@ from classes.MainClasses import User, Payment
 from classes.Invoice import MyInvoice
 from database.run_db import user_tb, payment_tb
 from texts import texts
-from keyboards import payment_url_keyboard, after_pay_keyboard
+from keyboards import after_pay_keyboard
 from config import PAY_WAIT_TIME, PAY_CHECK_INTERVAL, SUBSCRIPTION_PRICE
 from run_bot import bot
 
@@ -22,8 +22,8 @@ async def payment_currency_callback(call: types.CallbackQuery):
         my_invoice.client_user_id = call.from_user.id
         my_invoice.client_name = call.from_user.first_name
 
-        pay_url = await my_invoice.create_invoice_url()
-        keyboard = payment_url_keyboard(
+        pay_url = await my_invoice.create_invoice_url(bot=bot)
+        keyboard = my_invoice.payment_url_keyboard(
             lang=user.language,
             pay_url=pay_url,
             payment_method=my_invoice.method_name,
@@ -32,25 +32,25 @@ async def payment_currency_callback(call: types.CallbackQuery):
 
         pay_msg = await call.message.edit_text(text=texts[user.language][my_invoice.invoice_text_name],
                                                reply_markup=keyboard)
-
-        for _ in range(int(PAY_WAIT_TIME / PAY_CHECK_INTERVAL)):
-            if await my_invoice.check_invoice():
-                payment_db = Payment(payment_tb)
-                await payment_db.add_payment(
-                    user_id=call.from_user.id,
-                    currency=my_invoice.currency,
-                    payment_method=my_invoice.method_name,
-                    amount=my_invoice.amount,
-                    amount_usd=SUBSCRIPTION_PRICE,
-                    parameter=my_invoice.get_invoice_parameter()
-                )
-                await pay_msg.delete()
-                await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
-                                       reply_markup=after_pay_keyboard(user.language))
-                await user.make_subscriber()
-                break
-            else:
-                await asyncio.sleep(PAY_CHECK_INTERVAL)
+        if my_invoice.need_status_check_loop:
+            for _ in range(int(PAY_WAIT_TIME / PAY_CHECK_INTERVAL)):
+                if await my_invoice.check_invoice():
+                    payment_db = Payment(payment_tb)
+                    await payment_db.add_payment(
+                        user_id=call.from_user.id,
+                        currency=my_invoice.currency,
+                        payment_method=my_invoice.method_name,
+                        amount=my_invoice.amount,
+                        amount_usd=SUBSCRIPTION_PRICE,
+                        parameter=my_invoice.get_invoice_parameter()
+                    )
+                    await pay_msg.delete()
+                    await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
+                                           reply_markup=after_pay_keyboard(user.language))
+                    await user.make_subscriber()
+                    break
+                else:
+                    await asyncio.sleep(PAY_CHECK_INTERVAL)
 
     else:
         await call.message.edit_text(text=texts[user.language]["already_premium"], reply_markup=None)

@@ -89,15 +89,6 @@ async def payment_currencies_keyboard(lang: str, chosen_method_cl: MyInvoice):
     return keyboard
 
 
-def payment_url_keyboard(lang: str, pay_url: str, payment_method: str, parameter: str):
-    keyboard = InlineKeyboardMarkup()
-    if pay_url:
-        keyboard.add(InlineKeyboardButton(text=texts[lang]["pay_but"], url=pay_url))
-        keyboard.add(InlineKeyboardButton(text=texts[lang]["paid_but"],
-                                          callback_data=f"check_payment-{payment_method}-{parameter}"))
-    return keyboard
-
-
 def after_pay_keyboard(lang: str):
     first_guide_page = GuidePage(language=lang, text_name=Guide.texts_names_l[0])
     keyboard = InlineKeyboardMarkup()
