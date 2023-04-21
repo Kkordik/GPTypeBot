@@ -28,6 +28,13 @@ async def payment_status_callback(call: types.CallbackQuery):
         await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
                                reply_markup=after_pay_keyboard(user.language))
         await user.make_subscriber()
+        await MyInvoice.notify_admin_successful_pay(
+            bot=bot,
+            pay_parameter=my_invoice.invoice_parameter,
+            user=call.from_user,
+            amount=my_invoice.amount,
+            currency=my_invoice.currency
+        )
     else:
         await call.answer(text=texts[user.language]["not_paid"])
 

@@ -21,6 +21,7 @@ waiting_dict = {}  # {user_id: <datetime_query>}
 
 
 async def message_query(message: types.Message):
+    print("entered other")
     time_st = time()
     # Returning if message sent by bot (any inline bot or in a group)
     if message.via_bot:
@@ -129,4 +130,6 @@ async def message_query(message: types.Message):
 
 
 def register_message_query_cmd(dp: Dispatcher):
-    dp.register_message_handler(message_query, content_types=["text"])
+    dp.register_message_handler(message_query,
+                                lambda message: not message.successful_payment and message.content_type == "text")
+

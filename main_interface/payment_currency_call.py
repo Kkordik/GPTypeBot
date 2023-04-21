@@ -34,9 +34,12 @@ async def payment_currency_callback(call: types.CallbackQuery):
         pay_msg = await call.message.edit_text(text=texts[user.language][my_invoice.invoice_text_name],
                                                reply_markup=keyboard)
         if my_invoice.need_status_check_loop:
+
             for _ in range(int(PAY_WAIT_TIME / PAY_CHECK_INTERVAL)):
+
                 if await my_invoice.check_invoice():
                     payment_db = Payment(payment_tb)
+
                     await payment_db.add_payment(
                         user_id=call.from_user.id,
                         currency=my_invoice.currency,
@@ -45,10 +48,21 @@ async def payment_currency_callback(call: types.CallbackQuery):
                         amount_usd=SUBSCRIPTION_PRICE,
                         parameter=my_invoice.get_invoice_parameter()
                     )
+
                     await pay_msg.delete()
+
                     await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
                                            reply_markup=after_pay_keyboard(user.language))
+
                     await user.make_subscriber()
+
+                    await MyInvoice.notify_admin_successful_pay(
+                        bot=bot,
+                        pay_parameter=my_invoice.invoice_parameter,
+                        user=call.from_user,
+                        amount=my_invoice.amount,
+                        currency=my_invoice.currency
+                    )
                     break
                 else:
                     await asyncio.sleep(PAY_CHECK_INTERVAL)

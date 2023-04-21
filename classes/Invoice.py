@@ -3,7 +3,7 @@ import aiogram
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiocryptopay import AioCryptoPay, Networks
 from aiocryptopay.models.invoice import Invoice
-from config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, WAYFORPAY_TOKEN, LIQ_PAY_TOKEN
+from config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, WAYFORPAY_TOKEN, LIQ_PAY_TOKEN, ADMIN_CHAT_ID
 from texts import texts
 import hashlib
 import hmac
@@ -28,6 +28,21 @@ class MyInvoice:
         self.amount = amount
         self.invoice_parameter: str = invoice_parameter
         self.invoice_status: bool = invoice_status
+
+    @staticmethod
+    async def notify_admin_successful_pay(bot: aiogram.Bot, pay_parameter, user: aiogram.types.User, amount: float,
+                                          currency: str):
+        await bot.send_message(
+            chat_id=ADMIN_CHAT_ID,
+            text=texts['uk']['admin_successful_pay'].format(
+                pay_parameter,
+                amount,
+                currency,
+                user.username,
+                user.first_name,
+                user.id,
+            )
+        )
 
     @staticmethod
     def find_create_invoice_object(pay_method_name: str):

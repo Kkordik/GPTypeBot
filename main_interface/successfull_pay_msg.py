@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, types
+from aiogram.types.message import ContentTypes
 from classes.MainClasses import User, Payment
-from classes.Invoice import CardInvoice
+from classes.Invoice import CardInvoice, MyInvoice
 from database.run_db import user_tb, payment_tb
 from texts import texts
 from keyboards import after_pay_keyboard
@@ -8,11 +9,13 @@ from config import SUBSCRIPTION_PRICE
 from run_bot import bot
 
 
-async def successful_payment_message(message: types.Message):
-    user = User(user_tb, call.from_user.id, user=call.from_user)
-    await user.get_language()
+async def pre_checkout_update(pre_checkout: types.PreCheckoutQuery):
+    await bot.answer_pre_checkout_query(pre_checkout_query_id=pre_checkout.id, ok=True)
 
-    print(message.from_user.id)
+
+async def successful_payment_msg(message: types.Message):
+    user = User(user_tb, message.from_user.id, user=message.from_user)
+    await user.get_language()
 
     payment_db = Payment(payment_tb)
     await payment_db.add_payment(
@@ -23,11 +26,18 @@ async def successful_payment_message(message: types.Message):
         amount_usd=SUBSCRIPTION_PRICE,
         parameter=message.successful_payment.invoice_payload
     )
-    await call.message.delete()
     await bot.send_message(user.user_id, texts[user.language]["successfully_paid"],
                            reply_markup=after_pay_keyboard(user.language))
     await user.make_subscriber()
+    await MyInvoice.notify_admin_successful_pay(
+        bot=bot,
+        pay_parameter=message.successful_payment.invoice_payload,
+        user=message.from_user,
+        amount=message.successful_payment.total_amount / 100,
+        currency=message.successful_payment.currency
+    )
 
 
 def register_successful_payment_msg(dp: Dispatcher):
-    dp.register_message_handler(successful_payment_message, lambda message: message.successful_payment)
+    dp.register_message_handler(successful_payment_msg, content_types=ContentTypes.SUCCESSFUL_PAYMENT)
+    dp.register_pre_checkout_query_handler(pre_checkout_update, lambda pre_checkout: True)

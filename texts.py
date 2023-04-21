@@ -91,7 +91,8 @@ texts = {
         "not_paid": "❌ Не сплачено",
         "subs_pay_title": "GPTypeBot підписка",
         "subs_pay_description": "Стань t.me/GPTypeBot преміум юзером",
-        "subs_pay_label": "Преміум підписка"
+        "subs_pay_label": "Преміум підписка",
+        "admin_successful_pay": "Новий платіж #{},\n\nОтримано {} {} від \n\nusername: @{} \nім'я: {} \nuser_id: {}"
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
