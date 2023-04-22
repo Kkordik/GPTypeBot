@@ -8,7 +8,7 @@ from texts import texts
 class User:
     def __init__(self, table: UsersTable, user_id, user: types.User = None,
                  language: str = BASIC_LANGUAGE, date_time: str = None, subscriber: bool = False,
-                 current_topic_id: int = None):
+                 current_topic_id: int = None, trial_queries: int = None):
         self.table: Table = table
         self.user: types.User = user
         self.user_id: int = int(user_id)
@@ -16,6 +16,7 @@ class User:
         self.date_time: str = date_time
         self.subscriber: bool = subscriber
         self.current_topic_id: int = current_topic_id
+        self.trial_queries: int = trial_queries
 
     async def get_language(self, user: types.User = None):
         if user:
@@ -46,6 +47,20 @@ class User:
         else:
             self.subscriber = True
         return self.subscriber
+
+    async def get_trial_queries(self) -> int:
+        res = await self.table.select_vals(user_id=self.user_id)
+        self.trial_queries = res[0]["trial_queries"]
+        return self.trial_queries
+
+    async def charge_one_trial_query(self, prev_trial_amount: int = None):
+        if prev_trial_amount:
+            self.trial_queries = prev_trial_amount
+        elif self.trial_queries is None:
+            raise Exception("Not specified old trial queries amount")
+
+        self.trial_queries -= 1
+        return await self.table.update_val(where={"user_id": self.user_id}, trial_queries=self.trial_queries)
 
     async def get_current_topic_id(self):
         res = await self.table.select_vals(user_id=self.user_id)

@@ -29,9 +29,13 @@ async def inline_echo(inline_query: InlineQuery):
     lang = await user_db.get_language()
 
     try:
+        is_subs = await user_db.check_subscription()
+        trial_q = await user_db.get_trial_queries()
+        is_example = inline_query.query in example_queries
+
         # Returning inline tip if the user isn't a subscriber
-        if not (await user_db.check_subscription() or inline_query.query in example_queries):
-            return await NoSubscription(language=lang).send_inline_tip(inline_query, result_id)
+        if not (is_subs or trial_q >= 0 or is_example):
+            return await NoSubscription(language=lang).send_inline_tip(inline_query, result_id, user_db)
 
         # Returning mistake tips if length of query 0 or more than limit of the Telegram
         query_len = len(inline_query.query)
@@ -79,22 +83,9 @@ async def inline_echo(inline_query: InlineQuery):
             max_token_num=INLINE_MAX_TOKEN_NUM
         )
 
-        # Receiving answers to the sub-queries
+        # Receiving answers on the sub-queries
         answers = await query_t.answer_sub_queries(max_token_num=INLINE_MAX_TOKEN_NUM)
         query_t.answer = query_t.answer.format(*answers)  # Replacing {} with answers in the answer text
-
-        answers = [
-            InlineQueryResultArticle(
-                id=result_id,
-                title=query_t.answer,
-                input_message_content=InputTextMessageContent(message_text=query_t.answer),
-                thumb_url=ANSWER_PHOTO,
-            )
-        ]
-        await inline_query.answer(
-            results=answers,
-            cache_time=0
-        )
 
         answer_tip = AnswerTip(language=lang, text=query_t.answer)
         await answer_tip.send_inline_tip(inline_query=inline_query, result_id=result_id)
@@ -110,6 +101,8 @@ async def inline_echo(inline_query: InlineQuery):
                 topic_id=topic_id,
                 user_id=user_db.user_id
             )
+        if not (user_db.subscriber or is_example):
+            await user_db.charge_one_trial_query(prev_trial_amount=user_db.trial_queries)
 
     except Exception as ex:
         print(result_id, datetime.datetime.now(), ex, sep="   inline   ")

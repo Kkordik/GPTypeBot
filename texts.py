@@ -3,7 +3,7 @@ from config import TELEGRAM_CHAR_LIMIT, SUBSCRIPTION_PRICE
 
 texts = {
     "en": {
-        "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!\nFeedback: @kkordik",
+        "start_text": "Powerful, unique, and free.\nCheck the short guide below before using me or start right now!\n\nYou have {} trial inline queries\n\nFeedback: @kkordik",
         "see_more_but": "See more..",
         "buy_subs_but": "Buy now..",
         "get_in_pm_but": "Send in pm with bot",
@@ -49,7 +49,7 @@ texts = {
     },
     "uk": {
         "start_text": "Могутній, унікальний та безкоштовний.\nПереглянь короткий гайд нижче,"
-                      " перш ніж користуватися мною, або почни прямо зараз!\nFeedback: @kkordik",
+                      " перш ніж користуватися мною, або почни прямо зараз!\n\nУ тебе є {} пробних інлайн запитів\n\nFeedback: @kkordik",
         "see_more_but": "Подробиці..",
         "buy_subs_but": "Придбати..",
         "get_in_pm_but": "Надіслати в лс з ботом",
@@ -96,7 +96,7 @@ texts = {
     },
     "ru": {
         "start_text": "Мощный, уникальный и бесплатный.\nПроверь краткий гайд ниже,"
-                      " прежде чем использовать меня, или начни прямо сейчас!\nFeedback: @kkordik",
+                      " прежде чем использовать меня, или начни прямо сейчас!\n\nУ тебя есть {} пробных инлайн запросов\n\nFeedback: @kkordik",
         "see_more_but": "Подробнее..",
         "buy_subs_but": "Купить..",
         "get_in_pm_but": "Прислать в лс с ботом",

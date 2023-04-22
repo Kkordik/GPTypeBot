@@ -1,3 +1,6 @@
+import aiogram.types
+
+import classes.MainClasses
 from texts import facts, texts
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message, User
 from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO
@@ -49,7 +52,7 @@ class Tip:
             reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
         )
     
-    async def pm_button_reaction(self, bot, chat_id, user: User):
+    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
         guide_page = GuidePage(language=self.lang, text_name=self.guide_page_name)
         await guide_page.send_page(bot=bot, chat_id=chat_id)
 
@@ -146,9 +149,9 @@ class NoSubscription(MistakeTip):
     guide_page_name = "simple_query"
     bot_but_text_name = "buy_subs_but"
 
-    async def pm_button_reaction(self, bot, chat_id, user: User):
+    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
         await bot.send_message(chat_id=chat_id,
-                               text=texts[self.lang]['start_text'],
+                               text=texts[self.lang]['start_text'].format(user_db.trial_queries),
                                parse_mode="HTML",
                                reply_markup=start_keyboard(self.lang, start_using_but=False))
 
@@ -174,8 +177,8 @@ class CurrentTopic(InfoTip):
     guide_page_name = "simple_query"
 
     async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
-        user = User(user_tb, inline_query.from_user.id, user=inline_query.from_user)
-        current_topic_id = await user.get_current_topic_id()
+        user_db = User(user_tb, inline_query.from_user.id, user=inline_query.from_user)
+        current_topic_id = await user_db.get_current_topic_id()
 
         if current_topic_id == 0:
             topic_title = texts[self.lang]["no_topic"]
@@ -199,7 +202,7 @@ class CurrentTopic(InfoTip):
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
 
-    async def pm_button_reaction(self, bot, chat_id, user: User):
+    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
         await context_message(user=user, chat_id=chat_id)
 
 

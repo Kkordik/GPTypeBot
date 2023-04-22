@@ -204,9 +204,10 @@ class UsersTable(Table):
     date_time: datetime
     subscriber: boolean
     current_topic: smallint
+    trial_queries: tinyint
     """
     __name = "users"
-    __columns = ["user_id", "date_time", "subscriber", "current_topic"]
+    __columns = ["user_id", "date_time", "subscriber", "current_topic", "trial_queries"]
 
     def __init__(self, db: Database):
         super().__init__(self.__name, db, self.__columns)

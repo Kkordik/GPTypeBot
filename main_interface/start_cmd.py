@@ -15,12 +15,14 @@ async def simple_start_cmd(message: types.Message):
     user_db = User(user_tb, message.from_user.id, user=message.from_user)
     await user_db.get_language()
     await user_db.insert_user()
+    await user_db.get_trial_queries()
 
     if message.text == "/start":
         await bot.send_message(chat_id=message.chat.id,
-                               text=texts[user_db.language]['start_text'],
+                               text=texts[user_db.language]['start_text'].format(user_db.trial_queries),
                                parse_mode="HTML",
                                reply_markup=start_keyboard(user_db.language))
+
     else:
         param_type = message.text.split(" ")[1].split("-")[0]
         param = message.text.split(" ")[1].split("-")[1]
