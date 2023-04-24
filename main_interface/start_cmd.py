@@ -1,6 +1,6 @@
 from aiogram import Dispatcher, types
 from classes.Query import Query
-from classes.MainClasses import QueryDb
+from classes.MainClasses import QueryDb, User
 from classes.Tip import *
 from database.run_db import user_tb, query_tb
 from texts import texts
@@ -14,20 +14,28 @@ async def simple_start_cmd(message: types.Message):
     user_db = User(user_tb, message.from_user.id, user=message.from_user)
     await user_db.get_language()
     await user_db.insert_user()
-    await user_db.get_trial_queries()
 
     if message.text == "/start":
-        await bot.send_message(chat_id=message.chat.id,
-                               text=texts[user_db.language]['start_text'].format(user_db.trial_queries),
-                               parse_mode="HTML",
-                               reply_markup=start_keyboard(user_db.language))
+        await user_db.check_subscription()
+
+        if user_db.subscriber:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=texts[user_db.language]['start_text_subs'],
+                                   parse_mode="HTML",
+                                   reply_markup=start_keyboard(user_db.language))
+        else:
+            await user_db.get_trial_queries()
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=texts[user_db.language]['start_text'].format(user_db.trial_queries),
+                                   parse_mode="HTML",
+                                   reply_markup=start_keyboard(user_db.language))
 
     else:
         param_type = message.text.split(" ")[1].split("-")[0]
         param = message.text.split(" ")[1].split("-")[1]
 
         if param_type == "tip":
-            tip_type: Tip = globals()[param]
+            tip_type = globals()[param]
             tip: Tip = tip_type(language=user_db.language)
             await tip.pm_button_reaction(bot=bot, chat_id=message.chat.id, user=message.from_user, user_db=user_db)
 
