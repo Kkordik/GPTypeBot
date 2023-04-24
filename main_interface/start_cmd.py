@@ -1,11 +1,10 @@
 from aiogram import Dispatcher, types
 from classes.Query import Query
-from classes.MainClasses import User, QueryDb
+from classes.MainClasses import QueryDb
 from classes.Tip import *
 from database.run_db import user_tb, query_tb
-from texts import texts, facts
+from texts import texts
 from keyboards import start_keyboard, ask_return_inline
-from classes.Guide import GuidePage
 from run_bot import bot
 from classes.Tip import MsgAnswerMistake
 import datetime
