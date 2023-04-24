@@ -13,7 +13,7 @@ import aiohttp
 class MyInvoice:
     button_name: str
     method_name: str
-    _currencies_list: list
+    _currencies_dict: dict
     default_currency: str
     invoice_text_name: str
     need_status_check_loop: bool
@@ -59,6 +59,16 @@ class MyInvoice:
             keyboard.add(InlineKeyboardButton(text=texts[lang]["pay_but"], url=pay_url))
         return keyboard
 
+    async def payment_currencies_keyboard(self, lang: str):
+        keyboard = InlineKeyboardMarkup()
+        currencies_dict = await self.get_currencies_dict()
+        for currency in currencies_dict.keys():
+            keyboard.add(InlineKeyboardButton(text=currencies_dict[currency],
+                                              callback_data=self.get_currency_callback_data(currency)))
+
+        keyboard.add(InlineKeyboardButton(text=texts[lang]["back_payment_but"], callback_data="premium"))
+        return keyboard
+
     def calculate_price(self, chosen_currency, usd_price):
         pass
 
@@ -68,13 +78,13 @@ class MyInvoice:
     async def check_invoice(self, invoice_parameter: str = None):
         pass
 
-    async def get_currencies_list(self):
-        return self._currencies_list
+    async def get_currencies_dict(self) -> dict:
+        return self._currencies_dict
 
     def get_callback_data(self):
         return "payment_method-" + self.method_name
 
-    async def get_currency_callback_data(self, chosen_currency):
+    def get_currency_callback_data(self, chosen_currency):
         return "payment_currency-" + self.method_name + "-" + chosen_currency
 
     def get_invoice_parameter(self) -> str:
@@ -84,7 +94,7 @@ class MyInvoice:
 class CryptoInvoice(MyInvoice):
     button_name = "crypto_method_but"
     method_name = "crypto"
-    _currencies_list = ["BTC", "TON", "ETH", "USDT", "USDC", "BUSD"]
+    _currencies_dict = {"BTC": "🌑 BTC", "TON": "🌑 TON", "ETH": "🌑 ETH", "USDT": "🌑 USDT", "USDC": "🌑 USDC", "BUSD": "🌑 BUSD"}
     default_currency = "USDT"
     invoice_text_name = "crypto_invoice"
     need_status_check_loop = True
@@ -106,13 +116,14 @@ class CryptoInvoice(MyInvoice):
                                               callback_data=f"check_payment-{payment_method}-{parameter}"))
         return keyboard
 
-    async def get_currencies_list(self):
+    async def get_currencies_dict(self) -> dict:
         currencies_list = await self.__crypto.get_currencies()
-        self._currencies_list = []
+        self._currencies_dict = {}
+
         for currency in currencies_list:
             if not currency.is_fiat:
-                self._currencies_list.append(currency.code)
-        return self._currencies_list
+                self._currencies_dict[currency.code] = "🌑 " + currency.code
+        return self._currencies_dict
 
     async def calculate_price(self, chosen_currency, usd_price):
         parameters = {'symbol': chosen_currency,
@@ -161,7 +172,7 @@ class CryptoInvoice(MyInvoice):
 class CardInvoice(MyInvoice):
     button_name = "card_method_but"
     method_name = "card"
-    _currencies_list = ["UAH"]
+    _currencies_dict = {"UAH": "💳 LiqPay"}
     default_currency = "UAH"
     invoice_text_name = "card_invoice"
     need_status_check_loop = False

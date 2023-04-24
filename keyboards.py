@@ -81,15 +81,6 @@ def payment_method_keyboard(lang: str):
     return keyboard
 
 
-async def payment_currencies_keyboard(lang: str, chosen_method_cl: MyInvoice):
-    keyboard = InlineKeyboardMarkup()
-    for currency in await chosen_method_cl.get_currencies_list():
-        keyboard.add(InlineKeyboardButton(text=currency,
-                                          callback_data=await chosen_method_cl.get_currency_callback_data(currency)))
-    keyboard.add(InlineKeyboardButton(text=texts[lang]["back_payment_but"], callback_data="premium"))
-    return keyboard
-
-
 def after_pay_keyboard(lang: str):
     first_guide_page = GuidePage(language=lang, text_name=Guide.texts_names_l[0])
     keyboard = InlineKeyboardMarkup()

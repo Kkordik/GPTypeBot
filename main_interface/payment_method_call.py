@@ -3,7 +3,6 @@ from classes.MainClasses import User
 from classes.Invoice import MyInvoice
 from database.run_db import user_tb
 from texts import texts
-from keyboards import payment_currencies_keyboard
 
 
 async def payment_method_callback(call: types.CallbackQuery):
@@ -13,7 +12,7 @@ async def payment_method_callback(call: types.CallbackQuery):
     if not await user.check_subscription():
         chosen_method_cl = MyInvoice.find_create_invoice_object(call.data.split("-")[1])
 
-        keyboard = await payment_currencies_keyboard(lang=user.language, chosen_method_cl=chosen_method_cl)
+        keyboard = await chosen_method_cl.payment_currencies_keyboard(lang=user.language)
         await call.message.edit_text(text=texts[user.language]["premium_benefits"], reply_markup=keyboard)
     else:
         await call.message.edit_text(text=texts[user.language]["already_premium"], reply_markup=None)
