@@ -30,7 +30,7 @@ async def simple_start_cmd(message: types.Message):
         if param_type == "tip":
             tip_type: Tip = globals()[param]
             tip: Tip = tip_type(language=user_db.language)
-            await tip.pm_button_reaction(bot=bot, chat_id=message.chat.id, user=message.from_user)
+            await tip.pm_button_reaction(bot=bot, chat_id=message.chat.id, user=message.from_user, user_db=user_db)
 
         elif param_type == "query":
             try:

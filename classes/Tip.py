@@ -29,7 +29,7 @@ class Tip:
         else:
             self.text = ""
 
-    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
@@ -85,7 +85,7 @@ class AnswerTip(Tip):
         self.text = text
         self.bot_but_text = texts[self.lang][self.bot_but_text_name]
 
-    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
@@ -115,7 +115,7 @@ class WrongMarkerUse(MistakeTip):
         super().__init__(language)
         self.marker = marker
 
-    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
@@ -176,8 +176,7 @@ class CurrentTopic(InfoTip):
     text_name = "current_topic"
     guide_page_name = "simple_query"
 
-    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
-        user_db = User(user_tb, inline_query.from_user.id, user=inline_query.from_user)
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         current_topic_id = await user_db.get_current_topic_id()
 
         if current_topic_id == 0:
@@ -214,7 +213,7 @@ class WaitAskLater(MistakeTip):
         super().__init__(language)
         self.waiting_time = waiting_time
 
-    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str):
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
