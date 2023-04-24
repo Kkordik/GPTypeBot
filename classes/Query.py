@@ -1,5 +1,4 @@
 import copy
-import datetime
 import re
 import asyncio
 from typing import Union
@@ -7,7 +6,7 @@ from classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
 from classes.GPTSession import GPT
 from config import OPEN_AI_KEY, MAX_TOKEN_NUM
 from aiogram.types import User
-from classes.GPTSession import PrevMessages, BOT_ROLE
+from classes.GPTSession import PrevMessages
 from classes.Tip import WrongMarkerUse
 from classes.GPTSession import USER_ROLE
 from typing import List
@@ -147,4 +146,4 @@ class Query:
         for result, query in zip(results, self.sub_queries):
             query.answer = result
 
-        return results
+        return list(results)

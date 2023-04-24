@@ -27,10 +27,10 @@ class PrevMessages:
             encoding = tiktoken.get_encoding("cl100k_base")
         if model == "gpt-3.5-turbo":
             print("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
-            return num_tokens_from_messages(messages, model="gpt-3.5-turbo-0301")
+            return self.count_tokens(model="gpt-3.5-turbo-0301")
         elif model == "gpt-4":
             print("Warning: gpt-4 may change over time. Returning num tokens assuming gpt-4-0314.")
-            return num_tokens_from_messages(messages, model="gpt-4-0314")
+            return self.count_tokens(model="gpt-4-0314")
         elif model == "gpt-3.5-turbo-0301":
             tokens_per_message = 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
             tokens_per_name = -1  # if there's a name, the role is omitted
@@ -39,7 +39,9 @@ class PrevMessages:
             tokens_per_name = 1
         else:
             raise NotImplementedError(
-                f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
+                f"""num_tokens_from_messages() is not implemented for model {model}. 
+                See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are 
+                converted to tokens.""")
         num_tokens = 0
         for message in self.get_messages_list():
             num_tokens += tokens_per_message
@@ -90,7 +92,7 @@ class PrevMessages:
 class GPT:
     session = aiohttp.ClientSession()
 
-    def __init__(self, token: str, url: str= None, model: str = None, prompt: str = None, edit_input: str = None,
+    def __init__(self, token: str, url: str = None, model: str = None, prompt: str = None, edit_input: str = None,
                  instruction: str = None, data: dict = None, headers: dict = None, response: dict = None,
                  messages: PrevMessages = None):
         self.url: str = url

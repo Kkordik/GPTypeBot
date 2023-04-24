@@ -76,16 +76,16 @@ class User:
 
 class QueryDb:
     def __init__(self, table: QueryTable, row_id: int = None, result_id: str = None, subquery_id: int = None,
-                 orig_query: str = None, query: str = None, answer: str = None, sent: bool = False,
+                 orig_query: str = None, query: str = None, answer: str = None, sent: int = 0,
                  topic_id=None, user_id: int = None):
-        self.table: Table = table
+        self.table: QueryTable = table
         self.row_id: int = row_id
-        self.result_id: int = result_id
+        self.result_id: str = result_id
         self.subquery_id: int = subquery_id
         self.orig_query: str = orig_query
         self.query: str = query
         self.answer: str = answer
-        self.sent: bool = sent
+        self.sent: int = sent
         self.topic_id: int = topic_id
         self.user_id: int = user_id
 
@@ -166,7 +166,7 @@ class QueryDb:
 
 class Topic:
     def __init__(self, table: TopicTable, topic_id=None, user_id=None, topic_title: str = None, msg_amount: int = None):
-        self.table: Table = table
+        self.table: TopicTable = table
         self.topic_id: int = topic_id
         self.user_id: int = user_id
         self.topic_title: str = topic_title
@@ -233,5 +233,3 @@ class Payment:
             parameter=self.parameter
         )
         return self
-
-

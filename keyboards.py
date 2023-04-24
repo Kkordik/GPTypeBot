@@ -1,4 +1,4 @@
-from texts import texts, guide_texts
+from texts import texts
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from classes.Guide import Guide, GuidePage
 from classes.MainClasses import Topic

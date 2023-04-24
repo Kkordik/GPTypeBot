@@ -1,16 +1,15 @@
 import aiogram.types
-
 import classes.MainClasses
 from texts import facts, texts
-from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message, User
+from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message
 from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO
 from classes.Guide import GuidePage
 from classes.Markers import BeginMarker, EndMarker
 from typing import Union
 from random import choices
 from keyboards import message_tip_keyboard, start_keyboard
-from classes.MainClasses import User, Topic
-from database.run_db import user_tb, topic_tb
+from classes.MainClasses import Topic
+from database.run_db import topic_tb
 from main_interface.context_call import context_message
 
 
@@ -235,5 +234,3 @@ class WaitAskLater(MistakeTip):
             text="❌" + self.text.format(self.waiting_time),
             reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
         )
-
-

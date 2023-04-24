@@ -132,4 +132,3 @@ async def message_query(message: types.Message):
 def register_message_query_cmd(dp: Dispatcher):
     dp.register_message_handler(message_query,
                                 lambda message: not message.successful_payment and message.content_type == "text")
-

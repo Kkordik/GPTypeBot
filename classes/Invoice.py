@@ -18,8 +18,8 @@ class MyInvoice:
     invoice_text_name: str
     need_status_check_loop: bool
 
-    def __init__(self, amount: float = None, currency: str = None, product_name: str = None, client_user_id=None, client_name: str = None,
-                 invoice_parameter: str = None, invoice_status: bool = None):
+    def __init__(self, amount: float = None, currency: str = None, product_name: str = None, client_user_id=None,
+                 client_name: str = None, invoice_parameter: str = None, invoice_status: bool = None):
         self.invoice_time: int = int(time.time())
         self.client_user_id = client_user_id
         self.client_name = client_name
@@ -94,7 +94,8 @@ class MyInvoice:
 class CryptoInvoice(MyInvoice):
     button_name = "crypto_method_but"
     method_name = "crypto"
-    _currencies_dict = {"BTC": "🌑 BTC", "TON": "🌑 TON", "ETH": "🌑 ETH", "USDT": "🌑 USDT", "USDC": "🌑 USDC", "BUSD": "🌑 BUSD"}
+    _currencies_dict = {"BTC": "🌑 BTC", "TON": "🌑 TON", "ETH": "🌑 ETH",
+                        "USDT": "🌑 USDT", "USDC": "🌑 USDC", "BUSD": "🌑 BUSD"}
     default_currency = "USDT"
     invoice_text_name = "crypto_invoice"
     need_status_check_loop = True

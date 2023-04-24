@@ -1,8 +1,6 @@
 from aiogram import Dispatcher, types
-from classes.Guide import GuidePage
 from classes.MainClasses import User
 from database.run_db import user_tb
-from run_bot import bot
 from keyboards import return_inline_keyboard
 
 

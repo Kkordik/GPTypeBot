@@ -1,4 +1,3 @@
-import aiogram.utils.exceptions
 from aiogram import Dispatcher, types
 from classes.MainClasses import User, Topic
 from database.run_db import user_tb, topic_tb, query_tb
