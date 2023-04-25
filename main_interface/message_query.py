@@ -3,9 +3,7 @@ import datetime
 from aiogram import Dispatcher, types
 from classes.MainClasses import User, QueryDb
 from database.run_db import user_tb, query_tb
-from texts import texts, facts
-from keyboards import start_keyboard
-from classes.Guide import GuidePage
+from texts import texts
 from run_bot import bot
 from time import time
 from classes.Query import Query
@@ -13,7 +11,7 @@ from classes.Tip import MsgAnswerMistake, WaitAskLater
 import hashlib
 import random
 import string
-from config import USER_ROLE, BOT_ROLE, WAIT_TIME, MISTAKE_WAIT_TIME
+from config import WAIT_TIME, MISTAKE_WAIT_TIME
 
 
 # A dict for users that sent a message query less than 30s (or other timeout time (see config)) ago.
@@ -131,4 +129,4 @@ async def message_query(message: types.Message):
 
 def register_message_query_cmd(dp: Dispatcher):
     dp.register_message_handler(message_query,
-                                lambda message: not message.successful_payment and message.content_type == "text")
+                                lambda message: not (message.successful_payment or message.text[0] == "/") and message.content_type == "text")
