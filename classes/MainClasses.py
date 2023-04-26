@@ -50,7 +50,7 @@ class User:
 
     async def get_trial_queries(self) -> int:
         res = await self.table.select_vals(user_id=self.user_id)
-        self.trial_queries = res[0]["trial_queries"]
+        self.trial_queries = res[0]["trial_queries"] if not None else 0
         return self.trial_queries
 
     async def charge_one_trial_query(self, prev_trial_amount: int = None):
