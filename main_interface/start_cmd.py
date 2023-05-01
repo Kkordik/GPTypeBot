@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Dispatcher, types
 from classes.Query import Query
 from classes.MainClasses import QueryDb, User
@@ -8,6 +10,7 @@ from keyboards import start_keyboard, ask_return_inline
 from run_bot import bot
 from classes.Tip import MsgAnswerMistake
 import datetime
+from config import QUERY_WAIT_TIME, QUERY_CHECK_INTERVAL
 
 
 async def simple_start_cmd(message: types.Message):
@@ -69,6 +72,52 @@ async def simple_start_cmd(message: types.Message):
                 waiting_msg = await message.answer(text=texts[user_db.language]["getting_query_ready"])
                 await MsgAnswerMistake(language=user_db.language).send_message_tip(waiting_msg)
                 print(datetime.datetime.now(), ex, sep="  msg_start  ")
+
+        elif param_type == "wait_query":
+
+            waiting_msg = await message.answer(text=texts[user_db.language]["waiting_for_openai"])
+            try:
+                query_db = QueryDb(query_tb)
+
+                sub_queries = None
+                for _ in range(int(QUERY_WAIT_TIME / QUERY_CHECK_INTERVAL)):
+
+                    sub_queries = await query_db.get_queries_by_res_id(result_id=param)
+
+                    if not sub_queries:
+                        await asyncio.sleep(QUERY_CHECK_INTERVAL)
+                    else:
+                        break
+
+                if not sub_queries:
+                    await MsgAnswerMistake(language=user_db.language).send_message_tip(waiting_msg)
+                    return
+
+                orig_query_text = sub_queries[0].orig_query
+
+                query_t = Query(
+                    language=user_db.language,
+                    text=orig_query_text,
+                    from_user=message.from_user,
+                    repeat_question=True
+                )
+
+                query_t.divide_query(query_t.get_markers_list())
+                query_t.answer = query_t.answer.format(*[sub_query.answer for sub_query in sub_queries])
+
+                await waiting_msg.delete()
+                await bot.send_message(
+                    chat_id=message.chat.id,
+                    text=query_t.answer,
+                    disable_web_page_preview=True,
+                    reply_markup=ask_return_inline(user_db.language)
+                )
+
+                await query_db.set_as_sent(result_id=param)
+
+            except Exception as ex:
+                await MsgAnswerMistake(language=user_db.language).send_message_tip(waiting_msg)
+                print(datetime.datetime.now(), ex, sep="  msg_start wait ")
 
 
 def register_main_start_cmd(dp: Dispatcher):

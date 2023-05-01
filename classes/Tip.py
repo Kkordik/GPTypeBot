@@ -1,3 +1,5 @@
+import datetime
+import time
 import aiogram.types
 import classes.MainClasses
 from texts import facts, texts
@@ -99,6 +101,16 @@ class AnswerTip(Tip):
             switch_pm_text=self.bot_but_text,
             switch_pm_parameter=self.pm_parameter + "-" + result_id
         )
+
+
+class TimeLimitTip(AnswerTip):
+    photo = INFO_PHOTO
+    bot_but_text_name = "get_in_pm_but"
+    pm_parameter = "wait_query"
+
+    def __init__(self, language: str):
+        super().__init__(language, texts[language]["query_out_of_time"])
+        self.bot_but_text = texts[self.lang][self.bot_but_text_name]
 
 
 class EndWithSign(WarningTip):
