@@ -1,5 +1,4 @@
 import asyncio
-
 from aiogram import Dispatcher, types
 from classes.Query import Query
 from classes.MainClasses import QueryDb, User
@@ -10,7 +9,7 @@ from keyboards import start_keyboard, ask_return_inline
 from run_bot import bot
 from classes.Tip import MsgAnswerMistake
 import datetime
-from config import QUERY_WAIT_TIME, QUERY_CHECK_INTERVAL
+from config import QUERY_WAIT_TIME, QUERY_CHECK_INTERVAL, INTRO_FILE_ID
 
 
 async def simple_start_cmd(message: types.Message):
@@ -22,16 +21,18 @@ async def simple_start_cmd(message: types.Message):
         await user_db.check_subscription()
 
         if user_db.subscriber:
-            await bot.send_message(chat_id=message.chat.id,
-                                   text=texts[user_db.language]['start_text_subs'],
-                                   parse_mode="HTML",
-                                   reply_markup=start_keyboard(user_db.language))
+            await bot.send_video(chat_id=message.chat.id,
+                                 video=INTRO_FILE_ID,
+                                 caption=texts[user_db.language]['start_text_subs'],
+                                 parse_mode="HTML",
+                                 reply_markup=start_keyboard(user_db.language))
         else:
             await user_db.get_trial_queries()
-            await bot.send_message(chat_id=message.chat.id,
-                                   text=texts[user_db.language]['start_text'].format(user_db.trial_queries),
-                                   parse_mode="HTML",
-                                   reply_markup=start_keyboard(user_db.language))
+            await bot.send_video(chat_id=message.chat.id,
+                                 video=INTRO_FILE_ID,
+                                 caption=texts[user_db.language]['start_text'].format(user_db.trial_queries),
+                                 parse_mode="HTML",
+                                 reply_markup=start_keyboard(user_db.language))
 
     else:
         param_type = message.text.split(" ")[1].split("-")[0]

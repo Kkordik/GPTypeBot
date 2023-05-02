@@ -4,7 +4,7 @@ import aiogram.types
 import classes.MainClasses
 from texts import facts, texts
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message
-from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO
+from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO, INTRO_FILE_ID
 from classes.Guide import GuidePage
 from classes.Markers import BeginMarker, EndMarker
 from typing import Union
@@ -161,10 +161,12 @@ class NoSubscription(MistakeTip):
     bot_but_text_name = "buy_subs_but"
 
     async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
-        await bot.send_message(chat_id=chat_id,
-                               text=texts[self.lang]['start_text'].format(user_db.trial_queries),
-                               parse_mode="HTML",
-                               reply_markup=start_keyboard(self.lang, start_using_but=False))
+        trial_queries = await user_db.get_trial_queries()
+        await bot.send_video(chat_id=chat.id,
+                             video=INTRO_FILE_ID,
+                             caption=texts[self.lang]['start_text'].format(trial_queries),
+                             parse_mode="HTML",
+                             reply_markup=start_keyboard(self.lang, start_using_but=False))
 
 
 class StartWithMarker(WarningTip):

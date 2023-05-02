@@ -1,3 +1,4 @@
+import aiogram.types
 from texts import guide_texts
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
@@ -47,9 +48,11 @@ class GuidePage(Guide):
 
     async def send_page(self, bot,  chat_id, message: Message = None):
         if message:
-            await message.edit_text(text="<i><b>Guide</b></i>\n\n" + self.text["description"],
-                                    reply_markup=self.create_keyboard(),
-                                    parse_mode='HTML')
+            await message.delete()
+            await bot.send_message(chat_id=chat_id,
+                                   text="<i><b>Guide</b></i>\n\n" + self.text["description"],
+                                   reply_markup=self.create_keyboard(),
+                                   parse_mode='HTML')
         else:
             await bot.send_message(chat_id, text="<i><b>Guide</b></i>\n\n" + self.text["description"],
                                    reply_markup=self.create_keyboard(),

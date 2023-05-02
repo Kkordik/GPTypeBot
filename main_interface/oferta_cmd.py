@@ -7,7 +7,15 @@ from config import OFERTA_FILE_ID
 
 
 async def file_message(message: types.Message):
-    print("file_id = ", message.document.file_id)
+    if message.document:
+        print("file_id = ", message.document.file_id)
+        await message.answer(text=message.document.file_id)
+    elif message.video:
+        print("video_file_id = ", message.video.file_id)
+        await message.answer(text=message.video.file_id)
+    elif message.photo:
+        print("photo_file_id = ", message.photo[0].file_id)
+        await message.answer(text=message.photo[0].file_id)
 
 
 async def simple_oferta_cmd(message: types.Message):
@@ -22,4 +30,4 @@ async def simple_oferta_cmd(message: types.Message):
 
 def register_oferta_cmd(dp: Dispatcher):
     dp.register_message_handler(simple_oferta_cmd, commands=["oferta"])
-    dp.register_message_handler(file_message, content_types=["document"])
+    dp.register_message_handler(file_message, content_types=["document", "video", "photo"])
