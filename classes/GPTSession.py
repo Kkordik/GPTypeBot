@@ -1,9 +1,11 @@
 from builtins import list
 import tiktoken
 import aiohttp
-from config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE
+from config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE, OPEN_AI_KEY
 from classes.MainClasses import QueryDb
 from typing import List
+import openai
+openai.api_key = OPEN_AI_KEY
 
 
 class PrevMessages:
@@ -92,7 +94,7 @@ class PrevMessages:
 class GPT:
     session = aiohttp.ClientSession()
 
-    def __init__(self, token: str, url: str = None, model: str = None, prompt: str = None, edit_input: str = None,
+    def __init__(self, url: str = None, model: str = None, prompt: str = None, edit_input: str = None,
                  instruction: str = None, data: dict = None, headers: dict = None, response: dict = None,
                  messages: PrevMessages = None):
         self.url: str = url
@@ -108,80 +110,23 @@ class GPT:
         self.headers: dict = headers
         self.response: dict = response
         self.messages: PrevMessages = messages
-        self.token = token
-
-    async def completion(self, prompt: str, max_tokens: int = None, model: str = None, temperature: int = None,
-                         n: int = None, echo: bool = None) -> str:
-        self.url = "https://api.openai.com/v1/completions"
-        self.prompt = prompt
-        self.model = model or "text-davinci-003"
-        self.max_tokens = max_tokens or DEFAULT_TOKEN_NUM
-        self.temperature = temperature or 1
-        self.n = n or 1
-        self.echo = echo or False
-
-        self.data = {
-            "model": self.model,
-            "prompt": self.prompt,
-            "max_tokens": self.max_tokens,
-            "temperature": self.temperature,
-            "n": self.n,
-        }
-        self.headers = {
-            "Authorization": f"Bearer {self.token}",
-            "Content-Type": "application/json"
-        }
-        response = await self.session.post(self.url, headers=self.headers, json=self.data)
-        self.response = await response.json()
-        return self.response['choices'][0]['text']
-
-    async def edit(self, edit_input: str, instruction: str, model: str = None, temperature: int = None,
-                   n: int = None) -> str:
-        self.url = "https://api.openai.com/v1/edits"
-        self.edit_input = edit_input
-        self.instruction = instruction
-        self.model = model or "text-davinci-edit-001"
-        self.temperature = temperature or 1
-        self.n = n or 1
-
-        self.data = {
-            "model": self.model,
-            "input": self.edit_input,
-            "instruction": self.instruction,
-            "temperature": self.temperature,
-            "n": self.n,
-        }
-        self.headers = {
-            "Authorization": f"Bearer {self.token}",
-            "Content-Type": "application/json"
-        }
-        response = await self.session.post(self.url, headers=self.headers, json=self.data)
-        self.response = await response.json()
-        return self.response['choices'][0]['text']
 
     async def chat_completion(self, messages: PrevMessages, max_tokens: int = None, temperature: int = None,
-                              n: int = None, echo: bool = None):
-        self.url = "https://api.openai.com/v1/chat/completions"
+                              n: int = None):
         self.model = "gpt-3.5-turbo-0301"
         self.messages: PrevMessages = messages
         self.max_tokens = max_tokens or DEFAULT_TOKEN_NUM
         self.temperature = temperature or 1
         self.n = n or 1
-        self.echo = echo or False
+        self.echo = False
 
-        print(self.messages.get_messages_list())
-        self.data = {
-            "model": self.model,
-            "messages": self.messages.get_messages_list(),
-            "max_tokens": self.max_tokens,
-            "temperature": self.temperature,
-            "n": self.n,
-            "stream": self.echo
-        }
-        self.headers = {
-            "Authorization": f"Bearer {self.token}",
-            "Content-Type": "application/json"
-        }
-        response = await self.session.post(self.url, headers=self.headers, json=self.data)
-        self.response = await response.json()
-        return self.response['choices'][0]['message']['content']
+        response = await openai.ChatCompletion.acreate(
+            model=self.model,
+            messages=self.messages.get_messages_list(),
+            temperature=self.temperature,
+            max_tokens=self.max_tokens,
+            n=self.n,
+            stream=self.echo
+        )
+        return response.choices[0].message.content
+
