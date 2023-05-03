@@ -1,5 +1,3 @@
-import datetime
-import time
 import aiogram.types
 import classes.MainClasses
 from texts import facts, texts
@@ -162,7 +160,7 @@ class NoSubscription(MistakeTip):
 
     async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
         trial_queries = await user_db.get_trial_queries()
-        await bot.send_video(chat_id=chat.id,
+        await bot.send_video(chat_id=chat_id,
                              video=INTRO_FILE_ID,
                              caption=texts[self.lang]['start_text'].format(trial_queries),
                              parse_mode="HTML",

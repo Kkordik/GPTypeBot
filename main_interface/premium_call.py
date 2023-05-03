@@ -12,8 +12,10 @@ async def premium_callback(call: types.CallbackQuery):
 
     if not await user.check_subscription():
         keyboard = payment_method_keyboard(user.language)
-        await call.message.edit_text(text=texts[user.language]["premium_benefits"],
-                                     reply_markup=keyboard)
+        await call.message.delete()
+        await bot.send_message(chat_id=call.message.chat.id,
+                               text=texts[user.language]["premium_benefits"],
+                               reply_markup=keyboard)
     else:
         await bot.send_message(call.message.chat.id, text=texts[user.language]["already_premium"])
     await call.answer()

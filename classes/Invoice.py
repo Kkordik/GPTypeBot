@@ -145,7 +145,6 @@ class CryptoInvoice(MyInvoice):
 
     async def create_invoice_url(self, lang: str, bot: aiogram.Bot) -> str:
         self.invoice = await self.__crypto.create_invoice(asset=self.currency, amount=self.amount)
-        print(self.invoice.invoice_id)
         self.invoice_parameter = str(self.invoice.invoice_id)
         return self.invoice.pay_url
 
@@ -159,7 +158,6 @@ class CryptoInvoice(MyInvoice):
         else:
             raise Exception("No self.invoice or self.invoice_parameter specified to check status")
 
-        print(int(self.invoice_parameter))
         gotten_invoice = await self.__crypto.get_invoices(invoice_ids=int(self.invoice_parameter))
 
         self.invoice_status = True if gotten_invoice.status == gotten_invoice.status.PAID else False

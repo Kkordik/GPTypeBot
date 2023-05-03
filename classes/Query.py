@@ -4,7 +4,7 @@ import asyncio
 from typing import Union
 from classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
 from classes.GPTSession import GPT
-from config import OPEN_AI_KEY, MAX_TOKEN_NUM
+from config import MAX_TOKEN_NUM
 from aiogram.types import User
 from classes.GPTSession import PrevMessages
 from classes.Tip import WrongMarkerUse
@@ -128,7 +128,7 @@ class Query:
         return None, self.sub_queries
 
     async def answer_sub_queries(self, max_token_num: int = MAX_TOKEN_NUM) -> list:
-        gpt = GPT(OPEN_AI_KEY)
+        gpt = GPT()
         tasks = []
 
         for query in self.sub_queries:
