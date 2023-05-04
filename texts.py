@@ -216,57 +216,83 @@ facts = {
 
 guide_texts = {
     "en": {
-        "inline_bot": {
-            "description": "It is an inline bot, it means that you can use it in any chat"
-                           " without having to add it to a chat or group. "
-                           "\nTo call the bot - type @GPTypeBot in the text input field",
-            "button": "Inline bot",
+        "introduction": {
+            "description": "<b>Introduction</b>\n\nThe OpenAI-powered @GPTypeBot bot is a powerful tool for generating"
+                           " text quickly and easily. It can generate text for a wide range of purposes,"
+                           " including writing formal letters, correcting mistakes, translating to different languages,"
+                           " and writing social media posts. This manual will guide you through using"
+                           " the bot's various functions and explain how to make a query using both the inline query"
+                           " and private message query methods.",
+            "button": "Introduction",
             "examples": []
         },
-        "simple_query": {
-            "description": "After you've called the bot, type your query, which can be simple or with markers\n\n"
-                           "<b>Simple query</b>\n\nIt is a query, that consists of one question or request to the bot,"
-                           " the result will be the answer to it.\nMust finish with '.' or '?' or '!'\n\n<i>Generating "
-                           "response to the example takes time, please be patient</i>",
-            "button": "Simple query",
-            "examples": [{"button": "Example", "query": "Why doing sport is healthy?"}]
-        },
-        "marked_query": {
-            "description": "<b>Marked query</b>\n\nIt is a query that consists of one or more simple sub-queries "
-                           "separated by start/end markers, the text outside of the markers will be returned in the "
-                           "result at the  same positions as it is in the query\nMust finish with ‘.’ or ‘?’ or ‘!’ or"
-                           " can finish with end marker ‘-q’ if before is sub-query.\n\nIn the example: '-s' is a "
-                           "simple start marker and '-q' is an end marker (about Markers later)",
-            "button": "Marked query",
-            "examples": [
-                {"button": "Example 1", "query": "Here is how to be punctual: -s How to be punctual? -q You must know it!"},
-                {"button": "Example 2", "query": "Here is how to be punctual: -s How to be punctual?"}
-            ]
-        },
-        "markers_list": {
-            "description": "<b>Markers</b>\n\nMarkers are used to separate sub-queries and to specify its "
-                           "handling type.\n\n<b>Begin Markers:</b>\n"
-                           "<b>'-s'</b>   is a simple start marker. Doesn't have any specific handling.\n"
-                           "<b>'-f'</b>   is a formal start marker. Writes a formal message based on the given theme.\n"
-                           "<b>'-p'</b>   is a post start marker. Creates a post based on the given theme and details.\n"
-                           "<b>'-t-language'</b>   is a translate start marker. Translates given text to the specified"
-                           " language\n"
-                           "<b>'-m'</b>   is a mistakes start marker. Corrects mistakes in the given text.\n\n"
-                           "<b>End Marker:</b>\n"
-                           "<b>'-q'</b>   is a quit end marker. Is used to finish queries and sub-queries.",
-            "button": "Markers",
-            "examples": [
-                {"button": "Example -f", "query": "-f Alex, I am late, sorry, traffic jams!"},
-                {"button": "Example -p", "query": "-p We have to stop climate changing or it will kill us!"},
-                {"button": "Example -t", "query": "-t-spanish Hi! My name is Max, glad to see you in this chat!"},
-                {"button": "Example -m", "query": "-m I have jast told u thet I will continu sleping!"},
-                {"button": "Example -q", "query": "-s Give me 5 reasons why should I start exercising -q"},
-            ]
-        },
-        "last_page": {
-            "description": "<b>Congrats! You have finished this short guide! Start enjoying the bot!</b>",
-            "button": "Finish",
+        "inline_method": {
+            "description": "<b>Inline Method</b>\n\nInline Method is a way of sending a query to the bot directly from "
+                           "any Telegram chat or group without the need to open a separate chat with the bot.\nTo start"
+                           " the query, the user simply types in bot's username followed by a space and then the query"
+                           " itself.\nThe bot will then process the query and return the result in the same chat where "
+                           "the query was made.\nThis method is useful when you want to get and send result fastly.",
+            "button": "Inline Bots",
             "examples": []
+        },
+        "query_methods": {
+            "description": "<b>Private Message Method:</b>"
+                           "\nTo make a query using the private message method, send your query directly to "
+                           "the bot in a private message.\nThis method is useful when you want to keep your queries"
+                           " private.",
+            "button": "Query Methods",
+            "examples": []
+        },
+        "query_syntax": {
+            "description": "<b>Query Syntax:</b>\n\n<b>Both the Inline and Private Messages methods have the same"
+                           " query syntax with one difference:\n• The query in the Inline method always starts with"
+                           " the bot's username @GPTypeBot and a space: '@GPTypeBot '\n• However, in the Private"
+                           " Messages method, the query should never start with the bot's username.</b>",
+            "button": "Queries Syntax",
+            "examples": []
+        },
+        "query_syntax2": {
+            "description": "<b>1. The query always consists of <u>sub-query blocks</u> and <u>static texts</u>:"
+                           "\n    1.1. Static text is text that won't be passed into the OpenAI GPT Model and will be "
+                           "returned at the same position as it was given."
+                           "\n    1.2. A sub-query block is a question or request that will be passed to the GPT Model."
+                           " Its text is always between <u>start marker</u> "
+                           "and <u>finish marker</u> (but if there is only one block, markers can be omitted).</b>",
+            "button": "Syntax 2",
+            "examples": []
+        },
+        "examples": {
+            "description": "In the examples below, '-s' is used as the start marker and '-q' as the finish marker. "
+                           "These are the simplest markers and mean the start of a sub-query and its finish. "
+                           "More complex markers will be explained later.\n\nExamples:\n\n<b>Single sub-query:</b>\n"
+                           "'@GPTypeBot <code>-s How to cook borshch? -q</code>'\n"
+                           "Here is only one sub-query block without static text, so all markers can be omitted:\n"
+                           "'@GPTypeBot <code>How to cook borshch ?</code>'\n<i>Notice, if query doesn't end with"
+                           " finish marker, it must end with one of the punctuation signs (./!/?)</i>\n\n"
+                           "<b>Sub-query with static text after:</b>\n"
+                           "'@GPTypeBot <code>-s How to cook borshch? -q My grandma's recipe .</code>'\n"
+                           "<i>Don't forget about punctuation sign</i>\n\n"
+                           "<b>Sub-query with static text before:</b>\n"
+                           "'@GPTypeBot <code>My grandma's recipe: -s How to cook borshch ?</code>'"
+                           "<i>Here static text is before the sub-query block.</i>\n\n"
+                           "<b>Two sub-queries with static texts everywhere:</b>\n"
+                           "'@GPTypeBot <code>My grandma's recipe: -s How to cook borshch? -q I used to eat it every"
+                           " day! -s Is borshch healthy? -q It can explain why I visit doctor so rarely .</code>'"
+                           "\nAs you can see, this query has two sub-queries because their amount is not limited.\n"
+                           "Notice, static text is not required and can be omitted:\n"
+                           " '@GPTypeBot <code>-s How to cook borshch? -q -s Is borshch healthy ?</code>'\n\n"
+                           "You can try inline examples, clicking on the buttons below or"
+                           " you can try private message examples copying (just click on its text) "
+                           "and sending queries to the chat with bot",
+            "button": "Syntax Examples",
+            "examples": [{"button": "Single sub-query", "query": "How to cook borshch ?"},
+                         {"button": "Static text after", "query": "-s How to cook borshch? -q My grandma's recipe ."},
+                         {"button": "Static text before:", "query": "My grandma's recipe: -s How to cook borshch ?"},
+                         {"button": "Two sub-queries, static texts", "query": "My grandma's recipe: -s How to cook "
+                                                                              "borshch? -q I used to eat it every day! "
+                                                                              "-s Is borshch healthy? -q It can explain"
+                                                                              " why I visit doctor so rarely ."},
+                         {"button": "Two sub-queries", "query": "-s How to cook borshch? -q -s Is borshch healthy ?"}]
         }
     },
     "uk": {
@@ -383,4 +409,5 @@ for lang in guide_texts.values():
     for text_dict in lang.values():
         if text_dict["examples"]:
             for example in text_dict["examples"]:
+                example: dict
                 example_queries.append(example["query"])
