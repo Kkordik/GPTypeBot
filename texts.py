@@ -293,6 +293,26 @@ guide_texts = {
                                                                               "-s Is borshch healthy? -q It can explain"
                                                                               " why I visit doctor so rarely ."},
                          {"button": "Two sub-queries", "query": "-s How to cook borshch? -q -s Is borshch healthy ?"}]
+        },
+        "markers_list": {
+            "description": "<b>Markers</b>\n\nMarkers are used to separate sub-queries and to specify its "
+                           "handling type.\n\n<b>Begin Markers:</b>\n"
+                           "<b>'<code>-s</code>'</b>   is a simple start marker. Doesn't have any specific handling.\n"
+                           "<b>'<code>-f</code>'</b>   is a formal start marker. Writes a formal message based on the given theme.\n"
+                           "<b>'<code>-p</code>'</b>   is a post start marker. Creates a post based on the given theme and details.\n"
+                           "<b>'<code>-t-language</code>'</b>   is a translate start marker. Translates given text to the specified"
+                           " language\n"
+                           "<b>'<code>-m</code>'</b>   is a mistakes start marker. Corrects mistakes in the given text.\n\n"
+                           "<b>End Marker:</b>\n"
+                           "<b>'<code>-q</code>'</b>   is a quit end marker. Is used to finish queries and sub-queries.",
+            "button": "Markers",
+            "examples": [
+                {"button": "Example -f", "query": "-f Alex, I am late, sorry, traffic jams!"},
+                {"button": "Example -p", "query": "-p We have to stop climate changing or it will kill us!"},
+                {"button": "Example -t", "query": "-t-spanish Hi! My name is Max, glad to see you in this chat!"},
+                {"button": "Example -m", "query": "-m I have jast told u thet I will continu sleping!"},
+                {"button": "Example -q", "query": "-s Give me 5 reasons why should I start exercising -q"},
+            ]
         }
     },
     "uk": {
