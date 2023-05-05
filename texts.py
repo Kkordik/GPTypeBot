@@ -220,25 +220,28 @@ guide_texts = {
             "description": "<b>Introduction</b>\n\nThe OpenAI-powered @GPTypeBot bot is a powerful tool for generating"
                            " text quickly and easily. It can generate text for a wide range of purposes,"
                            " including writing formal letters, correcting mistakes, translating to different languages,"
-                           " and writing social media posts. This manual will guide you through using"
+                           " and writing social media posts.\n\nThis manual will guide you through using"
                            " the bot's various functions and explain how to make a query using both the inline query"
                            " and private message query methods.",
             "button": "Introduction",
             "examples": []
         },
         "inline_method": {
-            "description": "<b>Inline Method</b>\n\nInline Method is a way of sending a query to the bot directly from "
-                           "any Telegram chat or group without the need to open a separate chat with the bot.\nTo start"
-                           " the query, the user simply types in bot's username followed by a space and then the query"
-                           " itself.\nThe bot will then process the query and return the result in the same chat where "
-                           "the query was made.\nThis method is useful when you want to get and send result fastly.",
+            "description": "<b>Inline Method</b>"
+                           "\n\nInline Method is a way of sending a query to the bot directly from "
+                           "any Telegram chat or group without the need to open a separate chat with the bot."
+                           "\n\nTo start the query, the user simply types in bot's username followed by a space and"
+                           " then the query itself. "
+                           "The bot will then process the query and return the result in the same chat where "
+                           "the query was made."
+                           "\n\nThis method is useful when you want to get and send result fastly.",
             "button": "Inline Bots",
             "examples": []
         },
         "query_methods": {
             "description": "<b>Private Message Method:</b>"
-                           "\nTo make a query using the private message method, send your query directly to "
-                           "the bot in a private message.\nThis method is useful when you want to keep your queries"
+                           "\n\nTo make a query using the private message method, send your query directly to "
+                           "the bot in a private message.\n\nThis method is useful when you want to keep your queries"
                            " private.",
             "button": "Query Methods",
             "examples": []
@@ -252,7 +255,8 @@ guide_texts = {
             "examples": []
         },
         "query_syntax2": {
-            "description": "<b>1. The query always consists of <u>sub-query blocks</u> and <u>static texts</u>:"
+            "description": "<b>Query Syntax:</b>\n\n"
+                           "<b>1. The query always consists of <u>sub-query blocks</u> and <u>static texts</u>:"
                            "\n    1.1. Static text is text that won't be passed into the OpenAI GPT Model and will be "
                            "returned at the same position as it was given."
                            "\n    1.2. A sub-query block is a question or request that will be passed to the GPT Model."
@@ -295,15 +299,15 @@ guide_texts = {
                          {"button": "Two sub-queries", "query": "-s How to cook borshch? -q -s Is borshch healthy ?"}]
         },
         "markers_list": {
-            "description": "<b>Markers</b>\n\nMarkers are used to separate sub-queries and to specify its "
-                           "handling type.\n\n<b>Begin Markers:</b>\n"
+            "description": "<b>Markers</b>\n\nMarkers are used to separate sub-queries and to specify their "
+                           "handling type.\n\n<b>Start Markers:</b>\n"
                            "<b>'<code>-s</code>'</b>   is a simple start marker. Doesn't have any specific handling.\n"
                            "<b>'<code>-f</code>'</b>   is a formal start marker. Writes a formal message based on the given theme.\n"
                            "<b>'<code>-p</code>'</b>   is a post start marker. Creates a post based on the given theme and details.\n"
                            "<b>'<code>-t-language</code>'</b>   is a translate start marker. Translates given text to the specified"
                            " language\n"
                            "<b>'<code>-m</code>'</b>   is a mistakes start marker. Corrects mistakes in the given text.\n\n"
-                           "<b>End Marker:</b>\n"
+                           "<b>Finish Marker:</b>\n"
                            "<b>'<code>-q</code>'</b>   is a quit end marker. Is used to finish queries and sub-queries.",
             "button": "Markers",
             "examples": [
