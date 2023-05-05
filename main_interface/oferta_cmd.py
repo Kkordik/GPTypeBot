@@ -3,7 +3,7 @@ from classes.MainClasses import User
 from database.run_db import user_tb
 from texts import texts
 from run_bot import bot
-from config import OFERTA_FILE_ID
+from config import OFERTA_FILE_ID, VISA_MC_FILE_ID
 
 
 async def file_message(message: types.Message):
@@ -23,6 +23,8 @@ async def simple_oferta_cmd(message: types.Message):
     await user_db.get_language()
     await user_db.insert_user()
 
+    await bot.send_photo(chat_id=message.chat.id,
+                         photo=VISA_MC_FILE_ID)
     await bot.send_document(chat_id=message.chat.id,
                             document=OFERTA_FILE_ID,
                             caption=texts[user_db.language]["oferta_msg"])
