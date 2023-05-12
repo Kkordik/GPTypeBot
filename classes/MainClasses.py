@@ -1,8 +1,9 @@
 from aiogram import types
-from run_bot import bot
-from classes.Tables import Table, UsersTable, QueryTable, TopicTable, NotFormatedValue, PaymentTable
-from config import BASIC_LANGUAGE
-from texts import texts
+from GPTypeBot.run_bot import bot
+from GPTypeBot.classes.Table import NotFormatedValue
+from GPTypeBot.classes.BotTables import Table, UsersTable, QueryTable, TopicTable, PaymentTable
+from GPTypeBot.config import BASIC_LANGUAGE
+from GPTypeBot.texts import texts
 
 
 class User:
@@ -77,7 +78,7 @@ class User:
 class QueryDb:
     def __init__(self, table: QueryTable, row_id: int = None, result_id: str = None, subquery_id: int = None,
                  orig_query: str = None, query: str = None, answer: str = None, sent: int = 0,
-                 topic_id=None, user_id: int = None):
+                 topic_id=None, user_id: int = None, date_time: str = None):
         self.table: QueryTable = table
         self.row_id: int = row_id
         self.result_id: str = result_id
@@ -88,6 +89,7 @@ class QueryDb:
         self.sent: int = sent
         self.topic_id: int = topic_id
         self.user_id: int = user_id
+        self.date_time: str = date_time
 
     async def insert_query(self, result_id: str = None, subquery_id: int = None, orig_query: str = None,
                            query: str = None, answer: str = None, topic_id=None,

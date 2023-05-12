@@ -1,8 +1,8 @@
 from builtins import list
 import tiktoken
 import aiohttp
-from config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE, OPEN_AI_KEY
-from classes.MainClasses import QueryDb
+from GPTypeBot.config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE, OPEN_AI_KEY
+from GPTypeBot.classes.MainClasses import QueryDb
 from typing import List
 import openai
 openai.api_key = OPEN_AI_KEY
@@ -113,7 +113,7 @@ class GPT:
 
     async def chat_completion(self, messages: PrevMessages, max_tokens: int = None, temperature: int = None,
                               n: int = None):
-        self.model = "gpt-3.5-turbo-0301"
+        self.model = "gpt-3.5-turbo"
         self.messages: PrevMessages = messages
         self.max_tokens = max_tokens or DEFAULT_TOKEN_NUM
         self.temperature = temperature or 1
@@ -129,4 +129,3 @@ class GPT:
             stream=self.echo
         )
         return response.choices[0].message.content
-

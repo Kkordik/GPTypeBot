@@ -1,8 +1,8 @@
 from aiogram import Dispatcher, types
-from classes.Guide import GuidePage
-from classes.MainClasses import User
-from database.run_db import user_tb
-from run_bot import bot
+from GPTypeBot.classes.Guide import GuidePage
+from GPTypeBot.classes.MainClasses import User
+from GPTypeBot.database.run_db import user_tb
+from GPTypeBot.run_bot import bot
 
 
 async def guide_callback(call: types.CallbackQuery):

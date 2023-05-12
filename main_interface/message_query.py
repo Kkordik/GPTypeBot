@@ -1,17 +1,17 @@
 import asyncio
 import datetime
 from aiogram import Dispatcher, types
-from classes.MainClasses import User, QueryDb
-from database.run_db import user_tb, query_tb
-from texts import texts
-from run_bot import bot
+from GPTypeBot.classes.MainClasses import User, QueryDb
+from GPTypeBot.database.run_db import user_tb, query_tb
+from GPTypeBot.texts import texts
+from GPTypeBot.run_bot import bot
 from time import time
-from classes.Query import Query
-from classes.Tip import MsgAnswerMistake, WaitAskLater
+from GPTypeBot.classes.Query import Query
+from GPTypeBot.classes.Tip import MsgAnswerMistake, WaitAskLater
 import hashlib
 import random
 import string
-from config import WAIT_TIME, MISTAKE_WAIT_TIME
+from GPTypeBot.config import WAIT_TIME, MISTAKE_WAIT_TIME
 
 
 # A dict for users that sent a message query less than 30s (or other timeout time (see config)) ago.
@@ -35,6 +35,22 @@ async def message_query(message: types.Message):
 
     # Sending wait message to show that bot received the query
     waiting_msg = await message.answer(text=texts[user_db.language]["getting_query_ready"])
+    
+    # Sending a waiting tip if user is in a waiting dict and asked query less than waiting_time(see config) ago
+    now_time = time()
+    if message.from_user.id in waiting_dict:
+        next_query_time = waiting_dict[message.from_user.id]
+
+        if now_time < next_query_time:
+            left_time = int(next_query_time - now_time)
+        else:
+            left_time = 0
+            del waiting_dict[message.from_user.id]
+
+        return await WaitAskLater(user_db.language, left_time).send_message_tip(waiting_msg)
+
+    else:
+        waiting_dict[message.from_user.id] = now_time + WAIT_TIME  # Adding user to the waiting dict if he wasn't
 
     rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
     result_id: str = hashlib.md5(message.text.encode()).hexdigest() + rand_str
@@ -53,22 +69,6 @@ async def message_query(message: types.Message):
         # Returning mistake marker if while dividing query found wrong markers usage
         if mistake:
             return await mistake.send_message_tip(waiting_msg)
-
-        # Sending a waiting tip if user is in a waiting dict and asked query less than waiting_time(see config) ago
-        now_time = time()
-        if message.from_user.id in waiting_dict:
-            next_query_time = waiting_dict[message.from_user.id]
-
-            if now_time < next_query_time:
-                left_time = int(next_query_time - now_time)
-            else:
-                left_time = 0
-                del waiting_dict[message.from_user.id]
-
-            return await WaitAskLater(user_db.language, left_time).send_message_tip(waiting_msg)
-
-        else:
-            waiting_dict[message.from_user.id] = now_time + WAIT_TIME  # Adding user to the waiting dict if he wasn't
 
         # Adding previous messages to the query based on the user's current chosen topic.
         # If topic_id is 0 than no history is taken

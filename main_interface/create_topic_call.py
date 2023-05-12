@@ -1,9 +1,9 @@
 from aiogram import Dispatcher, types
-from classes.MainClasses import User, Topic
-from database.run_db import user_tb, topic_tb, query_tb
-from run_bot import bot
-from keyboards import topics_keyboard, buy_subs_keyboard, cancel_state_keyboard
-from texts import texts
+from GPTypeBot.classes.MainClasses import User, Topic
+from GPTypeBot.database.run_db import user_tb, topic_tb, query_tb
+from GPTypeBot.run_bot import bot
+from GPTypeBot.keyboards import topics_keyboard, buy_subs_keyboard, cancel_state_keyboard
+from GPTypeBot.texts import texts
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 

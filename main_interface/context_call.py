@@ -1,9 +1,9 @@
 from aiogram import Dispatcher, types
-from classes.MainClasses import User, Topic
-from database.run_db import user_tb, topic_tb, query_tb
-from run_bot import bot
-from keyboards import topics_keyboard, buy_subs_keyboard
-from texts import texts
+from GPTypeBot.classes.MainClasses import User, Topic
+from GPTypeBot.database.run_db import user_tb, topic_tb, query_tb
+from GPTypeBot.run_bot import bot
+from GPTypeBot.keyboards import topics_keyboard, buy_subs_keyboard
+from GPTypeBot.texts import texts
 
 
 async def context_message(user: types.User, chat_id, call: types.CallbackQuery = None):

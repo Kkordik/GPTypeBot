@@ -1,9 +1,9 @@
 from aiogram import Dispatcher, types
-from classes.MainClasses import User
-from database.run_db import user_tb
-from run_bot import bot
-from texts import texts
-from keyboards import payment_method_keyboard
+from GPTypeBot.classes.MainClasses import User
+from GPTypeBot.database.run_db import user_tb
+from GPTypeBot.run_bot import bot
+from GPTypeBot.texts import texts
+from GPTypeBot.keyboards import payment_method_keyboard
 
 
 async def premium_callback(call: types.CallbackQuery):

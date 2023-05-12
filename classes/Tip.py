@@ -1,16 +1,16 @@
 import aiogram.types
-import classes.MainClasses
-from texts import facts, texts
+import GPTypeBot.classes.MainClasses
+from GPTypeBot.texts import facts, texts
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, Message
-from config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO, INTRO_FILE_ID
-from classes.Guide import GuidePage
-from classes.Markers import BeginMarker, EndMarker
+from GPTypeBot.config import INFO_PHOTO, WARNING_PHOTO, MISTAKE_PHOTO, ANSWER_PHOTO, INTRO_FILE_ID
+from GPTypeBot.classes.Guide import GuidePage
+from GPTypeBot.classes.Markers import BeginMarker, EndMarker
 from typing import Union
 from random import choices
-from keyboards import message_tip_keyboard, start_keyboard
-from classes.MainClasses import Topic
-from database.run_db import topic_tb
-from main_interface.context_call import context_message
+from GPTypeBot.keyboards import message_tip_keyboard, start_keyboard
+from GPTypeBot.classes.MainClasses import Topic
+from GPTypeBot.database.run_db import topic_tb
+from GPTypeBot.main_interface.context_call import context_message
 
 
 class Tip:
@@ -51,7 +51,8 @@ class Tip:
             reply_markup=message_tip_keyboard(self.guide_page_name, self.bot_but_text)
         )
     
-    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
+    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User,
+                                 user_db: GPTypeBot.classes.MainClasses.User):
         guide_page = GuidePage(language=self.lang, text_name=self.guide_page_name)
         await guide_page.send_page(bot=bot, chat_id=chat_id)
 
@@ -113,12 +114,12 @@ class TimeLimitTip(AnswerTip):
 
 class EndWithSign(WarningTip):
     text_name = "end_with_sign"
-    guide_page_name = "marked_query"
+    guide_page_name = "examples"
 
 
 class WrongMarkerUse(MistakeTip):
     text_name = "wrong_marker_use"
-    guide_page_name = "marked_query"
+    guide_page_name = "examples"
 
     def __init__(self, language: str, marker: Union[BeginMarker, EndMarker] = None):
         super().__init__(language)
@@ -150,15 +151,16 @@ class WrongMarkerUse(MistakeTip):
 
 class TooLongQuery(MistakeTip):
     text_name = "too_long_query"
-    guide_page_name = "simple_query"
+    guide_page_name = "introduction"
 
 
 class NoSubscription(MistakeTip):
     text_name = "no_subscription"
-    guide_page_name = "simple_query"
+    guide_page_name = "inline_method"
     bot_but_text_name = "buy_subs_but"
 
-    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
+    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User,
+                                 user_db: GPTypeBot.classes.MainClasses.User):
         trial_queries = await user_db.get_trial_queries()
         await bot.send_video(chat_id=chat_id,
                              video=INTRO_FILE_ID,
@@ -170,22 +172,22 @@ class NoSubscription(MistakeTip):
 class StartWithMarker(WarningTip):
     photo = INFO_PHOTO
     text_name = "start_with_marker"
-    guide_page_name = "simple_query"
+    guide_page_name = "introduction"
 
 
 class WaitingTime(InfoTip):
     text_name = "waiting_time"
-    guide_page_name = "simple_query"
+    guide_page_name = "introduction"
 
 
 class MsgAnswerMistake(MistakeTip):
     text_name = "unknown_error"
-    guide_page_name = "simple_query"
+    guide_page_name = "introduction"
 
 
 class CurrentTopic(InfoTip):
     text_name = "current_topic"
-    guide_page_name = "simple_query"
+    guide_page_name = "introduction"
 
     async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         current_topic_id = await user_db.get_current_topic_id()
@@ -212,13 +214,14 @@ class CurrentTopic(InfoTip):
             switch_pm_parameter=self.pm_parameter + "-" + self.__class__.__name__
         )
 
-    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User, user_db: classes.MainClasses.User):
+    async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User,
+                                 user_db: GPTypeBot.classes.MainClasses.User):
         await context_message(user=user, chat_id=chat_id)
 
 
 class WaitAskLater(MistakeTip):
     text_name = "ask_later"
-    guide_page_name = "simple_query"
+    guide_page_name = "introduction"
 
     def __init__(self, language: str, waiting_time: int = None):
         super().__init__(language)

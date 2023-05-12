@@ -1,5 +1,5 @@
 import aiogram.types
-from texts import guide_texts
+from GPTypeBot.texts import guide_texts
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
 

@@ -1,12 +1,12 @@
 from aiogram import Dispatcher, types
 from aiogram.types.message import ContentTypes
-from classes.MainClasses import User, Payment
-from classes.Invoice import CardInvoice, MyInvoice
-from database.run_db import user_tb, payment_tb
-from texts import texts
-from keyboards import after_pay_keyboard
-from config import SUBSCRIPTION_PRICE
-from run_bot import bot
+from GPTypeBot.classes.MainClasses import User, Payment
+from GPTypeBot.classes.Invoice import CardInvoice, MyInvoice
+from GPTypeBot.database.run_db import user_tb, payment_tb
+from GPTypeBot.texts import texts
+from GPTypeBot.keyboards import after_pay_keyboard
+from GPTypeBot.config import SUBSCRIPTION_PRICE
+from GPTypeBot.run_bot import bot
 
 
 async def pre_checkout_update(pre_checkout: types.PreCheckoutQuery):

@@ -1,5 +1,5 @@
-from classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
-from config import TELEGRAM_CHAR_LIMIT, SUBSCRIPTION_PRICE
+from GPTypeBot.classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
+from GPTypeBot.config import TELEGRAM_CHAR_LIMIT, SUBSCRIPTION_PRICE
 
 texts = {
     "en": {
@@ -157,7 +157,7 @@ texts = {
 
 facts = {
     "en": {
-        "start_with_marker":  "Ask or use marker ({})".format(
+        "start_with_marker":  "Ask GPT or use marker ({})".format(
             " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
 
@@ -176,7 +176,7 @@ facts = {
         "current_topic": "Current topic: '{}'"
     },
     "uk": {
-        "start_with_marker":  "Запитуй або пиши маркер ({})".format(
+        "start_with_marker":  "Запитуй GPT або пиши маркер ({})".format(
             " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
         "end_with_sign": "Закінчуй маркером ({} / {} / {} / {})".format(
@@ -194,7 +194,7 @@ facts = {
         "current_topic": "Обрана тема: '{}'"
     },
     "ru": {
-        "start_with_marker": "Спрашивай или юзай маркер ({})".format(
+        "start_with_marker": "Спрашивай GPT или юзай маркер ({})".format(
             " / ".join([b_marker.marker for b_marker in BeginMarker.__subclasses__()])
         ),
 
