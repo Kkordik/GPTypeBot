@@ -1,9 +1,9 @@
 from aiogram import types
-from GPTypeBot.run_bot import bot
-from GPTypeBot.classes.Table import NotFormatedValue
-from GPTypeBot.classes.BotTables import Table, UsersTable, QueryTable, TopicTable, PaymentTable
-from GPTypeBot.config import BASIC_LANGUAGE
-from GPTypeBot.texts import texts
+from run_bot import bot
+from classes.Table import NotFormatedValue
+from classes.BotTables import Table, UsersTable, QueryTable, TopicTable, PaymentTable
+from config import BASIC_LANGUAGE
+from texts import texts
 
 
 class User:

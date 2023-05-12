@@ -1,5 +1,5 @@
-from GPTypeBot.classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
-from GPTypeBot.config import TELEGRAM_CHAR_LIMIT, SUBSCRIPTION_PRICE
+from classes.Markers import BeginMarker, DotSign, ExclamationSign, QuestionSign, SimpleEndMarker
+from config import TELEGRAM_CHAR_LIMIT, SUBSCRIPTION_PRICE
 
 texts = {
     "en": {

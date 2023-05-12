@@ -1,15 +1,15 @@
 import asyncio
 from aiogram import Dispatcher, types
-from GPTypeBot.classes.Query import Query
-from GPTypeBot.classes.MainClasses import QueryDb, User
-from GPTypeBot.classes.Tip import *
-from GPTypeBot.database.run_db import user_tb, query_tb
-from GPTypeBot.texts import texts
-from GPTypeBot.keyboards import start_keyboard, ask_return_inline
-from GPTypeBot.run_bot import bot
-from GPTypeBot.classes.Tip import MsgAnswerMistake
+from classes.Query import Query
+from classes.MainClasses import QueryDb, User
+from classes.Tip import *
+from database.run_db import user_tb, query_tb
+from texts import texts
+from keyboards import start_keyboard, ask_return_inline
+from run_bot import bot
+from classes.Tip import MsgAnswerMistake
 import datetime
-from GPTypeBot.config import QUERY_WAIT_TIME, QUERY_CHECK_INTERVAL, INTRO_FILE_ID
+from config import QUERY_WAIT_TIME, QUERY_CHECK_INTERVAL, INTRO_FILE_ID
 
 
 async def simple_start_cmd(message: types.Message):

@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.types import ChosenInlineResult
-from GPTypeBot.classes.MainClasses import QueryDb
-from GPTypeBot.database.run_db import query_tb
+from classes.MainClasses import QueryDb
+from database.run_db import query_tb
 
 
 async def inline_feedback(result: ChosenInlineResult):

@@ -1,4 +1,4 @@
-from GPTypeBot.classes.Table import Table, Database
+from classes.Table import Table, Database
 
 
 class UsersTable(Table):

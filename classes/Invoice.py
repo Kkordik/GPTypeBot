@@ -3,8 +3,8 @@ import aiogram
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiocryptopay import AioCryptoPay, Networks
 from aiocryptopay.models.invoice import Invoice
-from GPTypeBot.config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, WAYFORPAY_TOKEN, LIQ_PAY_TOKEN, ADMIN_CHAT_ID
-from GPTypeBot.texts import texts
+from config import CRYPTOBOT_TOKEN, CURRENCIES_API_KEY, WAYFORPAY_TOKEN, LIQ_PAY_TOKEN, ADMIN_CHAT_ID
+from texts import texts
 import hashlib
 import hmac
 import aiohttp

@@ -1,9 +1,9 @@
-from GPTypeBot.texts import texts
+from texts import texts
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from GPTypeBot.classes.Guide import Guide, GuidePage
-from GPTypeBot.classes.MainClasses import Topic
+from classes.Guide import Guide, GuidePage
+from classes.MainClasses import Topic
 from typing import List
-from GPTypeBot.classes.Invoice import MyInvoice
+from classes.Invoice import MyInvoice
 
 
 def start_keyboard(lang: str, start_using_but: bool = True):

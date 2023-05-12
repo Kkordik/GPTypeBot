@@ -1,9 +1,9 @@
 from aiogram import Dispatcher, types
-from GPTypeBot.classes.MainClasses import User
-from GPTypeBot.database.run_db import user_tb
-from GPTypeBot.texts import texts
-from GPTypeBot.run_bot import bot
-from GPTypeBot.config import OFERTA_FILE_ID, VISA_MC_FILE_ID
+from classes.MainClasses import User
+from database.run_db import user_tb
+from texts import texts
+from run_bot import bot
+from config import OFERTA_FILE_ID, VISA_MC_FILE_ID
 
 
 async def file_message(message: types.Message):

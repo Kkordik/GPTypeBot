@@ -1,8 +1,8 @@
 from aiogram import Dispatcher, types
-from GPTypeBot.classes.MainClasses import User
-from GPTypeBot.classes.Invoice import MyInvoice
-from GPTypeBot.database.run_db import user_tb
-from GPTypeBot.texts import texts
+from classes.MainClasses import User
+from classes.Invoice import MyInvoice
+from database.run_db import user_tb
+from texts import texts
 
 
 async def payment_method_callback(call: types.CallbackQuery):

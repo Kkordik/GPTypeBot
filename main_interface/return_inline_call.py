@@ -1,8 +1,8 @@
 import asyncio
 from aiogram import Dispatcher, types
-from GPTypeBot.classes.MainClasses import User
-from GPTypeBot.database.run_db import user_tb
-from GPTypeBot.keyboards import return_inline_keyboard
+from classes.MainClasses import User
+from database.run_db import user_tb
+from keyboards import return_inline_keyboard
 
 
 async def return_inline_callback(call: types.CallbackQuery):

@@ -2,13 +2,13 @@ import copy
 import re
 import asyncio
 from typing import Union
-from GPTypeBot.classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
-from GPTypeBot.classes.GPTSession import GPT
-from GPTypeBot.config import MAX_TOKEN_NUM
+from classes.Markers import Marker, BeginMarker, EndMarker, SimpleMarker
+from classes.GPTSession import GPT
+from config import MAX_TOKEN_NUM
 from aiogram.types import User
-from GPTypeBot.classes.GPTSession import PrevMessages
-from GPTypeBot.classes.Tip import WrongMarkerUse
-from GPTypeBot.classes.GPTSession import USER_ROLE
+from classes.GPTSession import PrevMessages
+from classes.Tip import WrongMarkerUse
+from classes.GPTSession import USER_ROLE
 from typing import List
 
 

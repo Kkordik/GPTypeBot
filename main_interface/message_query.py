@@ -1,17 +1,17 @@
 import asyncio
 import datetime
 from aiogram import Dispatcher, types
-from GPTypeBot.classes.MainClasses import User, QueryDb
-from GPTypeBot.database.run_db import user_tb, query_tb
-from GPTypeBot.texts import texts
-from GPTypeBot.run_bot import bot
+from classes.MainClasses import User, QueryDb
+from database.run_db import user_tb, query_tb
+from texts import texts
+from run_bot import bot
 from time import time
-from GPTypeBot.classes.Query import Query
-from GPTypeBot.classes.Tip import MsgAnswerMistake, WaitAskLater
+from classes.Query import Query
+from classes.Tip import MsgAnswerMistake, WaitAskLater
 import hashlib
 import random
 import string
-from GPTypeBot.config import WAIT_TIME, MISTAKE_WAIT_TIME
+from config import WAIT_TIME, MISTAKE_WAIT_TIME
 
 
 # A dict for users that sent a message query less than 30s (or other timeout time (see config)) ago.

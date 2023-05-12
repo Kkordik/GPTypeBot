@@ -1,8 +1,8 @@
 from builtins import list
 import tiktoken
 import aiohttp
-from GPTypeBot.config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE, OPEN_AI_KEY
-from GPTypeBot.classes.MainClasses import QueryDb
+from config import DEFAULT_TOKEN_NUM, MAX_TOKEN_NUM, BOT_ROLE, USER_ROLE, OPEN_AI_KEY
+from classes.MainClasses import QueryDb
 from typing import List
 import openai
 openai.api_key = OPEN_AI_KEY

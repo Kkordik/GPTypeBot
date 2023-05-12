@@ -1,8 +1,8 @@
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
-from GPTypeBot.classes.MainClasses import User
-from GPTypeBot.database.run_db import user_tb
-from GPTypeBot.texts import texts
+from classes.MainClasses import User
+from database.run_db import user_tb
+from texts import texts
 
 
 async def cancel_state_call(call: types.CallbackQuery, state: FSMContext):

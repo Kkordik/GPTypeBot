@@ -2,14 +2,14 @@ import time
 from aiogram import Dispatcher
 from aiogram.types import InlineQuery
 import hashlib
-from GPTypeBot.classes.Query import Query
-from GPTypeBot.texts import example_queries
-from GPTypeBot.classes.MainClasses import User, QueryDb
-from GPTypeBot.database.run_db import user_tb, query_tb
-from GPTypeBot.classes.Markers import ends_with_marker
-from GPTypeBot.classes.Tip import NoSubscription, StartWithMarker, TooLongQuery, MsgAnswerMistake, EndWithSign, InfoTip,\
+from classes.Query import Query
+from texts import example_queries
+from classes.MainClasses import User, QueryDb
+from database.run_db import user_tb, query_tb
+from classes.Markers import ends_with_marker
+from classes.Tip import NoSubscription, StartWithMarker, TooLongQuery, MsgAnswerMistake, EndWithSign, InfoTip,\
     AnswerTip, TimeLimitTip
-from GPTypeBot.config import TELEGRAM_CHAR_LIMIT, END_TIP_PROBABILITY, INLINE_DEF_TOKEN_NUM, INLINE_MAX_TOKEN_NUM,\
+from config import TELEGRAM_CHAR_LIMIT, END_TIP_PROBABILITY, INLINE_DEF_TOKEN_NUM, INLINE_MAX_TOKEN_NUM,\
     TG_INLINE_TIME_LIMIT
 import random
 import string
