@@ -104,7 +104,7 @@ async def answer_inline_query(inline_query: InlineQuery, user_db: User, result_i
     if answer_state.should_send:
         answer_state.should_send = False
         answer_state.in_time = True
-        answer_tip = AnswerTip(language=user_db.language, text=query_t.answer)
+        answer_tip = AnswerTip(language=user_db.language, answer_text=query_t.answer)
         await answer_tip.send_inline_tip(inline_query=inline_query, result_id=result_id, user_db=user_db)
 
     # Adding sub-queries to the database
@@ -155,7 +155,7 @@ async def inline_echo(inline_query: InlineQuery):
             query_t.divide_query(query_t.get_markers_list())
             query_t.answer = query_t.answer.format(*[sub_query.answer for sub_query in sub_queries])
 
-            answer_tip = AnswerTip(language=user_db.language, text=query_t.answer)
+            answer_tip = AnswerTip(language=user_db.language, answer_text=query_t.answer)
             await answer_tip.send_inline_tip(inline_query=inline_query, result_id=param, user_db=user_db)
 
         except Exception as ex:

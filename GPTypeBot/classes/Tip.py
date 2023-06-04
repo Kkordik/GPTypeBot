@@ -79,18 +79,18 @@ class AnswerTip(Tip):
     photo = ANSWER_PHOTO
     bot_but_text_name = "get_in_pm_but"
     pm_parameter = "query"
+    text_name = "answer_text"
 
-    def __init__(self, language: str, text: str):
+    def __init__(self, language: str, answer_text: str):
         super().__init__(language)
-        self.text = text
-        self.bot_but_text = texts[self.lang][self.bot_but_text_name]
+        self.answer_text: str = answer_text
 
     async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         answers = [
             InlineQueryResultArticle(
                 id=result_id,
-                title=self.text,
-                input_message_content=InputTextMessageContent(message_text=self.text),
+                title=self.text.format(self.answer_text),
+                input_message_content=InputTextMessageContent(message_text=self.answer_text),
                 thumb_url=self.photo,
             )
         ]
@@ -102,24 +102,40 @@ class AnswerTip(Tip):
         )
 
 
-class TimeLimitTip(AnswerTip):
+class TimeLimitTip(Tip):
     photo = INFO_PHOTO
     bot_but_text_name = "get_in_pm_but"
     pm_parameter = "wait_query"
+    text_name = "query_out_of_time"
 
     def __init__(self, language: str):
-        super().__init__(language, texts[language]["query_out_of_time"])
-        self.bot_but_text = texts[self.lang][self.bot_but_text_name]
+        super().__init__(language)
+
+    async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
+        answers = [
+            InlineQueryResultArticle(
+                id=result_id,
+                title=self.text,
+                input_message_content=InputTextMessageContent(message_text=texts[self.lang]["share"]),
+                thumb_url=self.photo,
+            )
+        ]
+        await inline_query.answer(
+            results=answers,
+            cache_time=0,
+            switch_pm_text=self.bot_but_text,
+            switch_pm_parameter=self.pm_parameter + "-" + result_id
+        )
 
 
 class EndWithSign(WarningTip):
     text_name = "end_with_sign"
-    guide_page_name = "examples"
+    guide_page_name = "guide1"
 
 
 class WrongMarkerUse(MistakeTip):
     text_name = "wrong_marker_use"
-    guide_page_name = "examples"
+    guide_page_name = "guide1"
 
     def __init__(self, language: str, marker: Union[BeginMarker, EndMarker] = None):
         super().__init__(language)
@@ -151,12 +167,12 @@ class WrongMarkerUse(MistakeTip):
 
 class TooLongQuery(MistakeTip):
     text_name = "too_long_query"
-    guide_page_name = "introduction"
+    guide_page_name = "guide1"
 
 
 class NoSubscription(MistakeTip):
     text_name = "no_subscription"
-    guide_page_name = "inline_method"
+    guide_page_name = "guide1"
     bot_but_text_name = "buy_subs_but"
 
     async def pm_button_reaction(self, bot, chat_id, user: aiogram.types.User,
@@ -172,22 +188,22 @@ class NoSubscription(MistakeTip):
 class StartWithMarker(WarningTip):
     photo = INFO_PHOTO
     text_name = "start_with_marker"
-    guide_page_name = "introduction"
+    guide_page_name = "guide1"
 
 
 class WaitingTime(InfoTip):
     text_name = "waiting_time"
-    guide_page_name = "introduction"
+    guide_page_name = "guide1"
 
 
 class MsgAnswerMistake(MistakeTip):
     text_name = "unknown_error"
-    guide_page_name = "introduction"
+    guide_page_name = "guide1"
 
 
 class CurrentTopic(InfoTip):
     text_name = "current_topic"
-    guide_page_name = "introduction"
+    guide_page_name = "guide1"
 
     async def send_inline_tip(self, inline_query: InlineQuery, result_id: str, user_db):
         current_topic_id = await user_db.get_current_topic_id()
@@ -221,7 +237,7 @@ class CurrentTopic(InfoTip):
 
 class WaitAskLater(MistakeTip):
     text_name = "ask_later"
-    guide_page_name = "introduction"
+    guide_page_name = "guide1"
 
     def __init__(self, language: str, waiting_time: int = None):
         super().__init__(language)

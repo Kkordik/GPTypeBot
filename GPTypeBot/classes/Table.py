@@ -30,7 +30,6 @@ class Database:
                 await cur.execute(command, values)
                 res = await cur.fetchall()
             await con.commit()
-        print(res)
         return res
 
 

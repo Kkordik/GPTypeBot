@@ -1,5 +1,4 @@
 import asyncio
-
 import pyrogram.types
 from pyrogram import Client
 from AdvertBot.config import api_hash, api_id
@@ -44,10 +43,11 @@ async def my_handler(client: pyrogram.Client, message: pyrogram.types.Message):
         try:
             # Dividing query into sub-queries or if only one query - getting it as a sub-query.
             # And replacing sub-queries in answer text with {} to make possible later add answers at the same places
-            size = random.choice(["short ", ""])
+            param = random.choice([" short", " very short", " funny", " smart", "n interesting", " philosophical",
+                                  " boastful"])
             query_t = Query(
                 language="en",
-                text=f"-s Create a {size}comment to the post use only the language of the post: {text} -q",
+                text=f"-s Create a{param} comment to the post, write it on the language of the post: {text} -q",
                 short_answers=False
             )
             mistake, _ = query_t.divide_query(query_t.get_markers_list())
