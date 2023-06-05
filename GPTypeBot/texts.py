@@ -224,15 +224,16 @@ guide_texts = {
 
 <b>To ask the bot in any chat, you need to:</b>
 
-<b>▸</b>At the beginning of the input line, type the bot's username followed by a space '@GPTypeBot '. A prompt will appear, indicating that we should now write our query.
+<b>▸</b>At the beginning of the input line, type the bot's username followed by a space '@GPTypeBot '. 
 
-<b>▸</b>While typing the query, other prompts will appear. The first one will tell us how to properly end our query, namely, it should be ended with a period, exclamation mark, or question mark ( . / ! / ? ).
+<b>▸</b>Now write your query, it should be ended with a period, exclamation mark, or question mark ( . / ! / ? ).
 
 <b>▸</b>After entering one of these punctuation marks, it is important not to type or click anything until the result appears (maximum 10 seconds). Then, to send the result, click on it or click the button above to receive the result in private messages with the bot.
-<i>If the generation of the answer takes more than 10 seconds, a message will be displayed with a button above it. By clicking the button, we will enter the chat with the bot and receive our result.
-In another case, if the loading circle stops but no answer or message appears, it is necessary to add a space after the punctuation mark, thereby resending the query.</i>''',
+<i>If the generation of the answer takes more than 10 seconds, a message will be displayed with a button above it. By clicking the button, we will enter the chat with the bot and receive our result.</i>''',
             "button": "Guide",
-            "examples": [{"button": "Example", "query": "How to cook borshch ?"}]
+            "examples": [{"button": "Query example", "query": "How to cook borshch ?"},
+                         {"button": "More bot features", "url": "https://t.me/kkordbots/7"}],
+            "video_file_id": "BAACAgIAAxkBAAI-r2R8_pUOqI6Ehsk-Ba8iFtIlFgKvAAKRKQACEaPpS7R4fENUFDFFLwQ"
          },
         # "inline_method": {
         #     "description": "<b>Inline Method</b>"
@@ -333,15 +334,16 @@ In another case, if the loading circle stops but no answer or message appears, i
 
 <b>Щоб запитати бота в будь-якому чаті, потрібно:</b>
 
-<b>▸</b>На початку рядка введення написати юзернейм бота і пробіл '@GPTypeBot ', з'явиться підказка, яка дозволить нам зрозуміти, що тепер потрібно написати наш запит.
+<b>▸</b>На початку рядка введення написати юзернейм бота і пробіл '@GPTypeBot '.
 
-<b>▸</b>Під час написання запиту з'являться інші підказки, перша з них розповість нам, як правильно закінчити наш запит, а саме, його потрібно закінчувати крапкою, знаком оклику або знаком питання ( . / ! / ? ).
+<b>▸</b>Тепер пишемо запит, його потрібно закінчувати крапкою, знаком оклику або знаком питання ( . / ! / ? ).
 
 <b>▸</b>Після введення одного знаків пунктуації важливо нічого не писати та не натискати, поки не з'явиться результат (максимум 10 секунд), а потім, щоб його відправити, клікніть на нього або натисніть кнопку вище, щоб отримати результат у приватних повідомленнях з ботом.
-<i>Якщо генерація відповіді займе більше 10 секунд, з'явиться повідомлення, над ним буде кнопка, натиснувши на яку ми перейдемо до чату з ботом та отримаємо наш результат.
-У іншому випадку, якщо коло зупинилося, але при цьому ні відповідь, ні повідомлення не з'явилися, потрібно поставити пробіл після знака пунктуації, тим самим відправивши запит знову.</i>''',
+<i>Якщо генерація відповіді займе більше 10 секунд, з'явиться повідомлення, над ним буде кнопка, натиснувши на яку ми перейдемо до чату з ботом та отримаємо наш результат.</i>''',
              "button": "Гайд",
-             "examples": [{"button": "Example", "query": "How to cook borshch ?"}]
+             "examples": [{"button": "Приклад запросу", "query": "How to cook borshch ?"},
+                          {"button": "Більше можливостей бота", "url": "https://t.me/kkordbots/7"}],
+            "video_file_id": "BAACAgIAAxkBAAI-s2R8_plkovszk9c2BALrXtveUTkIAAKTKQACEaPpS6aCerFBKM_1LwQ"
          },
         # "inline_method": {
         #      "description": "<b>Метод Inline</b>"
@@ -438,15 +440,16 @@ In another case, if the loading circle stops but no answer or message appears, i
             "description": '''@GPTypeBot дает возможность спрашивать ChatGPT и сразу же отправлять результат в любом чате Telegram: личных сообщениях, приватных и публичных группах, заметках, комментариях и т.д. При этом бот не имеет никакого доступа к информации и сообщениям чата, в котором его использовали.
 
 <b>Чтобы спросить у бота в любом чате нужно:</b>
-<b>▸</b>В начале строки ввода написать юзернейм бота и пробел '@GPTypeBot ', появится подсказка, дающая нам понять, что теперь нужно написать наш запрос.
+<b>▸</b>В начале строки ввода написать юзернейм бота и пробел '@GPTypeBot '.
 
-<b>▸</b>Во время написания запроса будут появляться другие подсказки, первая скажет нам, как правильно закончить наш запрос, а именно, что его нужно заканчивать точкой, знаком восклицания или вопросительным знаком ( . / ! / ? ).
+<b>▸</b>Теперь пишем запрос, его нужно заканчивать точкой, знаком восклицания или вопросительным знаком ( . / ! / ? ).
 
 <b>▸</b>Поставив один из знаков пунктуации, очень важно ничего не писать и не кликать, пока не появится результат (максимум 10 секунд), а затем, чтобы его отправить, кликаем на него или нажимаем на кнопку выше, чтобы получить результат в личных сообщениях с ботом.
-<i>В случае, если генерация ответа займет более 10 секунд, появится сообщение, сверху над ним будет кнопка, нажав на которую мы перейдем в чат с ботом и получим наш результат.
-В другом случае, если кружочек остановился, но при этом ни ответ, ни сообщение не появилось, нужно поставить пробел после знака пунктуации, тем самым отправив запрос заново.</b>''',
+<i>В случае, если генерация ответа займет более 10 секунд, появится сообщение, сверху над ним будет кнопка, нажав на которую мы перейдем в чат с ботом и получим наш результат.</i>''',
             "button": "Гайд",
-            "examples": [{"button": "Example", "query": "How to cook borshch ?"}]
+            "examples": [{"button": "Пример запроса", "query": "How to cook borshch ?"},
+                         {"button": "Больше возможностей бота", "url": "https://t.me/kkordbots/7"}],
+            "video_file_id": "BAACAgIAAxkBAAI-sWR8_pcbPmy3yn2WwUgpXF6li8peAAKSKQACEaPpSxlHSr90qimHLwQ"
         },
         # "inline_method": {
         #     "description": "<b>Метод встроенных запросов</b>\n\nМетод встроенных запросов позволяет отправлять запросы боту непосредственно из любого чата или группы Telegram без необходимости открывать отдельный чат с ботом.\n\nДля начала запроса пользователь просто вводит имя пользователя бота, за которым следует пробел, а затем сам запрос. Бот обработает запрос и вернет результат в том же чате, где был сделан запрос.\n\nЭтот метод полезен, когда вы хотите быстро получить и отправить результат.",
@@ -532,4 +535,5 @@ for lang in guide_texts.values():
         if text_dict["examples"]:
             for example in text_dict["examples"]:
                 example: dict
-                example_queries.append(example["query"])
+                if "query" in example:
+                    example_queries.append(example["query"])

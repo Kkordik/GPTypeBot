@@ -7,6 +7,7 @@ from GPTypeBot.classes.Invoice import MyInvoice
 
 
 def start_keyboard(lang: str, start_using_but: bool = True):
+    print(Guide.texts_names_l)
     first_guide_page = GuidePage(language=lang, text_name=Guide.texts_names_l[0])
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton(text=texts[lang]["guide_but"],

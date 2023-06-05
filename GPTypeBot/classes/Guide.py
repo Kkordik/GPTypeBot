@@ -1,3 +1,5 @@
+import aiogram
+
 from GPTypeBot.texts import guide_texts
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
@@ -41,19 +43,29 @@ class GuidePage(Guide):
                              InlineKeyboardButton(text=right_page.text["button"] + " ➡",
                                                   callback_data="guide-" + right_page.text_name))
 
-        for example in self.text["examples"]:
-            keyboard.add(InlineKeyboardButton(text=example["button"],
-                                              switch_inline_query_current_chat=example["query"]))
+        for button in self.text["examples"]:
+            if "query" in button:
+                keyboard.add(InlineKeyboardButton(text=button["button"],
+                                                  switch_inline_query_current_chat=button["query"]))
+            elif "url" in button:
+                keyboard.add(InlineKeyboardButton(text=button["button"],
+                                                  url=button["url"]))
+            elif "callback" in button:
+                keyboard.add(InlineKeyboardButton(text=button["button"],
+                                                  callback_data=button["callback"]))
 
         return keyboard
 
-    async def send_page(self, bot,  chat_id, message: Message = None):
+    async def send_page(self, bot: aiogram.Bot,  chat_id, message: Message = None):
         if message:
             await message.delete()
-            await bot.send_message(chat_id=chat_id,
-                                   text="<i><b>Guide</b></i>\n\n" + self.text["description"],
-                                   reply_markup=self.create_keyboard(),
-                                   parse_mode='HTML')
+
+        if self.text["video_file_id"]:
+            await bot.send_video(chat_id=chat_id,
+                                 video=self.text["video_file_id"],
+                                 caption="<i><b>Guide</b></i>\n\n" + self.text["description"],
+                                 reply_markup=self.create_keyboard(),
+                                 parse_mode='HTML')
         else:
             await bot.send_message(chat_id, text="<i><b>Guide</b></i>\n\n" + self.text["description"],
                                    reply_markup=self.create_keyboard(),

@@ -14,13 +14,9 @@ async def context_message(user: types.User, chat_id, call: types.CallbackQuery =
         topics = await Topic(topic_tb).get_user_topics(user_id=user.user_id, query_tb=query_tb)
         keyboard = topics_keyboard(topics=topics, lang=user.language, chosen_topic_id=current_topic)
 
-        if call:
-            await call.message.edit_text(text=texts[user.language]["topics_msg"],
-                                         reply_markup=keyboard)
-        else:
-            await bot.send_message(chat_id,
-                                   text=texts[user.language]["topics_msg"],
-                                   reply_markup=keyboard)
+        await bot.send_message(chat_id,
+                               text=texts[user.language]["topics_msg"],
+                               reply_markup=keyboard)
     else:
         keyboard = buy_subs_keyboard(user.language)
 
